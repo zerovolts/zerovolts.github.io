@@ -1,0 +1,14 @@
+
+{
+    // This is for vscode to understand root-based absolute paths for JS
+    // imports. This is necessary because the browser understands "/" to mean
+    // the root of the file server while vscode understands it to mean the root
+    // of the system by default.
+    // https://github.com/microsoft/TypeScript/issues/13730
+    "compilerOptions": {
+        "baseUrl": ".",
+        "paths": {
+            "/*": ["./*"]
+        }
+    }
+}
