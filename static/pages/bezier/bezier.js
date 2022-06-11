@@ -1,10 +1,10 @@
-import { createShaderProgram, getAttributeLocations, getUniformLocations } from "/shared/graphics.js";
-import { angleBetweenPoints, cubicLerp, randRange } from "/shared/math.js";
+import { createShaderProgram, getAttributeLocations, getUniformLocations } from "/static/shared/graphics.js";
+import { angleBetweenPoints, cubicLerp, randRange } from "/static/shared/math.js";
 
 // Initiate the fetch first to reduce perceived loading.
 const shaderSources = Promise.all([
-    fetch("./bezier.vert").then(res => res.text()),
-    fetch("./bezier.frag").then(res => res.text()),
+    fetch("/static/pages/bezier/bezier.vert").then(res => res.text()),
+    fetch("/static/pages/bezier/bezier.frag").then(res => res.text()),
 ]);
 
 document.addEventListener("DOMContentLoaded", () => {

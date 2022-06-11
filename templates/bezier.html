@@ -5,16 +5,17 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>zerovolts</title>
-    <link rel="icon" type="image/x-icon" href="/favicon.ico" />
-    <link rel="stylesheet" href="/style.css" />
-    <script src="./bezier.js" type="module"></script>
+    <link rel="icon" type="image/x-icon" href="/static/favicon.ico" />
+    <link rel="stylesheet" href="/static/style.css" />
+    <script src="/static/pages/bezier/bezier.js" type="module"></script>
     <script defer data-domain="zerovolts.com" src="https://plausible.io/js/plausible.js"></script>
 </head>
 
 <body>
+    {{template "header"}}
     <main>
         <div style="display: flex; flex-direction: column; align-items: flex-end">
-            <a href="./bezier.js">Source</a>
+            <a href="/static/pages/bezier/bezier.js">Source</a>
             <canvas id="main-canvas" width="512px" height="512px"></canvas>
         </div>
         <button id="generate">Generate</button>
