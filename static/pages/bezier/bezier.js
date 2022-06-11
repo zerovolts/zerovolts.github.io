@@ -8,6 +8,7 @@ const shaderSources = Promise.all([
 ]);
 
 document.addEventListener("DOMContentLoaded", () => {
+    /** @type HTMLCanvasElement */
     const canvas = document.getElementById("main-canvas");
     const gl = canvas.getContext("webgl2");
     if (gl === null) return;
@@ -18,6 +19,9 @@ document.addEventListener("DOMContentLoaded", () => {
     button.onclick = () => render(gl, [canvas.clientWidth, canvas.clientHeight]);
 });
 
+/**
+ * @param {WebGL2RenderingContext} gl 
+ */
 const render = async (gl, dimensions) => {
     gl.clearColor(0.1, 0.1, 0.1, 1.0);
     gl.clearDepth(1.0);
