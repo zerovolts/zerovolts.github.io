@@ -1,5 +1,6 @@
 import { createShaderProgram, getAttributeLocations, getUniformLocations } from "/static/shared/graphics.js";
-import { angleBetweenPoints, cubicLerp, randRange } from "/static/shared/math.js";
+import * as Vec2 from "/static/shared/vec2.js";
+import * as Vec3 from "/static/shared/vec3.js";
 
 // Initiate the fetch first to reduce perceived loading.
 const shaderSources = Promise.all([
@@ -45,19 +46,21 @@ const render = async (gl, dimensions) => {
 
     for (let i = 0; i < 8; i++) {
         const extreme = dimensions[0] / 2;
-        const from = [randRange(-extreme, extreme), randRange(-extreme, extreme)];
-        const fromCtrl = [randRange(-extreme, extreme), randRange(-extreme, extreme)];
-        const toCtrl = [randRange(-extreme, extreme), randRange(-extreme, extreme)];
-        const to = [randRange(-extreme, extreme), randRange(-extreme, extreme)];
+        const from = Vec2.randomRange(-extreme, extreme);
+        const fromCtrl = Vec2.randomRange(-extreme, extreme);
+        const toCtrl = Vec2.randomRange(-extreme, extreme);
+        const to = Vec2.randomRange(-extreme, extreme);
 
         const segments = 32;
-        const path = Array(segments).fill(null).flatMap((_x, i) => ([
-            cubicLerp(from[0], fromCtrl[0], toCtrl[0], to[0], i / segments),
-            cubicLerp(from[1], fromCtrl[1], toCtrl[1], to[1], i / segments),
-            Math.sin(((i / (segments - 1)) - 1) * Math.PI),
-        ]));
+        const path = [];
+        for (let i = 0; i < segments; i++) {
+            path.push([
+                ...Vec2.cubicLerp(from, fromCtrl, toCtrl, to, i / segments),
+                Math.sin(((i / (segments - 1)) - 1) * Math.PI),
+            ]);
+        }
 
-        const positions = new Float32Array(extrudeLine(path, 4));
+        const positions = new Float32Array(extrudeLine(path, 4).flat());
 
         const positionBuffer = gl.createBuffer();
         gl.bindBuffer(gl.ARRAY_BUFFER, positionBuffer);
@@ -71,19 +74,18 @@ const render = async (gl, dimensions) => {
 };
 
 /**
- * Expects a list of 3d vector components, but mostly ignores the z component.
+ * Expects a list of 3d vectors, but mostly ignores the z component.
  */
 const extrudeLine = (points, width) => {
-    const halfWidth = width / 2;
+    const pointAngles = [Vec2.angleBetween(points[0], points[1])];
+    // Iterate over all but the first and last.
+    for (let i = 1; i < points.length - 1; i++) {
+        const before = points[i - 1];
+        const position = points[i];
+        const after = points[i + 1];
 
-    const pointAngles = [angleBetweenPoints(points[0], points[1], points[3], points[4])];
-    for (let i = 3; i < points.length - 3; i += 3) {
-        const before = [points[i - 3], points[i - 2]];
-        const position = [points[i], points[i + 1]];
-        const after = [points[i + 3], points[i + 4]];
-
-        const beforeAngle = angleBetweenPoints(before[0], before[1], position[0], position[1]);
-        const afterAngle = angleBetweenPoints(position[0], position[1], after[0], after[1]);
+        const beforeAngle = Vec2.angleBetween(before, position);
+        const afterAngle = Vec2.angleBetween(position, after);
 
         const angleDiff = afterAngle - beforeAngle;
         const flipped = angleDiff <= -Math.PI || angleDiff >= Math.PI
@@ -96,21 +98,21 @@ const extrudeLine = (points, width) => {
             pointAngles.push((beforeAngle + afterAngle) / 2);
         }
     }
-    pointAngles.push(angleBetweenPoints(points.at(-6), points.at(-5), points.at(-3), points.at(-2)));
+    pointAngles.push(Vec2.angleBetween(points.at(-2), points.at(-1)));
 
     const extrudedPoints = [];
-    for (let i = 0; i < pointAngles.length; i++) {
-        const pointIndex = i * 3;
+    for (let i = 0; i < points.length; i++) {
+        const point = points[i];
         const angle = pointAngles[i];
 
-        const leftAngle = angle + (Math.PI / 2);
-        const leftOffset = [Math.cos(leftAngle) * halfWidth, Math.sin(leftAngle) * halfWidth];
+        const leftOffset = [...Vec2.scale(Vec2.fromAngle(angle + (Math.PI / 2)), width / 2), 0];
         const rightOffset = leftOffset.map(x => -x);
-        const left = [points[pointIndex] + leftOffset[0], points[pointIndex + 1] + leftOffset[1], points[pointIndex + 2]];
-        const right = [points[pointIndex] + rightOffset[0], points[pointIndex + 1] + rightOffset[1], points[pointIndex + 2]];
 
-        extrudedPoints.push(...left);
-        extrudedPoints.push(...right);
+        const leftPoint = Vec3.add(point, leftOffset);
+        const rightPoint = Vec3.add(point, rightOffset)
+
+        extrudedPoints.push(leftPoint);
+        extrudedPoints.push(rightPoint);
     }
     return extrudedPoints;
 };
