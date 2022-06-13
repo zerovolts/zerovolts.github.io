@@ -7,7 +7,15 @@ import (
 	"os"
 )
 
+var templates struct {
+	home   *template.Template
+	bezier *template.Template
+}
+
 func main() {
+	templates.home = template.Must(template.ParseFiles("./templates/index.html", "./templates/header.html"))
+	templates.bezier = template.Must(template.ParseFiles("./templates/bezier.html", "./templates/header.html"))
+
 	fs := http.FileServer(http.Dir("static"))
 	http.Handle("/static/", http.StripPrefix("/static/", fs))
 
@@ -25,11 +33,9 @@ func main() {
 }
 
 func home(w http.ResponseWriter, r *http.Request) {
-	tmpl := template.Must(template.ParseFiles("./templates/index.html", "./templates/header.html"))
-	tmpl.Execute(w, nil)
+	templates.home.Execute(w, nil)
 }
 
 func bezier(w http.ResponseWriter, r *http.Request) {
-	tmpl := template.Must(template.ParseFiles("./templates/bezier.html", "./templates/header.html"))
-	tmpl.Execute(w, nil)
+	templates.bezier.Execute(w, nil)
 }

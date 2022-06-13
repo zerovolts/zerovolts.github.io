@@ -101,10 +101,22 @@ header {
     border-radius: 3px;
 }
 
+.header-left {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    gap: 1rem;
+}
+
+.header-title {
+    font-size: 1.4rem;
+    font-family: "Ubuntu Mono";
+}
+
 .header-links {
     display: flex;
     flex-direction: row;
-    padding: 1rem 2rem;
+    padding: 0 2rem;
 }
 
 .logo-link {
@@ -112,6 +124,7 @@ header {
     height: 100%;
     padding: 1rem 2rem;
     border-right: 2px solid var(--background-color);
+    border-radius: 3px 0 0 3px;
 }
 
 main {
