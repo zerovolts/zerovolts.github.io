@@ -14,9 +14,9 @@
 <body>
     {{template "header" "Bezier Art Generator"}}
     <main>
-        <div style="display: flex; flex-direction: column; align-items: flex-end">
-            <a href="/static/pages/bezier/bezier.js">Source</a>
+        <div class="canvas-source-container">
             <canvas id="main-canvas" width="512px" height="512px"></canvas>
+            <a href="/static/pages/bezier/bezier.js">Source</a>
         </div>
         <button id="generate">Generate</button>
     </main>

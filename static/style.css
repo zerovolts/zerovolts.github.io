@@ -9,16 +9,15 @@
 }
 
 :root {
-    --accent-color: #f60;
-    --accent-shadow: #f40;
+    --accent-color: #f80;
+    --accent-shadow: #f60;
     --font-color: #2c3e50;
     --background-color: #f0f0ed;
 
-    --header-width: 96px;
-    --header-height: 48px;
+    --content-width: calc(512px + 4rem);
 
-    --down-speed: 0;
-    --up-speed: 0.1s;
+    --hero-width: 96px;
+    --hero-height: 48px;
 }
 
 * {
@@ -96,7 +95,7 @@ header {
     flex-direction: row;
     justify-content: space-between;
     align-items: center;
-    width: 600px;
+    width: var(--content-width);
     background: white;
     border-radius: 3px;
 }
@@ -131,7 +130,7 @@ main {
     display: flex;
     flex-direction: column;
     gap: 2rem;
-    width: 600px;
+    width: var(--content-width);
     padding: 2rem;
     background: white;
     border-radius: 3px;
@@ -165,27 +164,27 @@ section {
     display: inline-block;
     padding: 0.3rem 0.5rem;
     color: #f60;
-    background: #f603;
+    background: #f803;
     border-radius: 3px;
 }
 
-.header-image {
-    width: calc(var(--header-width) * 4);
-    height: calc(var(--header-height) * 4);
+.hero-image {
+    width: calc(var(--hero-width) * 4);
+    height: calc(var(--hero-height) * 4);
 }
 
 @media (max-width: calc(450px)) {
-    .header-image {
-        width: calc(var(--header-width) * 3);
-        height: calc(var(--header-height) * 3);
+    .hero-image {
+        width: calc(var(--hero-width) * 3);
+        height: calc(var(--hero-height) * 3);
     }
 }
 
 
 @media (max-width: calc(350px)) {
-    .header-image {
-        width: calc(var(--header-width) * 2);
-        height: calc(var(--header-height) * 2);
+    .hero-image {
+        width: calc(var(--hero-width) * 2);
+        height: calc(var(--hero-height) * 2);
     }
 }
 
@@ -205,6 +204,8 @@ section {
 }
 
 button {
+    --up-speed: 0.1s;
+
     position: relative;
     border: none;
     font-family: "Ubuntu Mono";
@@ -212,15 +213,26 @@ button {
     padding: 0.4rem 0.6rem;
     border-radius: 3px;
     color: white;
-    background-color: #f80;
-    box-shadow: 0 3px 0 0 #f40;
+    background-color: #fa0;
+    box-shadow: 0 3px 0 0 #f60;
     transition: bottom var(--up-speed), box-shadow var(--up-speed), background-color var(--up-speed);
     bottom: 3px;
 }
 
 button:active {
-    background-color: #f60;
+    --down-speed: 0;
+
+    background-color: #f80;
     box-shadow: none;
     bottom: 0;
     transition: bottom var(--down-speed), box-shadow var(--down-speed), background-color var(--down-speed);
+}
+
+.canvas-source-container {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    gap: 2px;
+    /* Offset the extra spacing caused by the "Source" link. */
+    margin-bottom: -21px;
 }
