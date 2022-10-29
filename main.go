@@ -13,9 +13,8 @@ var templates struct {
 }
 
 func main() {
-	templates.home = template.Must(template.ParseFiles("./templates/index.html", "./templates/header.html"))
-	templates.bezier = template.Must(template.ParseFiles("./templates/bezier.html", "./templates/header.html"))
-
+	templates.home = template.Must(template.ParseFiles("./templates/index.html"))
+	templates.bezier = template.Must(template.ParseFiles("./templates/bezier.html"))
 	fs := http.FileServer(http.Dir("static"))
 	http.Handle("/static/", http.StripPrefix("/static/", fs))
 

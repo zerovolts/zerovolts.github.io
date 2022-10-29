@@ -8,11 +8,12 @@
     <title>zerovolts</title>
     <link rel="icon" type="image/x-icon" href="/static/favicon.ico" />
     <link rel="stylesheet" href="/static/style.css" />
+    <script src="/static/shared/header.js"></script>
     <script defer data-domain="zerovolts.com" src="https://plausible.io/js/plausible.js"></script>
 </head>
 
 <body>
-    {{template "header" "Home"}}
+    <zv-header data-title="Home"></zv-header>
     <main>
         <section>
             <img

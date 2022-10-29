@@ -90,42 +90,6 @@ li:before {
     content: "•\0000a0\0000a0";
 }
 
-header {
-    display: flex;
-    flex-direction: row;
-    justify-content: space-between;
-    align-items: center;
-    width: var(--content-width);
-    background: white;
-    border-radius: 3px;
-}
-
-.header-left {
-    display: flex;
-    flex-direction: row;
-    align-items: center;
-    gap: 1rem;
-}
-
-.header-title {
-    font-size: 1.4rem;
-    font-family: "Ubuntu Mono";
-}
-
-.header-links {
-    display: flex;
-    flex-direction: row;
-    padding: 0 2rem;
-}
-
-.logo-link {
-    font-size: 0;
-    height: 100%;
-    padding: 1rem 2rem;
-    border-right: 2px solid var(--background-color);
-    border-radius: 3px 0 0 3px;
-}
-
 main {
     display: flex;
     flex-direction: column;
