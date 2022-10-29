@@ -1,11 +1,11 @@
-import { createShaderProgram, getAttributeLocations, getUniformLocations } from "/static/shared/graphics.js";
-import * as Vec2 from "/static/shared/vec2.js";
-import * as Vec3 from "/static/shared/vec3.js";
+import { createShaderProgram, getAttributeLocations, getUniformLocations } from "/shared/graphics.js";
+import * as Vec2 from "/shared/vec2.js";
+import * as Vec3 from "/shared/vec3.js";
 
 // Initiate the fetch first to reduce perceived loading.
 const shaderSources = Promise.all([
-    fetch("/static/pages/bezier/bezier.vert").then(res => res.text()),
-    fetch("/static/pages/bezier/bezier.frag").then(res => res.text()),
+    fetch("/pages/bezier/bezier.vert").then(res => res.text()),
+    fetch("/pages/bezier/bezier.frag").then(res => res.text()),
 ]);
 
 document.addEventListener("DOMContentLoaded", () => {

@@ -1,4 +1,4 @@
-const template = fetch("/static/shared/header.html").then(res => res.text());
+const template = fetch("/shared/header.html").then(res => res.text());
 
 class ZvHeader extends HTMLElement {
     async connectedCallback() {
