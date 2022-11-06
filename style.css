@@ -181,8 +181,11 @@ button {
     color: white;
     background-color: #fa0;
     box-shadow: 0 3px 0 0 #f60;
-    transition: bottom var(--up-speed), box-shadow var(--up-speed), background-color var(--up-speed);
     bottom: 3px;
+    transition:
+        bottom var(--up-speed),
+        box-shadow var(--up-speed),
+        background-color var(--up-speed);
 }
 
 button:active {
@@ -191,5 +194,8 @@ button:active {
     background-color: #f80;
     box-shadow: none;
     bottom: 0;
-    transition: bottom var(--down-speed), box-shadow var(--down-speed), background-color var(--down-speed);
+    transition:
+        bottom var(--down-speed),
+        box-shadow var(--down-speed),
+        background-color var(--down-speed);
 }
