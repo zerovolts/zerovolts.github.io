@@ -18,6 +18,8 @@
 
     --hero-width: 96px;
     --hero-height: 48px;
+
+    --radius: 3px;
 }
 
 * {
@@ -97,7 +99,7 @@ main {
     width: var(--content-width);
     padding: 2rem;
     background: white;
-    border-radius: 3px;
+    border-radius: var(--radius);
     align-items: center;
 }
 
@@ -129,7 +131,7 @@ section {
     padding: 0.3rem 0.5rem;
     color: #f60;
     background: #f803;
-    border-radius: 3px;
+    border-radius: var(--radius);
 }
 
 .hero-image {
@@ -175,7 +177,7 @@ button {
     font-family: "Ubuntu Mono";
     font-size: 1rem;
     padding: 0.4rem 0.6rem;
-    border-radius: 3px;
+    border-radius: var(--radius);
     color: white;
     background-color: #fa0;
     box-shadow: 0 3px 0 0 #f60;
