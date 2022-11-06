@@ -1,0 +1,31 @@
+.dial-container {
+    display: flex;
+    flex-direction: row;
+    gap: 2rem;
+}
+
+.dial-input {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.25rem;
+}
+
+.dial-input label {
+    font-size: 10px;
+}
+
+#keyboard-container {
+    background: var(--background-color);
+    padding: 1rem;
+    border-radius: 3px;
+}
+
+.keyboard {
+    width: 56px;
+    height: 32px;
+}
+
+.keyboard-key {
+    stroke: 1px var(--background-color);
+}

@@ -192,6 +192,10 @@ button:active {
     transition: bottom var(--down-speed), box-shadow var(--down-speed), background-color var(--down-speed);
 }
 
+button:disabled {
+    background-color: #444;
+}
+
 .canvas-source-container {
     display: flex;
     flex-direction: column;

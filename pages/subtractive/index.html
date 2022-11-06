@@ -1,0 +1,76 @@
+<!doctype html>
+<html>
+
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>zerovolts</title>
+    <link rel="icon" type="image/x-icon" href="/favicon.ico" />
+    <link rel="stylesheet" href="/style.css" />
+    <link rel="stylesheet" href="/pages/subtractive/subtractive.css" />
+    <script src="/components/header/header.js"></script>
+    <script src="/components/dial/dial.js"></script>
+    <script src="/pages/subtractive/subtractive.js" type="module"></script>
+    <script defer data-domain="zerovolts.com" src="https://plausible.io/js/plausible.js"></script>
+</head>
+
+<body>
+    <zv-header data-title="Subtractive Synthesizer"></zv-header>
+    <main>
+        <div class="dial-container">
+            <button id="power-toggle">Enable</button>
+            <button id="osc-shape" value="square">square</button>
+            <button id="filter-type" value="lowpass">lowpass</button>
+        </div>
+        <div class="dial-container">
+            <div class="dial-input">
+                <label>Frequency</label>
+                <zv-dial
+                    id="freq"
+                    data-value="440"
+                    data-min="32"
+                    data-max="512">
+                </zv-dial>
+            </div>
+
+            <div class="dial-input">
+                <label>Filter Cutoff</label>
+                <zv-dial
+                    id="filter-cutoff"
+                    data-value="110"
+                    data-min="32"
+                    data-max="512">
+                </zv-dial>
+            </div>
+
+            <div class="dial-input">
+                <label>Filter Resonance</label>
+                <zv-dial
+                    id="filter-q"
+                    data-min="0.0001"
+                    data-max="10">
+                </zv-dial>
+            </div>
+
+            <div class="dial-input">
+                <label>Amplitude</label>
+                <zv-dial
+                    id="amp"
+                    data-value="0.1"
+                    data-min="0"
+                    data-max="1">
+                </zv-dial>
+            </div>
+        </div>
+
+        <!-- <div id="keyboard"></div> -->
+
+        <div id="keyboard-container">
+            <!-- <svg id="keyboard" width="56px" height="32px"> -->
+                <!-- <polygon points="0,0 0,32 8,32 8,0" fill="white" stroke="white"></polygon> -->
+                <!-- <rect x="0" y="0" width="8px" height="32px" fill="black"  /> -->
+            <!-- </svg> -->
+        </div>
+    </main>
+</body>
+</html>

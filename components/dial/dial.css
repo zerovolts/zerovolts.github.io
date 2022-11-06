@@ -1,0 +1,28 @@
+@import "/style.css";
+
+#dial {
+    width: 32px;
+    height: 32px;
+}
+
+#dial-background {
+    fill: var(--background-color);
+}
+
+#dial-pointer {
+    stroke-width: 2px;
+    stroke: var(--font-color);
+}
+
+#dial-center {
+    fill: var(--font-color);
+    /* fill: white; */
+}
+
+.dial-outline-background {
+
+}
+
+.dial-outline-progress {
+
+}
