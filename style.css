@@ -193,12 +193,3 @@ button:active {
     bottom: 0;
     transition: bottom var(--down-speed), box-shadow var(--down-speed), background-color var(--down-speed);
 }
-
-.canvas-source-container {
-    display: flex;
-    flex-direction: column;
-    align-items: flex-end;
-    gap: 2px;
-    /* Offset the extra spacing caused by the "Source" link. */
-    margin-bottom: -21px;
-}

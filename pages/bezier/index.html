@@ -13,12 +13,12 @@
 </head>
 
 <body>
-    <zv-header data-title="Bezier Art Generator"></zv-header>
+    <zv-header
+        data-title="Bezier Art Generator"
+        data-source="/pages/bezier/bezier.js">
+    </zv-header>
     <main>
-        <div class="canvas-source-container">
-            <canvas id="main-canvas" width="512px" height="512px"></canvas>
-            <a href="/pages/bezier/bezier.js">Source</a>
-        </div>
+        <canvas id="main-canvas" width="512px" height="512px"></canvas>
         <button id="generate">Generate</button>
     </main>
 </body>
