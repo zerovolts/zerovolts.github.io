@@ -134,26 +134,6 @@ section {
     border-radius: var(--radius);
 }
 
-.hero-image {
-    width: calc(var(--hero-width) * 4);
-    height: calc(var(--hero-height) * 4);
-}
-
-@media (max-width: calc(450px)) {
-    .hero-image {
-        width: calc(var(--hero-width) * 3);
-        height: calc(var(--hero-height) * 3);
-    }
-}
-
-
-@media (max-width: calc(350px)) {
-    .hero-image {
-        width: calc(var(--hero-width) * 2);
-        height: calc(var(--hero-height) * 2);
-    }
-}
-
 @media (max-width: calc(600px + 8rem)) {
     body {
         padding: 0;
