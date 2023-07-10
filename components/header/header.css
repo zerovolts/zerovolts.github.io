@@ -6,7 +6,7 @@ header {
     justify-content: space-between;
     align-items: center;
     width: var(--content-width);
-    background: white;
+    background: var(--color-background-light);
     border-radius: var(--radius);
 }
 

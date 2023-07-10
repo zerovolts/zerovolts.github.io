@@ -11,7 +11,12 @@
 :root {
     --color-accent: #f80;
     --color-accent-shadow: #f60;
-    --color-font: #2c3e50;
+    --color-accent-soft: #f803;
+
+    --color-text: #2c3e50;
+    --color-text-light: white;
+
+    --color-background-light: white;
     --color-background: #f0f0ed;
 
     --content-width: calc(512px + 4rem);
@@ -33,7 +38,7 @@ body {
     flex-direction: column;
     align-items: center;
     gap: 1rem;
-    color: var(--color-font);
+    color: var(--color-text);
     font-family: "Ubuntu";
     font-size: 1rem;
     background: var(--color-background);
@@ -43,7 +48,7 @@ h1,
 h2,
 h3,
 h4 {
-    color: var(--color-font);
+    color: var(--color-text);
     margin: 0;
 }
 
@@ -98,7 +103,7 @@ main {
     gap: 2rem;
     width: var(--content-width);
     padding: 2rem;
-    background: white;
+    background: var(--color-background-light);
     border-radius: var(--radius);
     align-items: center;
 }
@@ -129,8 +134,8 @@ section {
     font-size: 0.9rem;
     display: inline-block;
     padding: 0.3rem 0.5rem;
-    color: #f60;
-    background: #f803;
+    color: var(--color-accent);
+    background: var(--color-accent-soft);
     border-radius: var(--radius);
 }
 
@@ -158,24 +163,22 @@ button {
     font-size: 1rem;
     padding: 0.4rem 0.6rem;
     border-radius: var(--radius);
-    color: white;
-    background-color: #fa0;
-    box-shadow: 0 3px 0 0 #f60;
+    color: var(--color-text-light);
+    background-color: var(--color-accent);
+    box-shadow: 0 3px 0 0 var(--color-accent-shadow);
     bottom: 3px;
     transition:
         bottom var(--up-speed),
-        box-shadow var(--up-speed),
-        background-color var(--up-speed);
+        box-shadow var(--up-speed);
 }
 
 button:active {
     --down-speed: 0;
 
-    background-color: #f80;
+    background-color: var(--color-accent-shadow);
     box-shadow: none;
     bottom: 0;
     transition:
         bottom var(--down-speed),
-        box-shadow var(--down-speed),
-        background-color var(--down-speed);
+        box-shadow var(--down-speed);
 }
