@@ -32,6 +32,6 @@ header {
     font-size: 0;
     height: 100%;
     padding: 1rem 2rem;
-    border-right: 2px solid var(--background-color);
+    border-right: 2px solid var(--color-background);
     border-radius: var(--radius) 0 0 var(--radius);
 }
