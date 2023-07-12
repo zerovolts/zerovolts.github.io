@@ -9,9 +9,9 @@
 }
 
 :root {
-    --color-accent: #f80;
-    --color-accent-shadow: #f60;
-    --color-accent-soft: #f803;
+    --color-accent: #ff906a;
+    --color-accent-shadow: #ff6a50;
+    --color-accent-soft: #ffeae4;
 
     --color-text: #2c3e50;
     --color-text-light: white;
