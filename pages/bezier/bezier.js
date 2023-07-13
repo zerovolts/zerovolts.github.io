@@ -1,4 +1,4 @@
-import { App } from "/shared/app.js"
+import { GlApp } from "../../shared/gl-app.js"
 import { createShaderProgram, getAttributeLocations, getUniformLocations } from "/shared/graphics.js";
 import * as Vec2 from "/shared/vec2.js";
 import * as Vec3 from "/shared/vec3.js";
@@ -20,7 +20,7 @@ document.addEventListener("DOMContentLoaded", async () => {
     button.onclick = app.step;
 });
 
-class BezierApp extends App {
+class BezierApp extends GlApp {
     setup(gl) {
         gl.clearColor(0.1, 0.1, 0.1, 1.0);
         gl.clearDepth(1.0);

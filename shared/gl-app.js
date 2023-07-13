@@ -1,4 +1,4 @@
-export class App {
+export class GlApp {
     /** @param {HTMLCanvasElement} canvas */
     constructor(canvas) {
         /** @type {WebGL2RenderingContext} */
