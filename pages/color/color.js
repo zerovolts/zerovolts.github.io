@@ -2,50 +2,40 @@ import { randomRange } from "/shared/math.js";
 
 class App {
     constructor() {
+        this.refreshColor = this.refreshColor.bind(this);
+        this.copyRgbValue = this.copyRgbValue.bind(this);
+        this.copyHexValue = this.copyHexValue.bind(this);
+        this.randomizeColor = this.randomizeColor.bind(this);
+        this.nudgeColor = this.nudgeColor.bind(this);
+        this.darkenColor = this.darkenColor.bind(this);
+        this.lightenColor = this.lightenColor.bind(this);
+
         document.addEventListener("DOMContentLoaded", async () => {
-            this.refreshColor = this.refreshColor.bind(this);
-            this.copyRgbValue = this.copyRgbValue.bind(this);
-            this.copyHexValue = this.copyHexValue.bind(this);
-            
             this.mainColorEl = document.getElementById("color-picker-display");
+
             this.rgbColorEl = document.getElementById("rgb-color");
-            this.rgbColorEl.addEventListener("click", this.copyRgbValue);
             this.hexColorEl = document.getElementById("hex-color");
+
+            this.rgbColorEl.addEventListener("click", this.copyRgbValue);
             this.hexColorEl.addEventListener("click", this.copyHexValue);
 
             this.redSliderEl = document.getElementById("red-slider");
-            this.redSliderEl.addEventListener("input", this.refreshColor);
             this.greenSliderEl = document.getElementById("green-slider");
-            this.greenSliderEl.addEventListener("input", this.refreshColor);
             this.blueSliderEl = document.getElementById("blue-slider");
+
+            this.redSliderEl.addEventListener("input", this.refreshColor);
+            this.greenSliderEl.addEventListener("input", this.refreshColor);
             this.blueSliderEl.addEventListener("input", this.refreshColor);
 
             this.buttonRandom = document.getElementById("button-random");
-            this.buttonRandom.addEventListener("click", () => {
-                this.setColor(new Color(
-                    randomRange(0, 255),
-                    randomRange(0, 255),
-                    randomRange(0, 255),
-                ));
-            });
             this.buttonNudge = document.getElementById("button-nudge");
-            this.buttonNudge.addEventListener("click", () => {
-                const nudgeScale = 5
-                const color = this.getColor();
-                this.setColor(new Color(
-                    color.red + randomRange(-nudgeScale, nudgeScale + 1),
-                    color.green+ randomRange(-nudgeScale, nudgeScale + 1),
-                    color.blue + randomRange(-nudgeScale, nudgeScale + 1),
-                ));
-            });
             this.buttonDarker = document.getElementById("button-darker");
-            this.buttonDarker.addEventListener("click", () => {
-                this.setColor(this.getColor().addValue(-10));
-            });
             this.buttonLighter = document.getElementById("button-lighter");
-            this.buttonLighter.addEventListener("click", () => {
-                this.setColor(this.getColor().addValue(10));
-            });
+
+            this.buttonRandom.addEventListener("click", this.randomizeColor);
+            this.buttonNudge.addEventListener("click", this.nudgeColor);
+            this.buttonDarker.addEventListener("click", this.darkenColor);
+            this.buttonLighter.addEventListener("click", this.lightenColor);
 
             this.refreshColor();
         });
@@ -68,6 +58,32 @@ class App {
         const rgb = color.toRgbString();
         this.rgbColorEl.innerText = rgb;
         this.mainColorEl.style.backgroundColor = rgb;
+    }
+
+    randomizeColor() {
+        this.setColor(new Color(
+            randomRange(0, 255),
+            randomRange(0, 255),
+            randomRange(0, 255),
+        ));
+    }
+
+    nudgeColor() {
+        const nudgeScale = 5
+        const color = this.getColor();
+        this.setColor(new Color(
+            color.red + randomRange(-nudgeScale, nudgeScale + 1),
+            color.green+ randomRange(-nudgeScale, nudgeScale + 1),
+            color.blue + randomRange(-nudgeScale, nudgeScale + 1),
+        ));
+    }
+
+    darkenColor() {
+        this.setColor(this.getColor().addValue(-10));
+    }
+
+    lightenColor() {
+        this.setColor(this.getColor().addValue(10));
     }
 
     refreshColor() {
