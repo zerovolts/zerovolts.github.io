@@ -4,10 +4,14 @@ class App {
     constructor() {
         document.addEventListener("DOMContentLoaded", async () => {
             this.refreshColor = this.refreshColor.bind(this);
+            this.copyRgbValue = this.copyRgbValue.bind(this);
+            this.copyHexValue = this.copyHexValue.bind(this);
             
             this.mainColorEl = document.getElementById("color-picker-display");
             this.rgbColorEl = document.getElementById("rgb-color");
+            this.rgbColorEl.addEventListener("click", this.copyRgbValue);
             this.hexColorEl = document.getElementById("hex-color");
+            this.hexColorEl.addEventListener("click", this.copyHexValue);
 
             this.redSliderEl = document.getElementById("red-slider");
             this.redSliderEl.addEventListener("input", this.refreshColor);
@@ -68,6 +72,14 @@ class App {
 
     refreshColor() {
         this.setColor(this.getColor());
+    }
+
+    copyRgbValue() {
+        navigator.clipboard.writeText(this.getColor().toRgbString());
+    }
+
+    copyHexValue() {
+        navigator.clipboard.writeText(this.getColor().toHexString());
     }
 }
 new App();
