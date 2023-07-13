@@ -33,9 +33,9 @@ class App {
                 const nudgeScale = 5
                 const color = this.getColor();
                 this.setColor(new Color(
-                    color.red + randomRange(-nudgeScale, nudgeScale),
-                    color.green+ randomRange(-nudgeScale, nudgeScale),
-                    color.blue + randomRange(-nudgeScale, nudgeScale),
+                    color.red + randomRange(-nudgeScale, nudgeScale + 1),
+                    color.green+ randomRange(-nudgeScale, nudgeScale + 1),
+                    color.blue + randomRange(-nudgeScale, nudgeScale + 1),
                 ));
             });
             this.buttonDarker = document.getElementById("button-darker");
