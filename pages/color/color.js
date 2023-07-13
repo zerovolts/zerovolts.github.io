@@ -1,4 +1,4 @@
-import { randomRange } from "/shared/math.js";
+import { clamp, randomRange } from "/shared/math.js";
 
 class App {
     constructor() {
@@ -135,14 +135,4 @@ class Color {
             this.blue += amount,
         );
     }
-}
-
-function clamp(value, min, max) {
-    if (value < min) {
-        return min;
-    }
-    if (value > max) {
-        return max;
-    }
-    return value;
 }
