@@ -1,4 +1,4 @@
-export const createShaderProgram = (gl, vertSource, fragSource) => {
+export function createShaderProgram(gl, vertSource, fragSource) {
     const vertShader = createShader(gl, vertSource, gl.VERTEX_SHADER);
     const fragShader = createShader(gl, fragSource, gl.FRAGMENT_SHADER);
 
@@ -10,14 +10,14 @@ export const createShaderProgram = (gl, vertSource, fragSource) => {
     return shaderProgram;
 };
 
-const createShader = (gl, source, type) => {
+function createShader(gl, source, type) {
     const shader = gl.createShader(type);
     gl.shaderSource(shader, source);
     gl.compileShader(shader);
     return shader;
 };
 
-export const getAttributeLocations = (gl, shaderProgram, keys) => {
+export function getAttributeLocations(gl, shaderProgram, keys) {
     const locations = {};
     for (const key of keys) {
         locations[key] = gl.getAttribLocation(shaderProgram, key);
@@ -25,7 +25,7 @@ export const getAttributeLocations = (gl, shaderProgram, keys) => {
     return locations;
 };
 
-export const getUniformLocations = (gl, shaderProgram, keys) => {
+export function getUniformLocations(gl, shaderProgram, keys) {
     const locations = {};
     for (const key of keys) {
         locations[key] = gl.getUniformLocation(shaderProgram, key);
