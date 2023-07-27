@@ -19,7 +19,7 @@ header {
 
 #header-title {
     font-size: 1.4rem;
-    font-family: "Ubuntu Mono";
+    font-family: var(--font-monospace);
 }
 
 .header-links {

@@ -25,6 +25,9 @@
     --hero-height: 48px;
 
     --radius: 3px;
+
+    --font: "Ubuntu";
+    --font-monospace: "Ubuntu Mono";
 }
 
 * {
@@ -39,7 +42,7 @@ body {
     align-items: center;
     gap: 1rem;
     color: var(--color-text);
-    font-family: "Ubuntu";
+    font-family: var(--font);
     font-size: 1rem;
     background: var(--color-background);
 }
@@ -130,7 +133,7 @@ section {
 }
 
 .tag {
-    font-family: "Ubuntu Mono";
+    font-family: var(--font-monospace);
     font-size: 0.9rem;
     display: inline-block;
     padding: 0.3rem 0.5rem;
@@ -159,7 +162,7 @@ button {
 
     position: relative;
     border: none;
-    font-family: "Ubuntu Mono";
+    font-family: var(--font-monospace);
     font-size: 1rem;
     padding: 0.4rem 0.6rem;
     border-radius: var(--radius);
