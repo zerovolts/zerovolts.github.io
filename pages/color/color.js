@@ -42,7 +42,7 @@ class App {
     }
 
     getColor() {
-        return new Color(
+        return Color.fromBytes(
             Number(this.redSliderEl.value),
             Number(this.greenSliderEl.value),
             Number(this.blueSliderEl.value),
@@ -50,9 +50,10 @@ class App {
     }
 
     setColor(color) {
-        this.redSliderEl.value = color.red;
-        this.greenSliderEl.value = color.green;
-        this.blueSliderEl.value = color.blue;
+        const [red, green, blue] = color.toBytes();
+        this.redSliderEl.value = red;
+        this.greenSliderEl.value = green;
+        this.blueSliderEl.value = blue;
 
         this.hexColorEl.innerText = color.toHexString();
         const rgb = color.toRgbString();
@@ -61,29 +62,31 @@ class App {
     }
 
     randomizeColor() {
-        this.setColor(new Color(
-            randomRange(0, 255),
-            randomRange(0, 255),
-            randomRange(0, 255),
+        this.setColor(Color.fromBytes(
+            randomRange(0, 256),
+            randomRange(0, 256),
+            randomRange(0, 256),
         ));
     }
 
     nudgeColor() {
         const nudgeScale = 5
         const color = this.getColor();
-        this.setColor(new Color(
-            color.red + randomRange(-nudgeScale, nudgeScale + 1),
-            color.green+ randomRange(-nudgeScale, nudgeScale + 1),
-            color.blue + randomRange(-nudgeScale, nudgeScale + 1),
+        const [red, green, blue] = color.toBytes();
+
+        this.setColor(Color.fromBytes(
+            red + randomRange(-nudgeScale, nudgeScale + 1),
+            green + randomRange(-nudgeScale, nudgeScale + 1),
+            blue + randomRange(-nudgeScale, nudgeScale + 1),
         ));
     }
 
     darkenColor() {
-        this.setColor(this.getColor().addValue(-10));
+        this.setColor(this.getColor().addValue(-0.05));
     }
 
     lightenColor() {
-        this.setColor(this.getColor().addValue(10));
+        this.setColor(this.getColor().addValue(0.05));
     }
 
     refreshColor() {
@@ -109,23 +112,35 @@ class Color {
     }
 
     normalize() {
-        this.red = clamp(Math.floor(this.red), 0, 255);
-        this.green = clamp(Math.floor(this.green), 0, 255);
-        this.blue = clamp(Math.floor(this.blue), 0, 255);
+        this.red = clamp(this.red, 0, 1);
+        this.green = clamp(this.green, 0, 1);
+        this.blue = clamp(this.blue, 0, 1);
+    }
+
+    static fromBytes(red, green, blue) {
+        return new Color(
+            red / 255,
+            green / 255,
+            blue / 255,
+        );
+    }
+
+    toBytes() {
+        return [
+            Math.floor(this.red * 255),
+            Math.floor(this.green * 255),
+            Math.floor(this.blue * 255),
+        ];
     }
 
     toHexString() {
-        return `#${
-            this.red.toString(16).padStart(2, "0")
-        }${
-            this.green.toString(16).padStart(2, "0")
-        }${
-            this.blue.toString(16).padStart(2, "0")
-        }`;
+        const [red, green, blue] = this.toBytes();
+        return `#${byteToHex(red)}${byteToHex(green)}${byteToHex(blue)}`;
     }
 
     toRgbString() {
-        return `rgb(${Number(this.red)}, ${Number(this.green)}, ${Number(this.blue)})`;
+        const [red, green, blue] = this.toBytes();
+        return `rgb(${red}, ${green}, ${blue})`;
     }
 
     addValue(amount) {
@@ -135,4 +150,8 @@ class Color {
             this.blue += amount,
         );
     }
+}
+
+function byteToHex(byte) {
+    return byte.toString(16).padStart(2, "0");
 }
