@@ -4,14 +4,6 @@
     --slider-height: 9px;
 }
 
-.color-picker {
-    display: flex;
-    flex-direction: row;
-    justify-content: flex-start;
-    gap: 1rem;
-    width: 100%;
-}
-
 #color-picker-display {
     width: 128px;
     height: 128px;
@@ -22,19 +14,6 @@
 #hex-color,
 #rgb-color {
     cursor: pointer;
-}
-
-.color-picker-right {
-    display: flex;
-    flex-direction: column;
-    gap: 1rem;
-    width: 100%;
-}
-
-.color-picker-sliders {
-    display: flex;
-    flex-direction: column;
-    gap: 0.25rem;
 }
 
 .color-slider {
