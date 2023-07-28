@@ -109,13 +109,6 @@ main {
     align-items: center;
 }
 
-section {
-    display: flex;
-    flex-direction: column;
-    gap: 1rem;
-    align-items: center;
-}
-
 .pixel-art {
     /* Chrome */
     image-rendering: pixelated;
