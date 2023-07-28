@@ -80,6 +80,7 @@ a {
 
 a:hover {
     color: var(--color-accent-shadow);
+    text-decoration: underline;
 }
 
 ul {
@@ -186,4 +187,46 @@ button:active {
     transition:
         bottom var(--down-speed),
         box-shadow var(--down-speed);
+}
+
+.row-2,
+.row-4,
+.row-8,
+.row-16,
+.row-32,
+.row-64 {
+    display: flex;
+    flex-direction: row;
+}
+
+.col-2,
+.col-4,
+.col-8,
+.col-16,
+.col-32,
+.col-64 {
+    display: flex;
+    flex-direction: column;
+}
+
+.row-2, .col-2 { gap: 0.125rem; }
+.row-4, .col-4 { gap: 0.25rem; }
+.row-8, .col-8 { gap: 0.5rem; }
+.row-16, .col-16 { gap: 1rem; }
+.row-32, .col-32 { gap: 2rem; }
+.row-64, .col-64 { gap: 4rem; }
+
+.align-start { align-items: flex-start; }
+.align-end { align-items: flex-end; }
+.align-center { align-items: center; }
+
+.justify-start { justify-content: flex-start; }
+.justify-end { justify-content: flex-end; }
+.justify-center { justify-content: center; }
+.justify-spread { justify-content: space-between; }
+
+.wrap { flex-wrap: wrap; }
+
+.fill-width {
+    width: 100%;
 }
