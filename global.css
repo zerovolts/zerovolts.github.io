@@ -123,6 +123,8 @@ section {
     image-rendering: pixelated;
     /* Firefox */
     image-rendering: crisp-edges;
+    /* JS will unhide after processing. */
+    visibility: hidden;
 }
 
 .tag-list {
