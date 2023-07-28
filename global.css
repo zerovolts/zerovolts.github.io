@@ -114,13 +114,6 @@ main {
     visibility: hidden;
 }
 
-.tag-list {
-    display: flex;
-    flex-direction: row;
-    gap: 0.5rem;
-    overflow: wrap;
-}
-
 .tag {
     font-family: var(--font-monospace);
     font-size: 0.9rem;
