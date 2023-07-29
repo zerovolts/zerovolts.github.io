@@ -6,7 +6,6 @@ window.addEventListener("load", () => {
     for (const image of images) {
         const pixelSize = getPixelSize(image) ?? DEFAULT_PIXEL_SIZE;
         const boundingRect = image.getBoundingClientRect();
-        console.log(boundingRect)
         image.style.width = `${boundingRect.width * pixelSize}px`;
         image.style.height = `${boundingRect.height * pixelSize}px`;
         image.style.visibility = "visible";
