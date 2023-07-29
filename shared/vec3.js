@@ -1,94 +1,100 @@
 import { lerp as lerpScalar } from "./math.js";
 
-export const zero = () => [0, 0, 0];
-export const one = () => [1, 1, 1];
+export function zero() { return [0, 0, 0]; }
+export function one() { return [1, 1, 1]; }
 
-export const right = () => [1, 0, 0];
-export const left = () => [-1, 0, 0];
-export const up = () => [0, 1, 0];
-export const down = () => [0, -1, 0];
-export const back = () => [0, 0, 1];
-export const forward = () => [0, 0, -1];
+export function right() { return [1, 0, 0]; }
+export function left() { return [-1, 0, 0]; }
+export function up() { return [0, 1, 0]; }
+export function down() { return [0, -1, 0]; }
+export function back() { return [0, 0, 1]; }
+export function forward() { return [0, 0, -1]; }
 
-export const copy = (self) => [self[0], self[1], self[2]];
+export function copy(self) {
+    return [self[0], self[1], self[2]];
+}
 
-export const addMut = (self, other) => {
+export function addMut(self, other) {
     self[0] += other[0];
     self[1] += other[1];
     self[2] += other[2];
     return self;
 };
 
-export const add = (self, other) => {
+export function add(self, other) {
     return addMut(copy(self), other);
 };
 
-export const subMut = (self, other) => {
+export function subMut(self, other) {
     self[0] -= other[0];
     self[1] -= other[1];
     self[2] -= other[2];
     return self;
 };
 
-export const sub = (self, other) => {
+export function sub(self, other) {
     return subMut(copy(self), other);
 };
 
-export const scaleMut = (self, scalar) => {
+export function scaleMut(self, scalar) {
     self[0] *= scalar;
     self[1] *= scalar;
     self[2] *= scalar;
     return self;
 };
 
-export const scale = (self, scalar) => {
+export function scale(self, scalar) {
     return scaleMut(copy(self), scalar);
 };
 
-export const cross = (self, other) => {
+export function cross(self, other) {
     return [
-        self[1] * other[2] - self[2] * other[1],
-        self[2] * other[0] - self[0] * other[2],
-        self[0] * other[1] - self[1] * other[0],
+        (self[1] * other[2]) - (self[2] * other[1]),
+        (self[2] * other[0]) - (self[0] * other[2]),
+        (self[0] * other[1]) - (self[1] * other[0]),
     ];
 }
 
-export const dot = (self, other) => {
-    return self[0] * other[0] + self[1] * other[1] + self[2] * other[2];
+export function dot(self, other) {
+    return (self[0] * other[0]) + (self[1] * other[1]) + (self[2] * other[2]);
 };
 
-export const lengthSq = (self) => {
+export function lengthSq(self) {
     return dot(self, self);
 };
 
-export const length = (self) => {
+export function length(self) {
     return Math.sqrt(lengthSq(self));
 };
 
-export const normalize = (self) => {
-    return scale(self, 1 / length(self));
+export function normalizeMut(self) {
+    return scaleMut(self, 1 / length(self));
 };
 
-export const lerp = (from, to, x) => {
+export function normalize(self) {
+    return normalizeMut(copy(self));
+};
+
+export function lerp(from, to, progress) {
     return [
-        lerpScalar(from[0], to[0], x),
-        lerpScalar(from[1], to[1], x),
-        lerpScalar(from[2], to[2], x),
+        lerpScalar(from[0], to[0], progress),
+        lerpScalar(from[1], to[1], progress),
+        lerpScalar(from[2], to[2], progress),
     ];
 };
 
-export const quadLerp = (from, ctrl, to, x) => {
+export function quadLerp(from, ctrl, to, progress) {
     return lerp(
-        lerp(from, ctrl, x),
-        lerp(ctrl, to, x),
-        x
+        lerp(from, ctrl, progress),
+        lerp(ctrl, to, progress,),
+        progress,
     );
 }
 
-export const cubicLerp = (from, ctrlFrom, ctrlTo, to, x) => {
+export function cubicLerp(from, ctrlFrom, ctrlTo, to, progress) {
     return lerp(
-        quadLerp(from, ctrlFrom, ctrlTo, x),
-        quadLerp(ctrlFrom, ctrlTo, to, x),
-        x
+        quadLerp(from, ctrlFrom, ctrlTo, progress),
+        quadLerp(ctrlFrom, ctrlTo, to, progress),
+        progress,
     );
 }
