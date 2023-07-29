@@ -87,6 +87,10 @@ export function normalize(self) {
     return normalizeMut(copy(self))
 };
 
+export function extend([x, y], z) {
+    return [x, y, z];
+}
+
 export function lerp(from, to, progress) {
     return [
         lerpScalar(from[0], to[0], progress),

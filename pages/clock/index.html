@@ -1,0 +1,35 @@
+<!doctype html>
+<html>
+
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Analog Clock | zerovolts</title>
+    <link rel="icon" type="image/x-icon" href="/favicon.ico" />
+    <link rel="stylesheet" href="/global.css" />
+    <script src="/components/header/header.js"></script>
+    <script src="/pages/clock/clock.js" type="module"></script>
+    <script
+        data-goatcounter="https://zerovolts.goatcounter.com/count"
+        async src="//gc.zgo.at/count.js"
+    ></script>
+    <style>
+        #main-canvas {
+            width: 512px;
+            height: 512px;
+        }
+    </style>
+</head>
+
+<body>
+    <zv-header
+        data-title="Analog Clock"
+        data-source="/pages/clock/clock.js">
+    </zv-header>
+    <main class="col-16 align-center">
+        <canvas id="main-canvas"></canvas>
+        <p>Analog clock made with WebGL.</p>
+    </main>
+</body>
+
+</html>
