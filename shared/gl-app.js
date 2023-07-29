@@ -1,8 +1,12 @@
 export class GlApp {
     /** @param {HTMLCanvasElement} canvas */
     constructor(canvas) {
+        // Fix resolution on high pixel density displays.
+        canvas.width = Math.floor(canvas.clientWidth * window.devicePixelRatio);
+        canvas.height = Math.floor(canvas.clientHeight * window.devicePixelRatio);
+
         /** @type {WebGL2RenderingContext} */
-        this.gl = canvas.getContext("webgl2");
+        this.gl = canvas.getContext("webgl2", { antialias: true });
         if (this.gl === null) throw new Error("WebGL2 not supported");
 
         this.width = canvas.clientWidth;

@@ -13,6 +13,12 @@
         data-goatcounter="https://zerovolts.goatcounter.com/count"
         async src="//gc.zgo.at/count.js"
     ></script>
+    <style>
+        #main-canvas {
+            width: 512px;
+            height: 512px;
+        }
+    </style>
 </head>
 
 <body>
@@ -21,7 +27,7 @@
         data-source="/pages/bezier/bezier.js">
     </zv-header>
     <main class="col-16 align-center">
-        <canvas id="main-canvas" width="512px" height="512px"></canvas>
+        <canvas id="main-canvas"></canvas>
         <div>
             WebGL experiment to generate Bézier curves in 3D and render them as
             triangle strips.
