@@ -116,9 +116,9 @@ main {
 
 .tag {
     font-family: var(--font-monospace);
-    font-size: 0.9rem;
+    font-size: 0.8rem;
     display: inline-block;
-    padding: 0.3rem 0.5rem;
+    padding: 0.2rem 0.3rem;
     color: var(--color-accent);
     background: var(--color-accent-soft);
     border-radius: var(--radius);
