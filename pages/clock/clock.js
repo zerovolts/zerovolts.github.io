@@ -86,9 +86,9 @@ class BezierApp extends GlApp {
         // Hour Hand
         {
             const vectors = roundedLine(
-                Vec2.zero(),
+                Vec2.scaleMut(Vec2.down(), 0.1),
                 Vec2.scaleMut(Vec2.up(), 0.4),
-                0.03,
+                0.025,
                 10,
             );
             const positions = new Float32Array(vectors.flat());
@@ -103,7 +103,7 @@ class BezierApp extends GlApp {
         // Minute Hand
         {
             const vectors = roundedLine(
-                Vec2.zero(),
+                Vec2.scaleMut(Vec2.down(), 0.1),
                 Vec2.scaleMut(Vec2.up(), 0.7),
                 0.02,
                 10,
@@ -120,7 +120,7 @@ class BezierApp extends GlApp {
         // Second Hand
         {
             const vectors = roundedLine(
-                Vec2.zero(),
+                Vec2.scaleMut(Vec2.down(), 0.1),
                 Vec2.scaleMut(Vec2.up(), 0.9),
                 0.01,
                 10,
@@ -131,6 +131,23 @@ class BezierApp extends GlApp {
                 positionBuffer: gl.createBuffer(),
             };
             gl.bindBuffer(gl.ARRAY_BUFFER, this.secondHand.positionBuffer);
+            gl.bufferData(gl.ARRAY_BUFFER, positions, gl.STATIC_DRAW);
+        }
+
+        // Second Hand Back
+        {
+            const vectors = roundedLine(
+                Vec2.scaleMut(Vec2.down(), 0.2),
+                Vec2.scaleMut(Vec2.down(), 0.1),
+                0.02,
+                10,
+            );
+            const positions = new Float32Array(vectors.flat());
+            this.secondHandBack = {
+                vertexCount: positions.length / 2,
+                positionBuffer: gl.createBuffer(),
+            };
+            gl.bindBuffer(gl.ARRAY_BUFFER, this.secondHandBack.positionBuffer);
             gl.bufferData(gl.ARRAY_BUFFER, positions, gl.STATIC_DRAW);
         }
 
@@ -230,6 +247,17 @@ class BezierApp extends GlApp {
             gl.vertexAttribPointer(this.attributeLocations.position, 2, gl.FLOAT, false, 0, 0);
             gl.enableVertexAttribArray(this.attributeLocations.position);
             gl.drawArrays(gl.TRIANGLE_FAN, 0, this.secondHand.vertexCount);
+        }
+
+        // Second Hand Back
+        {
+            const rotationMatrix = new Float32Array(Mat4.fromAngle(this.secondHandRadians))
+            gl.uniform4fv(this.uniformLocations.color, COLOR_ACCENT);
+            gl.uniformMatrix4fv(this.uniformLocations.rotation, false, rotationMatrix);
+            gl.bindBuffer(gl.ARRAY_BUFFER, this.secondHandBack.positionBuffer);
+            gl.vertexAttribPointer(this.attributeLocations.position, 2, gl.FLOAT, false, 0, 0);
+            gl.enableVertexAttribArray(this.attributeLocations.position);
+            gl.drawArrays(gl.TRIANGLE_FAN, 0, this.secondHandBack.vertexCount);
         }
 
         // Hand Cover
