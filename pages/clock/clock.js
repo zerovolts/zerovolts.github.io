@@ -2,6 +2,7 @@ import { GlApp } from "../../shared/gl-app.js"
 import { circle, roundedLine } from "/shared/geometry.js";
 import { createShaderProgram, getAttributeLocations, getUniformLocations } from "/shared/graphics.js";
 import * as Vec2 from "/shared/vec2.js";
+import * as Mat4 from "/shared/mat4.js";
 
 const TAU = Math.PI * 2;
 
@@ -11,7 +12,7 @@ const COLOR_ACCENT = [1.0, 0.42, 0.31, 1.0];
 
 // Initiate the fetch first to reduce perceived loading.
 let shaderSources = Promise.all([
-    fetch("/shared/default.vert").then(res => res.text()),
+    fetch("/pages/clock/hand.vert").then(res => res.text()),
     fetch("/pages/clock/flat_color.frag").then(res => res.text()),
 ]);
 
@@ -34,7 +35,7 @@ class BezierApp extends GlApp {
         const [vertexSource, fragmentSource] = shaderSources;
         this.shaderProgram = createShaderProgram(gl, vertexSource, fragmentSource);
         this.attributeLocations = getAttributeLocations(gl, this.shaderProgram, ["position"]);
-        this.uniformLocations = getUniformLocations(gl, this.shaderProgram, ["color"]);
+        this.uniformLocations = getUniformLocations(gl, this.shaderProgram, ["color", "rotation"]);
 
         this.shouldRender = true;
 
@@ -139,7 +140,7 @@ class BezierApp extends GlApp {
                 circle(20).map(v => Vec2.scaleMut(v, 0.03)).flat()
             );
             this.handCover = {
-                vertexCount: positions / 2,
+                vertexCount: positions.length / 2,
                 positionBuffer: gl.createBuffer(),
             };
             gl.bindBuffer(gl.ARRAY_BUFFER, this.handCover.positionBuffer);
@@ -148,11 +149,10 @@ class BezierApp extends GlApp {
     }
 
     update(_delta) {
-        const quarterTurn = TAU / 4;
         const date = new Date();
-        this.secondHandRadians = -((date.getSeconds() / 60) * TAU - quarterTurn);
-        this.minuteHandRadians = -((date.getMinutes() / 60) * TAU - quarterTurn);
-        this.hourHandRadians = -((date.getHours() % 12 / 12) * TAU - quarterTurn);
+        this.secondHandRadians = -((date.getSeconds() / 60) * TAU);
+        this.minuteHandRadians = -((date.getMinutes() / 60) * TAU);
+        this.hourHandRadians = -((date.getHours() % 12 / 12) * TAU);
 
         if (this.oldSeconds !== date.getSeconds()) {
             this.shouldRender = true;
@@ -167,9 +167,12 @@ class BezierApp extends GlApp {
         gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
         gl.useProgram(this.shaderProgram);
 
+        const MAT4_IDENTITY = new Float32Array(Mat4.identity())
+
         // Border
         {
             gl.uniform4fv(this.uniformLocations.color, COLOR_BLACK);
+            gl.uniformMatrix4fv(this.uniformLocations.rotation, false, MAT4_IDENTITY);
             gl.bindBuffer(gl.ARRAY_BUFFER, this.border.positionBuffer);
             gl.vertexAttribPointer(this.attributeLocations.position, 2, gl.FLOAT, false, 0, 0);
             gl.enableVertexAttribArray(this.attributeLocations.position);
@@ -179,6 +182,7 @@ class BezierApp extends GlApp {
         // Face
         {
             gl.uniform4fv(this.uniformLocations.color, COLOR_WHITE);
+            gl.uniformMatrix4fv(this.uniformLocations.rotation, false, MAT4_IDENTITY);
             gl.bindBuffer(gl.ARRAY_BUFFER, this.face.positionBuffer);
             gl.vertexAttribPointer(this.attributeLocations.position, 2, gl.FLOAT, false, 0, 0);
             gl.enableVertexAttribArray(this.attributeLocations.position);
@@ -188,6 +192,7 @@ class BezierApp extends GlApp {
         // Marks
         for (const mark of this.marks) {
             gl.uniform4fv(this.uniformLocations.color, COLOR_BLACK);
+            gl.uniformMatrix4fv(this.uniformLocations.rotation, false, MAT4_IDENTITY);
             gl.bindBuffer(gl.ARRAY_BUFFER, mark.positionBuffer);
             gl.vertexAttribPointer(this.attributeLocations.position, 2, gl.FLOAT, false, 0, 0);
             gl.enableVertexAttribArray(this.attributeLocations.position);
@@ -196,7 +201,9 @@ class BezierApp extends GlApp {
 
         // Hour Hand
         {
+            const rotationMatrix = new Float32Array(Mat4.fromAngle(this.hourHandRadians))
             gl.uniform4fv(this.uniformLocations.color, COLOR_BLACK);
+            gl.uniformMatrix4fv(this.uniformLocations.rotation, false, rotationMatrix);
             gl.bindBuffer(gl.ARRAY_BUFFER, this.hourHand.positionBuffer);
             gl.vertexAttribPointer(this.attributeLocations.position, 2, gl.FLOAT, false, 0, 0);
             gl.enableVertexAttribArray(this.attributeLocations.position);
@@ -205,7 +212,9 @@ class BezierApp extends GlApp {
 
         // Minute Hand
         {
+            const rotationMatrix = new Float32Array(Mat4.fromAngle(this.minuteHandRadians))
             gl.uniform4fv(this.uniformLocations.color, COLOR_BLACK);
+            gl.uniformMatrix4fv(this.uniformLocations.rotation, false, rotationMatrix);
             gl.bindBuffer(gl.ARRAY_BUFFER, this.minuteHand.positionBuffer);
             gl.vertexAttribPointer(this.attributeLocations.position, 2, gl.FLOAT, false, 0, 0);
             gl.enableVertexAttribArray(this.attributeLocations.position);
@@ -214,7 +223,9 @@ class BezierApp extends GlApp {
 
         // Second Hand
         {
+            const rotationMatrix = new Float32Array(Mat4.fromAngle(this.secondHandRadians))
             gl.uniform4fv(this.uniformLocations.color, COLOR_ACCENT);
+            gl.uniformMatrix4fv(this.uniformLocations.rotation, false, rotationMatrix);
             gl.bindBuffer(gl.ARRAY_BUFFER, this.secondHand.positionBuffer);
             gl.vertexAttribPointer(this.attributeLocations.position, 2, gl.FLOAT, false, 0, 0);
             gl.enableVertexAttribArray(this.attributeLocations.position);
@@ -224,6 +235,7 @@ class BezierApp extends GlApp {
         // Hand Cover
         {
             gl.uniform4fv(this.uniformLocations.color, COLOR_BLACK);
+            gl.uniformMatrix4fv(this.uniformLocations.rotation, false, MAT4_IDENTITY);
             gl.bindBuffer(gl.ARRAY_BUFFER, this.handCover.positionBuffer);
             gl.vertexAttribPointer(this.attributeLocations.position, 2, gl.FLOAT, false, 0, 0);
             gl.enableVertexAttribArray(this.attributeLocations.position);
