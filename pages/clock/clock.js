@@ -2,7 +2,6 @@ import { GlApp } from "../../shared/gl-app.js"
 import { circle, roundedLine } from "/shared/geometry.js";
 import { createShaderProgram, getAttributeLocations, getUniformLocations } from "/shared/graphics.js";
 import * as Vec2 from "/shared/vec2.js";
-import * as Vec3 from "/shared/vec3.js";
 
 const TAU = Math.PI * 2;
 
@@ -38,6 +37,114 @@ class BezierApp extends GlApp {
         this.uniformLocations = getUniformLocations(gl, this.shaderProgram, ["color"]);
 
         this.shouldRender = true;
+
+        // Border
+        {
+            const positions = new Float32Array(circle(100).flat());
+            this.border = {
+                vertexCount: positions.length / 2,
+                positionBuffer: gl.createBuffer(),
+            };
+            gl.bindBuffer(gl.ARRAY_BUFFER, this.border.positionBuffer);
+            gl.bufferData(gl.ARRAY_BUFFER, positions, gl.STATIC_DRAW);
+        }
+
+        // Face
+        {
+            const positions = new Float32Array(circle(100).map(v => Vec2.scaleMut(v, 0.95)).flat());
+            this.face = {
+                vertexCount: positions.length / 2,
+                positionBuffer: gl.createBuffer(),
+            }
+            gl.bindBuffer(gl.ARRAY_BUFFER, this.face.positionBuffer);
+            gl.bufferData(gl.ARRAY_BUFFER, positions, gl.STATIC_DRAW);
+        }
+
+        // Marks
+        this.marks = [];
+        for (let i = 0; i < 60; i++) {
+            const radians = (i / 60) * TAU;
+            const width = i % 5 === 0 ? 0.02 : 0.01;
+            const start = i % 5 === 0 ? 0.8 : 0.85;
+            const vectors = roundedLine(
+                Vec2.scaleMut(Vec2.fromAngle(radians), start),
+                Vec2.scaleMut(Vec2.fromAngle(radians), 0.9),
+                width,
+                10,
+            );
+            const positions = new Float32Array(vectors.flat());
+            const mark = {
+                vertexCount: positions.length / 2,
+                positionBuffer: gl.createBuffer(),
+            };
+            this.marks.push(mark);
+            gl.bindBuffer(gl.ARRAY_BUFFER, mark.positionBuffer);
+            gl.bufferData(gl.ARRAY_BUFFER, positions, gl.STATIC_DRAW);
+        }
+
+        // Hour Hand
+        {
+            const vectors = roundedLine(
+                Vec2.zero(),
+                Vec2.scaleMut(Vec2.up(), 0.4),
+                0.03,
+                10,
+            );
+            const positions = new Float32Array(vectors.flat());
+            this.hourHand = {
+                vertexCount: positions.length / 2,
+                positionBuffer: gl.createBuffer(),
+            };
+            gl.bindBuffer(gl.ARRAY_BUFFER, this.hourHand.positionBuffer);
+            gl.bufferData(gl.ARRAY_BUFFER, positions, gl.STATIC_DRAW);
+        }
+
+        // Minute Hand
+        {
+            const vectors = roundedLine(
+                Vec2.zero(),
+                Vec2.scaleMut(Vec2.up(), 0.7),
+                0.02,
+                10,
+            );
+            const positions = new Float32Array(vectors.flat());
+            this.minuteHand = {
+                vertexCount: positions.length / 2,
+                positionBuffer: gl.createBuffer(),
+            };
+            gl.bindBuffer(gl.ARRAY_BUFFER, this.minuteHand.positionBuffer);
+            gl.bufferData(gl.ARRAY_BUFFER, positions, gl.STATIC_DRAW);
+        }
+
+        // Second Hand
+        {
+            const vectors = roundedLine(
+                Vec2.zero(),
+                Vec2.scaleMut(Vec2.up(), 0.9),
+                0.01,
+                10,
+            );
+            const positions = new Float32Array(vectors.flat());
+            this.secondHand = {
+                vertexCount: positions.length / 2,
+                positionBuffer: gl.createBuffer(),
+            };
+            gl.bindBuffer(gl.ARRAY_BUFFER, this.secondHand.positionBuffer);
+            gl.bufferData(gl.ARRAY_BUFFER, positions, gl.STATIC_DRAW);
+        }
+
+        // Hand Cover
+        {
+            const positions = new Float32Array(
+                circle(20).map(v => Vec2.scaleMut(v, 0.03)).flat()
+            );
+            this.handCover = {
+                vertexCount: positions / 2,
+                positionBuffer: gl.createBuffer(),
+            };
+            gl.bindBuffer(gl.ARRAY_BUFFER, this.handCover.positionBuffer);
+            gl.bufferData(gl.ARRAY_BUFFER, positions, gl.STATIC_DRAW);
+        }
     }
 
     update(_delta) {
@@ -60,144 +167,67 @@ class BezierApp extends GlApp {
         gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
         gl.useProgram(this.shaderProgram);
 
-        // Background
+        // Border
         {
             gl.uniform4fv(this.uniformLocations.color, COLOR_BLACK);
-
-            const positions = new Float32Array(circle(100).map(v => Vec2.extend(v, 0)).flat());
-
-            const positionBuffer = gl.createBuffer();
-            gl.bindBuffer(gl.ARRAY_BUFFER, positionBuffer);
-            gl.bufferData(gl.ARRAY_BUFFER, positions, gl.STATIC_DRAW);
-
-            gl.vertexAttribPointer(this.attributeLocations.position, 3, gl.FLOAT, false, 0, 0);
+            gl.bindBuffer(gl.ARRAY_BUFFER, this.border.positionBuffer);
+            gl.vertexAttribPointer(this.attributeLocations.position, 2, gl.FLOAT, false, 0, 0);
             gl.enableVertexAttribArray(this.attributeLocations.position);
-
-            gl.drawArrays(gl.TRIANGLE_FAN, 0, positions.length / 3);
+            gl.drawArrays(gl.TRIANGLE_FAN, 0, this.border.vertexCount);
         }
 
-        // Clock Face
+        // Face
         {
             gl.uniform4fv(this.uniformLocations.color, COLOR_WHITE);
-
-            const positions = new Float32Array(circle(100).map(v => Vec2.extend(v, 0)).map(v => Vec3.scaleMut(v, 0.95)).flat());
-
-            const positionBuffer = gl.createBuffer();
-            gl.bindBuffer(gl.ARRAY_BUFFER, positionBuffer);
-            gl.bufferData(gl.ARRAY_BUFFER, positions, gl.STATIC_DRAW);
-
-            gl.vertexAttribPointer(this.attributeLocations.position, 3, gl.FLOAT, false, 0, 0);
+            gl.bindBuffer(gl.ARRAY_BUFFER, this.face.positionBuffer);
+            gl.vertexAttribPointer(this.attributeLocations.position, 2, gl.FLOAT, false, 0, 0);
             gl.enableVertexAttribArray(this.attributeLocations.position);
-
-            gl.drawArrays(gl.TRIANGLE_FAN, 0, positions.length / 3);
+            gl.drawArrays(gl.TRIANGLE_FAN, 0, this.face.vertexCount);
         }
 
-        // Minute Markers
-        for (let i = 0; i < 60; i++) {
-            const radians = (i / 60) * TAU;
-            const width = i % 5 === 0 ? 0.02 : 0.01;
-            const start = i % 5 === 0 ? 0.8 : 0.85;
-
+        // Marks
+        for (const mark of this.marks) {
             gl.uniform4fv(this.uniformLocations.color, COLOR_BLACK);
-
-            const vectors = roundedLine(
-                Vec2.scaleMut(Vec2.fromAngle(radians), start),
-                Vec2.scaleMut(Vec2.fromAngle(radians), 0.9),
-                width,
-                10,
-            );
-            const positions = new Float32Array(vectors.map(v => Vec2.extend(v, 0)).flat());
-
-            const positionBuffer = gl.createBuffer();
-            gl.bindBuffer(gl.ARRAY_BUFFER, positionBuffer);
-            gl.bufferData(gl.ARRAY_BUFFER, positions, gl.STATIC_DRAW);
-
-            gl.vertexAttribPointer(this.attributeLocations.position, 3, gl.FLOAT, false, 0, 0);
+            gl.bindBuffer(gl.ARRAY_BUFFER, mark.positionBuffer);
+            gl.vertexAttribPointer(this.attributeLocations.position, 2, gl.FLOAT, false, 0, 0);
             gl.enableVertexAttribArray(this.attributeLocations.position);
-
-            gl.drawArrays(gl.TRIANGLE_FAN, 0, positions.length / 3);
+            gl.drawArrays(gl.TRIANGLE_FAN, 0, mark.vertexCount);
         }
 
         // Hour Hand
         {
             gl.uniform4fv(this.uniformLocations.color, COLOR_BLACK);
-
-            const vectors = roundedLine(
-                Vec2.zero(),
-                Vec2.scaleMut(Vec2.fromAngle(this.hourHandRadians), 0.4),
-                0.03,
-                10,
-            );
-            const positions = new Float32Array(vectors.map(v => Vec2.extend(v, 0)).flat());
-
-            const positionBuffer = gl.createBuffer();
-            gl.bindBuffer(gl.ARRAY_BUFFER, positionBuffer);
-            gl.bufferData(gl.ARRAY_BUFFER, positions, gl.STATIC_DRAW);
-
-            gl.vertexAttribPointer(this.attributeLocations.position, 3, gl.FLOAT, false, 0, 0);
+            gl.bindBuffer(gl.ARRAY_BUFFER, this.hourHand.positionBuffer);
+            gl.vertexAttribPointer(this.attributeLocations.position, 2, gl.FLOAT, false, 0, 0);
             gl.enableVertexAttribArray(this.attributeLocations.position);
-
-            gl.drawArrays(gl.TRIANGLE_FAN, 0, positions.length / 3);
+            gl.drawArrays(gl.TRIANGLE_FAN, 0, this.hourHand.vertexCount);
         }
 
         // Minute Hand
         {
             gl.uniform4fv(this.uniformLocations.color, COLOR_BLACK);
-
-            const vectors = roundedLine(
-                Vec2.zero(),
-                Vec2.scaleMut(Vec2.fromAngle(this.minuteHandRadians), 0.70),
-                0.02,
-                10,
-            );
-            const positions = new Float32Array(vectors.map(v => Vec2.extend(v, 0)).flat());
-
-            const positionBuffer = gl.createBuffer();
-            gl.bindBuffer(gl.ARRAY_BUFFER, positionBuffer);
-            gl.bufferData(gl.ARRAY_BUFFER, positions, gl.STATIC_DRAW);
-
-            gl.vertexAttribPointer(this.attributeLocations.position, 3, gl.FLOAT, false, 0, 0);
+            gl.bindBuffer(gl.ARRAY_BUFFER, this.minuteHand.positionBuffer);
+            gl.vertexAttribPointer(this.attributeLocations.position, 2, gl.FLOAT, false, 0, 0);
             gl.enableVertexAttribArray(this.attributeLocations.position);
-
-            gl.drawArrays(gl.TRIANGLE_FAN, 0, positions.length / 3);
+            gl.drawArrays(gl.TRIANGLE_FAN, 0, this.minuteHand.vertexCount);
         }
 
         // Second Hand
         {
             gl.uniform4fv(this.uniformLocations.color, COLOR_ACCENT);
-
-            const vectors = roundedLine(
-                Vec2.zero(),
-                Vec2.scaleMut(Vec2.fromAngle(this.secondHandRadians), 0.9),
-                0.01,
-                10,
-            );
-            const positions = new Float32Array(vectors.map(v => Vec2.extend(v, 0)).flat());
-
-            const positionBuffer = gl.createBuffer();
-            gl.bindBuffer(gl.ARRAY_BUFFER, positionBuffer);
-            gl.bufferData(gl.ARRAY_BUFFER, positions, gl.STATIC_DRAW);
-
-            gl.vertexAttribPointer(this.attributeLocations.position, 3, gl.FLOAT, false, 0, 0);
+            gl.bindBuffer(gl.ARRAY_BUFFER, this.secondHand.positionBuffer);
+            gl.vertexAttribPointer(this.attributeLocations.position, 2, gl.FLOAT, false, 0, 0);
             gl.enableVertexAttribArray(this.attributeLocations.position);
-
-            gl.drawArrays(gl.TRIANGLE_FAN, 0, positions.length / 3);
+            gl.drawArrays(gl.TRIANGLE_FAN, 0, this.secondHand.vertexCount);
         }
 
-        // Center Hand Cover
+        // Hand Cover
         {
             gl.uniform4fv(this.uniformLocations.color, COLOR_BLACK);
-
-            const positions = new Float32Array(circle(20).map(v => Vec2.extend(v, 0)).map(v => Vec3.scaleMut(v, 0.03)).flat());
-
-            const positionBuffer = gl.createBuffer();
-            gl.bindBuffer(gl.ARRAY_BUFFER, positionBuffer);
-            gl.bufferData(gl.ARRAY_BUFFER, positions, gl.STATIC_DRAW);
-
-            gl.vertexAttribPointer(this.attributeLocations.position, 3, gl.FLOAT, false, 0, 0);
+            gl.bindBuffer(gl.ARRAY_BUFFER, this.handCover.positionBuffer);
+            gl.vertexAttribPointer(this.attributeLocations.position, 2, gl.FLOAT, false, 0, 0);
             gl.enableVertexAttribArray(this.attributeLocations.position);
-
-            gl.drawArrays(gl.TRIANGLE_FAN, 0, positions.length / 3);
+            gl.drawArrays(gl.TRIANGLE_FAN, 0, this.handCover.vertexCount);
         }
     }
 }
