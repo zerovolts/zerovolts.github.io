@@ -1,5 +1,5 @@
 import { GlApp } from "../../shared/gl-app.js"
-import { circle, roundedLine } from "/shared/geometry.js";
+import { Circle, roundedLine } from "/shared/geometry.js";
 import { createShaderProgram, getAttributeLocations, getUniformLocations } from "/shared/graphics.js";
 import * as Vec2 from "/shared/vec2.js";
 import * as Mat4 from "/shared/mat4.js";
@@ -41,7 +41,7 @@ class BezierApp extends GlApp {
 
         // Border
         {
-            const positions = new Float32Array(circle(100).flat());
+            const positions = new Circle(1, Vec2.zero()).toVertexBuffer(100);
             this.border = {
                 vertexCount: positions.length / 2,
                 positionBuffer: gl.createBuffer(),
@@ -52,7 +52,7 @@ class BezierApp extends GlApp {
 
         // Face
         {
-            const positions = new Float32Array(circle(100).map(v => Vec2.scaleMut(v, 0.95)).flat());
+            const positions = new Circle(0.95, Vec2.zero()).toVertexBuffer(100);
             this.face = {
                 vertexCount: positions.length / 2,
                 positionBuffer: gl.createBuffer(),
@@ -153,9 +153,7 @@ class BezierApp extends GlApp {
 
         // Hand Cover
         {
-            const positions = new Float32Array(
-                circle(20).map(v => Vec2.scaleMut(v, 0.03)).flat()
-            );
+            const positions = new Circle(0.03, Vec2.zero()).toVertexBuffer(20);
             this.handCover = {
                 vertexCount: positions.length / 2,
                 positionBuffer: gl.createBuffer(),

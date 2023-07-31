@@ -1,14 +1,31 @@
+import { pipe } from "/shared/util.js"
 import * as Vec2 from "/shared/vec2.js";
 
 const TAU = Math.PI * 2;
 
-export function circle(segmentCount) {
-    const segmentAngle = TAU / segmentCount;
-    const vertices = [];
-    for (let i = 0; i < segmentCount; i++) {
-        vertices.push(Vec2.fromAngle(segmentAngle * i));
+export class Circle {
+    constructor(radius, position) {
+        this.radius = radius;
+        this.position = position;
     }
-    return vertices;
+
+    toVec2(segmentCount) {
+        const segmentAngle = TAU / segmentCount;
+        const vertices = [];
+        for (let i = 0; i < segmentCount; i++) {
+            pipe(
+                Vec2.fromAngle(segmentAngle * i),
+                v => Vec2.scale(v, this.radius),
+                v => Vec2.add(v, this.position),
+                v => vertices.push(v),
+            );
+        }
+        return vertices;
+    }
+
+    toVertexBuffer(segmentCount) {
+        return new Float32Array(this.toVec2(segmentCount).flat())
+    }
 }
 
 export function roundedLine(start, end, width, segmentCount) {
