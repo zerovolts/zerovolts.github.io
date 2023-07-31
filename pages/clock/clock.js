@@ -1,5 +1,5 @@
 import { GlApp } from "../../shared/gl-app.js"
-import { Circle, roundedLine } from "/shared/geometry.js";
+import { Circle, Line } from "/shared/geometry.js";
 import { createShaderProgram, getAttributeLocations, getUniformLocations } from "/shared/graphics.js";
 import * as Vec2 from "/shared/vec2.js";
 import * as Mat4 from "/shared/mat4.js";
@@ -67,13 +67,12 @@ class BezierApp extends GlApp {
             const radians = (i / 60) * TAU;
             const width = i % 5 === 0 ? 0.02 : 0.01;
             const start = i % 5 === 0 ? 0.8 : 0.85;
-            const vectors = roundedLine(
+            const positions = new Line(
                 Vec2.scaleMut(Vec2.fromAngle(radians), start),
                 Vec2.scaleMut(Vec2.fromAngle(radians), 0.9),
                 width,
-                10,
-            );
-            const positions = new Float32Array(vectors.flat());
+                true,
+            ).toVertexBuffer(10);
             const mark = {
                 vertexCount: positions.length / 2,
                 positionBuffer: gl.createBuffer(),
@@ -85,13 +84,12 @@ class BezierApp extends GlApp {
 
         // Hour Hand
         {
-            const vectors = roundedLine(
+            const positions = new Line(
                 Vec2.scaleMut(Vec2.down(), 0.1),
                 Vec2.scaleMut(Vec2.up(), 0.4),
                 0.025,
-                10,
-            );
-            const positions = new Float32Array(vectors.flat());
+                true,
+            ).toVertexBuffer(10);
             this.hourHand = {
                 vertexCount: positions.length / 2,
                 positionBuffer: gl.createBuffer(),
@@ -102,13 +100,12 @@ class BezierApp extends GlApp {
 
         // Minute Hand
         {
-            const vectors = roundedLine(
+            const positions = new Line(
                 Vec2.scaleMut(Vec2.down(), 0.1),
                 Vec2.scaleMut(Vec2.up(), 0.7),
                 0.02,
-                10,
-            );
-            const positions = new Float32Array(vectors.flat());
+                true,
+            ).toVertexBuffer(10);
             this.minuteHand = {
                 vertexCount: positions.length / 2,
                 positionBuffer: gl.createBuffer(),
@@ -119,13 +116,12 @@ class BezierApp extends GlApp {
 
         // Second Hand
         {
-            const vectors = roundedLine(
+            const positions = new Line(
                 Vec2.scaleMut(Vec2.down(), 0.1),
                 Vec2.scaleMut(Vec2.up(), 0.9),
                 0.01,
-                10,
-            );
-            const positions = new Float32Array(vectors.flat());
+                true,
+            ).toVertexBuffer(10);
             this.secondHand = {
                 vertexCount: positions.length / 2,
                 positionBuffer: gl.createBuffer(),
@@ -136,13 +132,12 @@ class BezierApp extends GlApp {
 
         // Second Hand Back
         {
-            const vectors = roundedLine(
+            const positions = new Line(
                 Vec2.scaleMut(Vec2.down(), 0.2),
                 Vec2.scaleMut(Vec2.down(), 0.1),
                 0.02,
-                10,
-            );
-            const positions = new Float32Array(vectors.flat());
+                true,
+            ).toVertexBuffer(10);
             this.secondHandBack = {
                 vertexCount: positions.length / 2,
                 positionBuffer: gl.createBuffer(),
