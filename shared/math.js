@@ -1,3 +1,5 @@
+export const TAU = Math.PI * 2;
+
 export function lerp(from, to, x) {
     const span = to - from;
     return from + (span * x);

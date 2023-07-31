@@ -1,10 +1,9 @@
-import { GlApp } from "../../shared/gl-app.js"
+import { TAU } from "/shared/math.js"
+import { GlApp } from "/shared/gl-app.js"
 import { Circle, Line } from "/shared/geometry.js";
 import { createShaderProgram, getAttributeLocations, getUniformLocations } from "/shared/graphics.js";
 import * as Vec2 from "/shared/vec2.js";
 import * as Mat4 from "/shared/mat4.js";
-
-const TAU = Math.PI * 2;
 
 const COLOR_WHITE = [1.0, 1.0, 1.0, 1.0];
 const COLOR_BLACK = [0.17, 0.24, 0.31, 1.0];

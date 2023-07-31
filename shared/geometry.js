@@ -1,7 +1,6 @@
-import { pipe } from "/shared/util.js"
+import { TAU } from "/shared/math.js";
+import { pipe } from "/shared/util.js";
 import * as Vec2 from "/shared/vec2.js";
-
-const TAU = Math.PI * 2;
 
 export class Circle {
     constructor(radius, position) {
