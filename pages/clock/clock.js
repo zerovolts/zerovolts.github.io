@@ -210,7 +210,7 @@ class BezierApp extends GlApp {
 
         // Hour Hand
         {
-            const rotationMatrix = new Float32Array(Mat4.fromAngle(this.hourHandRadians))
+            const rotationMatrix = new Float32Array(Mat4.fromRotation2D(this.hourHandRadians))
             gl.uniform4fv(this.uniformLocations.color, COLOR_BLACK);
             gl.uniformMatrix4fv(this.uniformLocations.rotation, false, rotationMatrix);
             gl.bindBuffer(gl.ARRAY_BUFFER, this.hourHand.positionBuffer);
@@ -221,7 +221,7 @@ class BezierApp extends GlApp {
 
         // Minute Hand
         {
-            const rotationMatrix = new Float32Array(Mat4.fromAngle(this.minuteHandRadians))
+            const rotationMatrix = new Float32Array(Mat4.fromRotation2D(this.minuteHandRadians))
             gl.uniform4fv(this.uniformLocations.color, COLOR_BLACK);
             gl.uniformMatrix4fv(this.uniformLocations.rotation, false, rotationMatrix);
             gl.bindBuffer(gl.ARRAY_BUFFER, this.minuteHand.positionBuffer);
@@ -232,7 +232,7 @@ class BezierApp extends GlApp {
 
         // Second Hand
         {
-            const rotationMatrix = new Float32Array(Mat4.fromAngle(this.secondHandRadians))
+            const rotationMatrix = new Float32Array(Mat4.fromRotation2D(this.secondHandRadians))
             gl.uniform4fv(this.uniformLocations.color, COLOR_ACCENT);
             gl.uniformMatrix4fv(this.uniformLocations.rotation, false, rotationMatrix);
             gl.bindBuffer(gl.ARRAY_BUFFER, this.secondHand.positionBuffer);
@@ -243,7 +243,7 @@ class BezierApp extends GlApp {
 
         // Second Hand Back
         {
-            const rotationMatrix = new Float32Array(Mat4.fromAngle(this.secondHandRadians))
+            const rotationMatrix = new Float32Array(Mat4.fromRotation2D(this.secondHandRadians))
             gl.uniform4fv(this.uniformLocations.color, COLOR_ACCENT);
             gl.uniformMatrix4fv(this.uniformLocations.rotation, false, rotationMatrix);
             gl.bindBuffer(gl.ARRAY_BUFFER, this.secondHandBack.positionBuffer);

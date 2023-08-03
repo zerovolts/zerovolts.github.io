@@ -7,7 +7,7 @@ export function identity() {
     ];
 }
 
-export function fromAngle(angle) {
+export function fromRotation2D(angle) {
     return [
         Math.cos(angle), -Math.sin(angle), 0, 0,
         Math.sin(angle), Math.cos(angle), 0, 0,
