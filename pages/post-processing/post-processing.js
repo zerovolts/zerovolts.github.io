@@ -10,6 +10,7 @@ let shaderSources = Promise.all([
     fetch("/pages/post-processing/sharpen.frag").then(res => res.text()),
     fetch("/pages/post-processing/edge.frag").then(res => res.text()),
     fetch("/pages/post-processing/noise.frag").then(res => res.text()),
+    fetch("/pages/post-processing/crt.frag").then(res => res.text()),
 ]);
 
 const image = new Image();
@@ -57,6 +58,10 @@ class BezierApp extends GlApp {
         });
         document.getElementById("noise").addEventListener("click", () => {
             this.shaderType = "noise";
+            this.step();
+        });
+        document.getElementById("crt").addEventListener("click", () => {
+            this.shaderType = "crt";
             this.step();
         });
 
@@ -111,6 +116,7 @@ class BezierApp extends GlApp {
             sharpenFragSrc,
             edgeFragSrc,
             noiseFragSrc,
+            crtFragSrc,
         ] = shaderSources;
 
         switch (this.shaderType) {
@@ -131,6 +137,9 @@ class BezierApp extends GlApp {
                 break;
             case "noise":
                 this.shaderProgram = createShaderProgram(gl, vertSrc, noiseFragSrc);
+                break;
+            case "crt":
+                this.shaderProgram = createShaderProgram(gl, vertSrc, crtFragSrc);
                 break;
         }
         this.attributeLocations = getAttributeLocations(gl, this.shaderProgram, ["aPosition", "aTextureCoord"]);
