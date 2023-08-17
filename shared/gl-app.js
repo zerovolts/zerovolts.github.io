@@ -12,7 +12,7 @@ export class GlApp {
         this.width = canvas.width;
         this.height = canvas.width;
         this.running = true;
-        this.previousTimestamp = 0;
+        this.prevTimestamp = 0;
 
         this.setup(this.gl);
 
