@@ -62,10 +62,10 @@ class App {
     }
 
     randomizeColor() {
-        this.setColor(RgbColor.fromBytes(
-            randomRange(0, 256),
-            randomRange(0, 256),
-            randomRange(0, 256),
+        this.setColor(new RgbColor(
+            Math.random(),
+            Math.random(),
+            Math.random(),
         ));
     }
 
