@@ -5,6 +5,7 @@ class App {
         this.refreshColor = this.refreshColor.bind(this);
         this.copyByteValue = this.copyByteValue.bind(this);
         this.copyHexValue = this.copyHexValue.bind(this);
+        this.copyFractValue = this.copyFractValue.bind(this);
         this.randomizeColor = this.randomizeColor.bind(this);
         this.nudgeColor = this.nudgeColor.bind(this);
         this.darkenColor = this.darkenColor.bind(this);
@@ -15,9 +16,11 @@ class App {
 
             this.byteColorEl = document.getElementById("byte-color");
             this.hexColorEl = document.getElementById("hex-color");
+            this.fractColorEl = document.getElementById("fract-color");
 
             this.byteColorEl.addEventListener("click", this.copyByteValue);
             this.hexColorEl.addEventListener("click", this.copyHexValue);
+            this.fractColorEl.addEventListener("click", this.copyFractValue);
 
             this.redSliderEl = document.getElementById("red-slider");
             this.greenSliderEl = document.getElementById("green-slider");
@@ -55,10 +58,12 @@ class App {
         this.greenSliderEl.value = green;
         this.blueSliderEl.value = blue;
 
-        this.hexColorEl.innerText = color.toHexString();
         const byteString = color.toByteString();
-        this.byteColorEl.innerText = byteString;
         this.mainColorEl.style.backgroundColor = `rgb(${byteString})`;
+
+        this.byteColorEl.innerText = byteString;
+        this.hexColorEl.innerText = color.toHexString();
+        this.fractColorEl.innerText = color.toFractString();
     }
 
     randomizeColor() {
@@ -98,6 +103,10 @@ class App {
 
     copyHexValue() {
         navigator.clipboard.writeText(this.getColor().toHexString());
+    }
+
+    copyFractValue() {
+        navigator.clipboard.writeText(this.getColor().toFractString());
     }
 }
 new App();
@@ -140,6 +149,10 @@ class RgbColor {
     toByteString() {
         const [red, green, blue] = this.toBytes();
         return `${red}, ${green}, ${blue}`;
+    }
+
+    toFractString() {
+        return `${this.red.toFixed(2)}, ${this.green.toFixed(2)}, ${this.blue.toFixed(2)}`;
     }
 
     addValue(amount) {
