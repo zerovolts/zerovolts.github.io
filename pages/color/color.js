@@ -3,7 +3,7 @@ import { clamp, randomRange } from "/shared/math.js";
 class App {
     constructor() {
         this.refreshColor = this.refreshColor.bind(this);
-        this.copyRgbValue = this.copyRgbValue.bind(this);
+        this.copyByteValue = this.copyByteValue.bind(this);
         this.copyHexValue = this.copyHexValue.bind(this);
         this.randomizeColor = this.randomizeColor.bind(this);
         this.nudgeColor = this.nudgeColor.bind(this);
@@ -13,10 +13,10 @@ class App {
         document.addEventListener("DOMContentLoaded", async () => {
             this.mainColorEl = document.getElementById("color-picker-display");
 
-            this.rgbColorEl = document.getElementById("rgb-color");
+            this.byteColorEl = document.getElementById("byte-color");
             this.hexColorEl = document.getElementById("hex-color");
 
-            this.rgbColorEl.addEventListener("click", this.copyRgbValue);
+            this.byteColorEl.addEventListener("click", this.copyByteValue);
             this.hexColorEl.addEventListener("click", this.copyHexValue);
 
             this.redSliderEl = document.getElementById("red-slider");
@@ -56,9 +56,9 @@ class App {
         this.blueSliderEl.value = blue;
 
         this.hexColorEl.innerText = color.toHexString();
-        const rgb = color.toRgbString();
-        this.rgbColorEl.innerText = rgb;
-        this.mainColorEl.style.backgroundColor = rgb;
+        const byteString = color.toByteString();
+        this.byteColorEl.innerText = byteString;
+        this.mainColorEl.style.backgroundColor = `rgb(${byteString})`;
     }
 
     randomizeColor() {
@@ -93,8 +93,8 @@ class App {
         this.setColor(this.getColor());
     }
 
-    copyRgbValue() {
-        navigator.clipboard.writeText(this.getColor().toRgbString());
+    copyByteValue() {
+        navigator.clipboard.writeText(this.getColor().toByteString());
     }
 
     copyHexValue() {
@@ -138,9 +138,9 @@ class RgbColor {
         return `#${byteToHex(red)}${byteToHex(green)}${byteToHex(blue)}`;
     }
 
-    toRgbString() {
+    toByteString() {
         const [red, green, blue] = this.toBytes();
-        return `rgb(${red}, ${green}, ${blue})`;
+        return `${red}, ${green}, ${blue}`;
     }
 
     addValue(amount) {
