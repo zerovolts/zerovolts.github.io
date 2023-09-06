@@ -70,14 +70,13 @@ class App {
     }
 
     nudgeColor() {
-        const nudgeScale = 5
+        const nudgeScale = .02;
         const color = this.getColor();
-        const [red, green, blue] = color.toBytes();
 
-        this.setColor(RgbColor.fromBytes(
-            red + randomRange(-nudgeScale, nudgeScale + 1),
-            green + randomRange(-nudgeScale, nudgeScale + 1),
-            blue + randomRange(-nudgeScale, nudgeScale + 1),
+        this.setColor(new RgbColor(
+            color.red + randomRange(-nudgeScale, nudgeScale),
+            color.green + randomRange(-nudgeScale, nudgeScale),
+            color.blue + randomRange(-nudgeScale, nudgeScale),
         ));
     }
 
