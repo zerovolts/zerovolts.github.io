@@ -42,7 +42,7 @@ class App {
     }
 
     getColor() {
-        return Color.fromBytes(
+        return RgbColor.fromBytes(
             Number(this.redSliderEl.value),
             Number(this.greenSliderEl.value),
             Number(this.blueSliderEl.value),
@@ -62,7 +62,7 @@ class App {
     }
 
     randomizeColor() {
-        this.setColor(Color.fromBytes(
+        this.setColor(RgbColor.fromBytes(
             randomRange(0, 256),
             randomRange(0, 256),
             randomRange(0, 256),
@@ -74,7 +74,7 @@ class App {
         const color = this.getColor();
         const [red, green, blue] = color.toBytes();
 
-        this.setColor(Color.fromBytes(
+        this.setColor(RgbColor.fromBytes(
             red + randomRange(-nudgeScale, nudgeScale + 1),
             green + randomRange(-nudgeScale, nudgeScale + 1),
             blue + randomRange(-nudgeScale, nudgeScale + 1),
@@ -103,7 +103,7 @@ class App {
 }
 new App();
 
-class Color {
+class RgbColor {
     constructor(red, green, blue) {
         this.red = red;
         this.green = green;
@@ -118,7 +118,7 @@ class Color {
     }
 
     static fromBytes(red, green, blue) {
-        return new Color(
+        return new RgbColor(
             red / 255,
             green / 255,
             blue / 255,
@@ -144,7 +144,7 @@ class Color {
     }
 
     addValue(amount) {
-        return new Color(
+        return new RgbColor(
             this.red += amount,
             this.green += amount,
             this.blue += amount,
