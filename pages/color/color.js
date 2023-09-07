@@ -3,13 +3,6 @@ import { clamp, randomRange } from "/shared/math.js";
 class App {
     constructor() {
         this.refreshColor = this.refreshColor.bind(this);
-        this.copyByteValue = this.copyByteValue.bind(this);
-        this.copyHexValue = this.copyHexValue.bind(this);
-        this.copyFractValue = this.copyFractValue.bind(this);
-        this.randomizeColor = this.randomizeColor.bind(this);
-        this.nudgeColor = this.nudgeColor.bind(this);
-        this.darkenColor = this.darkenColor.bind(this);
-        this.lightenColor = this.lightenColor.bind(this);
 
         document.addEventListener("DOMContentLoaded", async () => {
             this.mainColorEl = document.getElementById("color-picker-display");
@@ -18,10 +11,6 @@ class App {
             this.hexColorEl = document.getElementById("hex-color");
             this.fractColorEl = document.getElementById("fract-color");
 
-            this.byteColorEl.addEventListener("click", this.copyByteValue);
-            this.hexColorEl.addEventListener("click", this.copyHexValue);
-            this.fractColorEl.addEventListener("click", this.copyFractValue);
-
             this.redSliderEl = document.getElementById("red-slider");
             this.greenSliderEl = document.getElementById("green-slider");
             this.blueSliderEl = document.getElementById("blue-slider");
@@ -29,16 +18,6 @@ class App {
             this.redSliderEl.addEventListener("input", this.refreshColor);
             this.greenSliderEl.addEventListener("input", this.refreshColor);
             this.blueSliderEl.addEventListener("input", this.refreshColor);
-
-            this.buttonRandom = document.getElementById("button-random");
-            this.buttonNudge = document.getElementById("button-nudge");
-            this.buttonDarker = document.getElementById("button-darker");
-            this.buttonLighter = document.getElementById("button-lighter");
-
-            this.buttonRandom.addEventListener("click", this.randomizeColor);
-            this.buttonNudge.addEventListener("click", this.nudgeColor);
-            this.buttonDarker.addEventListener("click", this.darkenColor);
-            this.buttonLighter.addEventListener("click", this.lightenColor);
 
             this.refreshColor();
         });
@@ -109,7 +88,8 @@ class App {
         navigator.clipboard.writeText(this.getColor().toFractString());
     }
 }
-new App();
+
+window.app = new App();
 
 class RgbColor {
     constructor(red, green, blue) {

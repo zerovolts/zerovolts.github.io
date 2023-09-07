@@ -12,7 +12,8 @@
 }
 
 #hex-color,
-#rgb-color {
+#byte-color,
+#fract-color {
     cursor: pointer;
 }
 

@@ -26,9 +26,9 @@
             <div id="color-picker-display"></div>
             <div class="col-16 fill-width">
                 <div class="row-8">
-                    <div id="hex-color" class="tag"></div>
-                    <div id="byte-color" class="tag"></div>
-                    <div id="fract-color" class="tag"></div>
+                    <div id="hex-color" class="tag" onclick="app.copyHexValue()"></div>
+                    <div id="byte-color" class="tag" onclick="app.copyByteValue()"></div>
+                    <div id="fract-color" class="tag" onclick="app.copyFractValue()"></div>
                 </div>
                 <div class="col-4">
                     <input id="red-slider" class="color-slider" type="range" min="0" max="255" step="1">
@@ -36,10 +36,10 @@
                     <input id="blue-slider" class="color-slider" type="range" min="0" max="255" step="1">
                 </div>
                 <div>
-                    <button id="button-random">Random</button>
-                    <button id="button-nudge">Nudge</button>
-                    <button id="button-darker">Darker</button>
-                    <button id="button-lighter">Lighter</button>
+                    <button onclick="app.randomizeColor()">Random</button>
+                    <button onclick="app.nudgeColor()">Nudge</button>
+                    <button onclick="app.darkenColor()">Darker</button>
+                    <button onclick="app.lightenColor()">Lighter</button>
                 </div>
             </div>
         </div>
