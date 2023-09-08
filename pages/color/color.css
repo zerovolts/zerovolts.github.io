@@ -27,27 +27,27 @@
 }
 
 input[type="range"]#red-slider {
-    background: linear-gradient(90deg, #000, #f00); 
+    background: linear-gradient(90deg, #000, #f00);
 }
 
 input[type="range"]#green-slider {
-    background: linear-gradient(90deg, #000, #0f0); 
+    background: linear-gradient(90deg, #000, #0f0);
 }
 
 input[type="range"]#blue-slider {
-    background: linear-gradient(90deg, #000, #00f); 
+    background: linear-gradient(90deg, #000, #00f);
 }
 
 input[type="range"]#hue-slider {
-    background: linear-gradient(90deg, #f00, #ff0, #0f0, #0ff, #00f, #f0f, #f00); 
+    background: linear-gradient(90deg, #f00, #ff0, #0f0, #0ff, #00f, #f0f, #f00);
 }
 
 input[type="range"]#sat-slider {
-    background: linear-gradient(90deg, #7f7f7f, #fff); 
+    background: linear-gradient(90deg, #7f7f7f, #fff);
 }
 
 input[type="range"]#val-slider {
-    background: linear-gradient(90deg, #000, #fff); 
+    background: linear-gradient(90deg, #000, #fff);
 }
 
 input[type="range"]::-moz-range-thumb {
