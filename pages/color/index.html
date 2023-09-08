@@ -31,9 +31,21 @@
                     <div id="fract-color" class="tag" onclick="app.copyFractValue()"></div>
                 </div>
                 <div class="col-4">
-                    <input id="red-slider" class="color-slider" type="range" min="0" max="255" step="1">
-                    <input id="green-slider" class="color-slider" type="range" min="0" max="255" step="1">
-                    <input id="blue-slider" class="color-slider" type="range" min="0" max="255" step="1">
+                    <div class="row-4 align-center">
+                        <div class="black-color-icon"></div>
+                        <input id="red-slider" class="color-slider fill-width" type="range" min="0" max="255" step="1">
+                        <div class="red-color-icon"></div>
+                    </div>
+                    <div class="row-4 align-center">
+                        <div class="black-color-icon"></div>
+                        <input id="green-slider" class="color-slider fill-width" type="range" min="0" max="255" step="1">
+                        <div class="green-color-icon"></div>
+                    </div>
+                    <div class="row-4 align-center">
+                        <div class="black-color-icon"></div>
+                        <input id="blue-slider" class="color-slider fill-width" type="range" min="0" max="255" step="1">
+                        <div class="blue-color-icon"></div>
+                    </div>
                 </div>
                 <div>
                     <button onclick="app.randomizeColor()">Random</button>
