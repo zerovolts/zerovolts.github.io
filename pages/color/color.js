@@ -10,6 +10,7 @@ class App {
             this.byteColorEl = document.getElementById("byte-color");
             this.hexColorEl = document.getElementById("hex-color");
             this.fractColorEl = document.getElementById("fract-color");
+            this.nonSrgbFractColorEl = document.getElementById("non-srgb-fract-color");
 
             this.redSliderEl = document.getElementById("red-slider");
             this.greenSliderEl = document.getElementById("green-slider");
@@ -59,6 +60,7 @@ class App {
         this.byteColorEl.innerText = byteString;
         this.hexColorEl.innerText = color.toHexString();
         this.fractColorEl.innerText = color.toFractString();
+        this.nonSrgbFractColorEl.innerText = color.toNonSrgbFractString();
     }
 
     randomizeColor() {
@@ -102,6 +104,10 @@ class App {
 
     copyFractValue() {
         navigator.clipboard.writeText(this.getColor().toFractString());
+    }
+
+    copyNonSrgbFractValue() {
+        navigator.clipboard.writeText(this.getColor().toNonSrgbFractString());
     }
 }
 
@@ -149,6 +155,10 @@ class RgbColor {
 
     toFractString() {
         return `${this.red.toFixed(2)}, ${this.green.toFixed(2)}, ${this.blue.toFixed(2)}`;
+    }
+
+    toNonSrgbFractString() {
+        return `${Math.pow(this.red, 2.2).toFixed(2)}, ${Math.pow(this.green, 2.2).toFixed(2)}, ${Math.pow(this.blue, 2.2).toFixed(2)}`;
     }
 
     addValue(amount) {
