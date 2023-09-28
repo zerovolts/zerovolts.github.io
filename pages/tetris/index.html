@@ -1,0 +1,39 @@
+<!doctype html>
+<html>
+
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Tetris | zerovolts</title>
+    <link rel="icon" type="image/x-icon" href="/favicon.ico" />
+    <link rel="stylesheet" href="/global.css" />
+    <script src="/components/header/header.js"></script>
+    <script src="/pages/tetris/tetris.js" type="module"></script>
+    <script
+        data-goatcounter="https://zerovolts.goatcounter.com/count"
+        async src="//gc.zgo.at/count.js"
+    ></script>
+    <style>
+        #main-canvas {
+            width: 300px;
+            height: 660px;
+        }
+    </style>
+</head>
+
+<body>
+    <zv-header
+        data-title="WebGL Tetris"
+        data-source="/pages/tetris/tetris.js">
+    </zv-header>
+    <main class="col-16 align-center">
+        <canvas id="main-canvas"></canvas>
+        <ul>
+            <li>Q/E (↑) - Rotate Tetromino</li>
+            <li>A/D (←/→) - Nudge Tetromino</li>
+            <li>S (↓) - Drop Tetromino</li>
+        </ul>
+    </main>
+</body>
+
+</html>
