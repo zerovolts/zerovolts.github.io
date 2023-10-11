@@ -1,5 +1,5 @@
 import { GlApp } from "/shared/gl-app.js"
-import { createShaderProgram, getAttributeLocations, getUniformLocations } from "/shared/graphics.js";
+import { ShaderProgram, createShaderProgram, getAttributeLocations, getUniformLocations } from "/shared/graphics.js";
 
 // Initiate the fetch first to reduce perceived loading.
 let shaderSources = Promise.all([
@@ -21,23 +21,21 @@ class TetrisApp extends GlApp {
     setup(gl) {
         gl.clearColor(0.1, 0.1, 0.1, 1.0);
 
-        {
-            const shaderProgram = createShaderProgram(gl, shaderSources[0], shaderSources[1]);
-            this.backgroundRenderer = {
-                shaderProgram,
-                attributeLocations: getAttributeLocations(gl, shaderProgram, ["a_position", "a_uv"]),
-                uniformLocations: getUniformLocations(gl, shaderProgram, []),
-            };
-        }
+        this.backgroundRenderer = new ShaderProgram(
+            gl,
+            shaderSources[0],
+            shaderSources[1],
+            ["a_position", "a_uv"],
+            [],
+        );
 
-        {
-            const shaderProgram = createShaderProgram(gl, shaderSources[2], shaderSources[3]);
-            this.blockRenderer = {
-                shaderProgram,
-                attributeLocations: getAttributeLocations(gl, shaderProgram, ["aPosition", "aUv"]),
-                uniformLocations: getUniformLocations(gl, shaderProgram, ["uCoord", "uColor"]),
-            };
-        }
+        this.blockRenderer = new ShaderProgram(
+            gl,
+            shaderSources[2],
+            shaderSources[3],
+            ["aPosition", "aUv"],
+            ["uCoord", "uColor"],
+        );
 
         this.backgroundMesh = new BackgroundMesh(gl, this.backgroundRenderer);
 
@@ -154,7 +152,7 @@ class BackgroundMesh {
     draw() {
         const gl = this.gl;
 
-        gl.useProgram(this.renderer.shaderProgram);
+        gl.useProgram(this.renderer.program);
 
         gl.bindBuffer(gl.ARRAY_BUFFER, this.positionBuffer);
         gl.vertexAttribPointer(this.renderer.attributeLocations.a_position, 2, gl.FLOAT, false, 0, 0);
@@ -203,7 +201,7 @@ class BlockMesh {
     draw(position) {
         const gl = this.gl;
 
-        gl.useProgram(this.renderer.shaderProgram);
+        gl.useProgram(this.renderer.program);
 
         gl.uniform3fv(this.renderer.uniformLocations.uColor, this.color);
         gl.uniform2fv(this.renderer.uniformLocations.uCoord, position);
