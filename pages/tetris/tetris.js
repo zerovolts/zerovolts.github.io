@@ -30,15 +30,7 @@ class TetrisApp extends GlApp {
             [],
         );
 
-        this.blockRenderer = new ShaderProgram(
-            gl,
-            shaderSources[2],
-            shaderSources[3],
-            ["aPosition", "aUv"],
-            ["uCoord", "uColor"],
-        );
-
-        this.blockMesh = new BlockMesh(gl, this.blockRenderer);
+        this.blockRenderer = new BlockRenderer(gl);
         this.backgroundMesh = new BackgroundMesh(gl, this.backgroundRenderer);
 
         this.timer = 0;
@@ -104,7 +96,7 @@ class TetrisApp extends GlApp {
             for (let x = 0; x < this.grid.width; x++) {
                 const color = this.grid.get(x, y);
                 if (color === null) continue;
-                this.blockMesh.draw([x, y], color);
+                this.blockRenderer.draw([x, y], color);
             }
         }
 
@@ -114,7 +106,7 @@ class TetrisApp extends GlApp {
                 if (this.tetromino.isEmpty(x, y)) continue;
                 const color = this.tetromino.get(x, y);
                 const coord = [x + this.tetromino.x, y + this.tetromino.y];
-                this.blockMesh.draw(coord, color);
+                this.blockRenderer.draw(coord, color);
             }
         }
     }
@@ -168,10 +160,17 @@ class BackgroundMesh {
     }
 }
 
-class BlockMesh {
-    constructor(gl, renderer) {
+class BlockRenderer {
+    constructor(gl) {
         this.gl = gl;
-        this.renderer = renderer;
+
+        this.shaderProgram = new ShaderProgram(
+            gl,
+            shaderSources[2],
+            shaderSources[3],
+            ["aPosition", "aUv"],
+            ["uCoord", "uColor"],
+        );
 
         const positions = new Float32Array([
             0, 0,
@@ -202,18 +201,18 @@ class BlockMesh {
     draw(position, color) {
         const gl = this.gl;
 
-        gl.useProgram(this.renderer.program);
+        gl.useProgram(this.shaderProgram.program);
 
-        gl.uniform3fv(this.renderer.uniformLocations.uColor, color);
-        gl.uniform2fv(this.renderer.uniformLocations.uCoord, position);
+        gl.uniform3fv(this.shaderProgram.uniformLocations.uColor, color);
+        gl.uniform2fv(this.shaderProgram.uniformLocations.uCoord, position);
 
         gl.bindBuffer(gl.ARRAY_BUFFER, this.positionBuffer);
-        gl.vertexAttribPointer(this.renderer.attributeLocations.aPosition, 2, gl.FLOAT, false, 0, 0);
-        gl.enableVertexAttribArray(this.renderer.attributeLocations.aPosition);
+        gl.vertexAttribPointer(this.shaderProgram.attributeLocations.aPosition, 2, gl.FLOAT, false, 0, 0);
+        gl.enableVertexAttribArray(this.shaderProgram.attributeLocations.aPosition);
 
         gl.bindBuffer(gl.ARRAY_BUFFER, this.uvBuffer);
-        gl.vertexAttribPointer(this.renderer.attributeLocations.aUv, 2, gl.FLOAT, false, 0, 0);
-        gl.enableVertexAttribArray(this.renderer.attributeLocations.aUv);
+        gl.vertexAttribPointer(this.shaderProgram.attributeLocations.aUv, 2, gl.FLOAT, false, 0, 0);
+        gl.enableVertexAttribArray(this.shaderProgram.attributeLocations.aUv);
 
         gl.drawElements(gl.TRIANGLE_STRIP, 6, gl.UNSIGNED_SHORT, this.indexBuffer);
     }
