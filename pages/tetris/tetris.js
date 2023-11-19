@@ -38,11 +38,12 @@ class TetrisApp extends GlApp {
             ["uCoord", "uColor"],
         );
 
+        this.blockMesh = new BlockMesh(gl, this.blockRenderer);
         this.backgroundMesh = new BackgroundMesh(gl, this.backgroundRenderer);
 
         this.timer = 0;
         this.grid = new GameGrid(10, 22);
-        this.tetromino = randomTetromino(gl, this.blockRenderer, this.grid);
+        this.tetromino = randomTetromino(this.grid);
 
         document.addEventListener("keydown", e => {
             e.preventDefault();
@@ -87,7 +88,7 @@ class TetrisApp extends GlApp {
                 if (this.grid.hasBlocksInDeadZone()) {
                     this.grid.reset();
                 }
-                this.tetromino = randomTetromino(this.gl, this.blockRenderer, this.grid);
+                this.tetromino = randomTetromino(this.grid);
             }
             this.timer = 0;
         }
@@ -101,9 +102,9 @@ class TetrisApp extends GlApp {
         // Grid blocks
         for (let y = 0; y < this.grid.height; y++) {
             for (let x = 0; x < this.grid.width; x++) {
-                const block = this.grid.get(x, y);
-                if (block === null) continue;
-                block.draw([x, y]);
+                const color = this.grid.get(x, y);
+                if (color === null) continue;
+                this.blockMesh.draw([x, y], color);
             }
         }
 
@@ -111,9 +112,9 @@ class TetrisApp extends GlApp {
         for (let y = 0; y < this.tetromino.height; y++) {
             for (let x = 0; x < this.tetromino.width; x++) {
                 if (this.tetromino.isEmpty(x, y)) continue;
-                const block = this.tetromino.get(x, y);
+                const color = this.tetromino.get(x, y);
                 const coord = [x + this.tetromino.x, y + this.tetromino.y];
-                block.draw(coord);
+                this.blockMesh.draw(coord, color);
             }
         }
     }
@@ -168,10 +169,9 @@ class BackgroundMesh {
 }
 
 class BlockMesh {
-    constructor(gl, renderer, color) {
+    constructor(gl, renderer) {
         this.gl = gl;
         this.renderer = renderer;
-        this.color = color;
 
         const positions = new Float32Array([
             0, 0,
@@ -199,12 +199,12 @@ class BlockMesh {
         gl.bufferData(gl.ELEMENT_ARRAY_BUFFER, indices, gl.STATIC_DRAW);
     }
 
-    draw(position) {
+    draw(position, color) {
         const gl = this.gl;
 
         gl.useProgram(this.renderer.program);
 
-        gl.uniform3fv(this.renderer.uniformLocations.uColor, this.color);
+        gl.uniform3fv(this.renderer.uniformLocations.uColor, color);
         gl.uniform2fv(this.renderer.uniformLocations.uCoord, position);
 
         gl.bindBuffer(gl.ARRAY_BUFFER, this.positionBuffer);
@@ -410,32 +410,32 @@ class TetrominoGrid extends Grid {
     }
 }
 
-function randomTetromino(gl, renderer, grid) {
+function randomTetromino(grid) {
     const r = Math.floor(Math.random() * 7);
     switch (r) {
         case 0:
-            return iTetromino(gl, renderer, grid);
+            return iTetromino(grid);
         case 1:
-            return jTetromino(gl, renderer, grid);
+            return jTetromino(grid);
         case 2:
-            return lTetromino(gl, renderer, grid);
+            return lTetromino(grid);
         case 3:
-            return oTetromino(gl, renderer, grid);
+            return oTetromino(grid);
         case 4:
-            return sTetromino(gl, renderer, grid);
+            return sTetromino(grid);
         case 5:
-            return tTetromino(gl, renderer, grid);
+            return tTetromino(grid);
         case 6:
-            return zTetromino(gl, renderer, grid);
+            return zTetromino(grid);
         default:
             console.error("Invalid tetromino");
     }
 }
 
-function tetromino(gl, renderer, grid, color, width, height, positions) {
+function tetromino(grid, color, width, height, positions) {
     const result = new TetrominoGrid(grid, width, height);
     for (const position of positions) {
-        result.set(position[0], position[1], new BlockMesh(gl, renderer, color));
+        result.set(position[0], position[1], color);
     }
     return result;
 }
@@ -444,30 +444,30 @@ const low = .1;
 const mid = .3;
 const high = .5;
 
-function iTetromino(gl, renderer, grid) {
-    return tetromino(gl, renderer, grid, [low, high, high], 4, 4, [[0, 2], [1, 2], [2, 2], [3, 2]]);
+function iTetromino(grid) {
+    return tetromino(grid, [low, high, high], 4, 4, [[0, 2], [1, 2], [2, 2], [3, 2]]);
 }
 
-function jTetromino(gl, renderer, grid) {
-    return tetromino(gl, renderer, grid, [low, low, high], 3, 3, [[0, 2], [0, 1], [1, 1], [2, 1]]);
+function jTetromino(grid) {
+    return tetromino(grid, [low, low, high], 3, 3, [[0, 2], [0, 1], [1, 1], [2, 1]]);
 }
 
-function lTetromino(gl, renderer, grid) {
-    return tetromino(gl, renderer, grid, [high, mid, low], 3, 3, [[0, 1], [1, 1], [2, 1], [2, 2]]);
+function lTetromino(grid) {
+    return tetromino(grid, [high, mid, low], 3, 3, [[0, 1], [1, 1], [2, 1], [2, 2]]);
 }
 
-function oTetromino(gl, renderer, grid) {
-    return tetromino(gl, renderer, grid, [high, high, low], 2, 2, [[0, 0], [0, 1], [1, 0], [1, 1]]);
+function oTetromino(grid) {
+    return tetromino(grid, [high, high, low], 2, 2, [[0, 0], [0, 1], [1, 0], [1, 1]]);
 }
 
-function sTetromino(gl, renderer, grid) {
-    return tetromino(gl, renderer, grid, [low, high, low], 3, 3, [[0, 1], [1, 1], [1, 2], [2, 2]]);
+function sTetromino(grid) {
+    return tetromino(grid, [low, high, low], 3, 3, [[0, 1], [1, 1], [1, 2], [2, 2]]);
 }
 
-function tTetromino(gl, renderer, grid) {
-    return tetromino(gl, renderer, grid, [high, low, high], 3, 3, [[0, 1], [1, 1], [2, 1], [1, 2]]);
+function tTetromino(grid) {
+    return tetromino(grid, [high, low, high], 3, 3, [[0, 1], [1, 1], [2, 1], [1, 2]]);
 }
 
-function zTetromino(gl, renderer, grid) {
-    return tetromino(gl, renderer, grid, [high, low, low], 3, 3, [[0, 2], [1, 2], [1, 1], [2, 1]]);
+function zTetromino(grid) {
+    return tetromino(grid, [high, low, low], 3, 3, [[0, 2], [1, 2], [1, 1], [2, 1]]);
 }
