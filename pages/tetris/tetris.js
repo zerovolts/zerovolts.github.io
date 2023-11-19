@@ -217,27 +217,6 @@ class BlockRenderer {
     }
 }
 
-class Coord {
-    constructor(x, y) {
-        this.x = x;
-        this.y = y;
-    }
-
-    add(other) {
-        return new Coord(
-            this.x + other.x,
-            this.y + other.y,
-        );
-    }
-
-    sub(other) {
-        return new Coord(
-            this.x - other.x,
-            this.y - other.y,
-        );
-    }
-}
-
 class GameGrid extends Grid {
     // Returns the highest non-empty point under the given point.
     nearestFallPoint(x, y) {
