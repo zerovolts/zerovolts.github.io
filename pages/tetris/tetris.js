@@ -1,5 +1,5 @@
 import { GlApp } from "/shared/gl-app.js"
-import { ShaderProgram, createShaderProgram, getAttributeLocations, getUniformLocations } from "/shared/graphics.js";
+import { Grid } from "/shared/grid.js";
 
 // Initiate the fetch first to reduce perceived loading.
 let shaderSources = Promise.all([
@@ -239,43 +239,6 @@ class Coord {
     }
 }
 
-class Grid {
-    constructor(width, height) {
-        this.width = width;
-        this.height = height;
-        this.blocks = Array(width * height).fill(null);
-    }
-
-    isEmpty(x, y) {
-        return this.isInBounds(x, y) && this.blocks[this.coordToIndex(x, y)] === null;
-    }
-
-    get(x, y) {
-        if (!this.isInBounds(x, y)) console.error(`Out of bounds: (${x}, ${y})`);
-        return this.blocks[this.coordToIndex(x, y)];
-    }
-
-    set(x, y, value) {
-        if (!this.isInBounds(x, y)) console.error(`Out of bounds: (${x}, ${y})`);
-        this.blocks[this.coordToIndex(x, y)] = value;
-    }
-
-    isInBounds(x, y) {
-        return x >= 0 && x < this.width && y >= 0 && y < this.height;
-    }
-
-    coordToIndex(x, y) {
-        return x + (y * this.width);
-    }
-
-    indexToCoord(i) {
-        return [
-            i % this.width,
-            Math.floor(i / this.width),
-        ];
-    }
-}
-
 class GameGrid extends Grid {
     // Returns the highest non-empty point under the given point.
     nearestFallPoint(x, y) {
@@ -312,12 +275,12 @@ class GameGrid extends Grid {
     }
 
     deleteRow(y) {
-        this.blocks.splice(y * this.width, this.width);
-        this.blocks.push(...Array(10).fill(null));
+        this.cells.splice(y * this.width, this.width);
+        this.cells.push(...Array(10).fill(null));
     }
 
     reset() {
-        this.blocks = Array(this.width * this.height).fill(null);
+        this.cells = Array(this.width * this.height).fill(null);
     }
 }
 
@@ -394,43 +357,43 @@ class TetrominoGrid extends Grid {
     }
 
     rotateLeft() {
-        const newBlocks = Array(this.width * this.height).fill(null);
+        const newCells = Array(this.width * this.height).fill(null);
         for (let y = 0; y < this.height; y++) {
             for (let x = 0; x < this.width; x++) {
-                newBlocks[this.coordToIndex(x, y)] = this.get(y, this.width - 1 - x);
+                newCells[this.coordToIndex(x, y)] = this.get(y, this.width - 1 - x);
             }
         }
 
         // abort if new positions collide with anything
         for (let y = 0; y < this.height; y++) {
             for (let x = 0; x < this.width; x++) {
-                if (newBlocks[this.coordToIndex(x, y)] === null) continue;
+                if (newCells[this.coordToIndex(x, y)] === null) continue;
                 if (this.gameGrid.isEmpty(x + this.x, y + this.y)) continue;
                 return;
             }
         }
 
-        this.blocks = newBlocks;
+        this.cells = newCells;
     }
 
     rotateRight() {
-        const newBlocks = Array(this.width * this.height).fill(null);
+        const newCells = Array(this.width * this.height).fill(null);
         for (let y = 0; y < this.height; y++) {
             for (let x = 0; x < this.width; x++) {
-                newBlocks[this.coordToIndex(x, y)] = this.get(this.height - 1 - y, x);
+                newCells[this.coordToIndex(x, y)] = this.get(this.height - 1 - y, x);
             }
         }
 
         // abort if new positions collide with anything
         for (let y = 0; y < this.height; y++) {
             for (let x = 0; x < this.width; x++) {
-                if (newBlocks[this.coordToIndex(x, y)] === null) continue;
+                if (newCells[this.coordToIndex(x, y)] === null) continue;
                 if (this.gameGrid.isEmpty(x + this.x, y + this.y)) continue;
                 return;
             }
         }
 
-        this.blocks = newBlocks;
+        this.cells = newCells;
     }
 
     canFall() {
