@@ -125,10 +125,13 @@ main {
 }
 
 @media (max-width: calc(600px + 8rem)) {
+    :root {
+        --content-width: 100vw;
+    }
+
     body {
         padding: 0;
         width: 100vw;
-        height: 100vh;
     }
 
     main {
