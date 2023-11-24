@@ -1,5 +1,5 @@
 import { GlApp } from "/shared/gl-app.js"
-import { ShaderProgram } from "/shared/graphics.js";
+import { ShaderProgram, Renderer } from "/shared/graphics.js";
 import { Grid } from "/shared/grid.js";
 
 // Initiate the fetch first to reduce perceived loading.
@@ -22,8 +22,35 @@ class TetrisApp extends GlApp {
     setup(gl) {
         gl.clearColor(0.1, 0.1, 0.1, 1.0);
 
-        this.blockRenderer = new BlockRenderer(gl);
-        this.backgroundRenderer = new BackgroundRenderer(gl);
+        this.ctx = new Renderer(gl, {});
+
+        this.backgroundShader = new ShaderProgram(
+            gl,
+            shaderSources[0],
+            shaderSources[1],
+            ["aPosition", "aUv"],
+            [],
+        );
+        this.backgroundMaterial = this.ctx.createMaterial(this.backgroundShader, {});
+        this.backgroundMesh = this.ctx.createMesh(
+            [-1, -1, 1, -1, 1, 1, -1, 1],
+            [0, 0, 1, 0, 1, 1, 0, 1],
+            [0, 1, 2, 2, 3, 0],
+        );
+
+        this.blockShader = new ShaderProgram(
+            gl,
+            shaderSources[2],
+            shaderSources[3],
+            ["aPosition", "aUv"],
+            ["uCoord", "uColor"],
+        );
+        this.blockMaterial = this.ctx.createMaterial(this.blockShader, {});
+        this.blockMesh = this.ctx.createMesh(
+            [0, 0, 1, 0, 1, 1, 0, 1],
+            [0, 0, 1, 0, 1, 1, 0, 1],
+            [0, 1, 2, 2, 3, 0],
+        );
 
         this.timer = 0;
         this.grid = new GameGrid(10, 22);
@@ -81,14 +108,14 @@ class TetrisApp extends GlApp {
     render(gl) {
         gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
 
-        this.backgroundRenderer.draw();
+        this.ctx.draw(this.backgroundMesh, this.backgroundMaterial, {});
 
         // Grid blocks
         for (let y = 0; y < this.grid.height; y++) {
             for (let x = 0; x < this.grid.width; x++) {
                 const color = this.grid.get(x, y);
                 if (color === null) continue;
-                this.blockRenderer.draw([x, y], color);
+                this.ctx.draw(this.blockMesh, this.blockMaterial, { uCoord: [x, y], uColor: color });
             }
         }
 
@@ -98,122 +125,9 @@ class TetrisApp extends GlApp {
                 if (this.tetromino.isEmpty(x, y)) continue;
                 const color = this.tetromino.get(x, y);
                 const coord = [x + this.tetromino.x, y + this.tetromino.y];
-                this.blockRenderer.draw(coord, color);
+                this.ctx.draw(this.blockMesh, this.blockMaterial, { uCoord: coord, uColor: color });
             }
         }
-    }
-}
-
-class BackgroundRenderer {
-    constructor(gl) {
-        this.gl = gl;
-
-        this.shaderProgram = new ShaderProgram(
-            gl,
-            shaderSources[0],
-            shaderSources[1],
-            ["a_position", "a_uv"],
-            [],
-        );
-
-        const positions = new Float32Array([
-            -1, -1,
-            1, -1,
-            1, 1,
-            -1, 1,
-        ]);
-        this.positionBuffer = gl.createBuffer();
-        gl.bindBuffer(gl.ARRAY_BUFFER, this.positionBuffer);
-        gl.bufferData(gl.ARRAY_BUFFER, positions, gl.STATIC_DRAW);
-
-        const uvs = new Float32Array([
-            0, 0,
-            1, 0,
-            1, 1,
-            0, 1,
-        ]);
-        this.uvBuffer = gl.createBuffer();
-        gl.bindBuffer(gl.ARRAY_BUFFER, this.uvBuffer);
-        gl.bufferData(gl.ARRAY_BUFFER, uvs, gl.STATIC_DRAW);
-
-        const indices = new Uint16Array([0, 1, 2, 2, 3, 0]);
-        this.indexBuffer = gl.createBuffer();
-        gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, this.indexBuffer);
-        gl.bufferData(gl.ELEMENT_ARRAY_BUFFER, indices, gl.STATIC_DRAW);
-    }
-
-    draw() {
-        const gl = this.gl;
-
-        gl.useProgram(this.shaderProgram.program);
-
-        gl.bindBuffer(gl.ARRAY_BUFFER, this.positionBuffer);
-        gl.vertexAttribPointer(this.shaderProgram.attributeLocations.a_position, 2, gl.FLOAT, false, 0, 0);
-        gl.enableVertexAttribArray(this.shaderProgram.attributeLocations.a_position);
-
-        gl.bindBuffer(gl.ARRAY_BUFFER, this.uvBuffer);
-        gl.vertexAttribPointer(this.shaderProgram.attributeLocations.a_uv, 2, gl.FLOAT, false, 0, 0);
-        gl.enableVertexAttribArray(this.shaderProgram.attributeLocations.a_uv);
-
-        gl.drawElements(gl.TRIANGLE_STRIP, 6, gl.UNSIGNED_SHORT, this.indexBuffer);
-    }
-}
-
-class BlockRenderer {
-    constructor(gl) {
-        this.gl = gl;
-
-        this.shaderProgram = new ShaderProgram(
-            gl,
-            shaderSources[2],
-            shaderSources[3],
-            ["aPosition", "aUv"],
-            ["uCoord", "uColor"],
-        );
-
-        const positions = new Float32Array([
-            0, 0,
-            1, 0,
-            1, 1,
-            0, 1,
-        ]);
-        this.positionBuffer = gl.createBuffer();
-        gl.bindBuffer(gl.ARRAY_BUFFER, this.positionBuffer);
-        gl.bufferData(gl.ARRAY_BUFFER, positions, gl.STATIC_DRAW);
-
-        const uvs = new Float32Array([
-            0, 0,
-            1, 0,
-            1, 1,
-            0, 1,
-        ]);
-        this.uvBuffer = gl.createBuffer();
-        gl.bindBuffer(gl.ARRAY_BUFFER, this.uvBuffer);
-        gl.bufferData(gl.ARRAY_BUFFER, uvs, gl.STATIC_DRAW);
-
-        const indices = new Uint16Array([0, 1, 2, 2, 3, 0]);
-        this.indexBuffer = gl.createBuffer();
-        gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, this.indexBuffer);
-        gl.bufferData(gl.ELEMENT_ARRAY_BUFFER, indices, gl.STATIC_DRAW);
-    }
-
-    draw(position, color) {
-        const gl = this.gl;
-
-        gl.useProgram(this.shaderProgram.program);
-
-        gl.uniform3fv(this.shaderProgram.uniformLocations.uColor, color);
-        gl.uniform2fv(this.shaderProgram.uniformLocations.uCoord, position);
-
-        gl.bindBuffer(gl.ARRAY_BUFFER, this.positionBuffer);
-        gl.vertexAttribPointer(this.shaderProgram.attributeLocations.aPosition, 2, gl.FLOAT, false, 0, 0);
-        gl.enableVertexAttribArray(this.shaderProgram.attributeLocations.aPosition);
-
-        gl.bindBuffer(gl.ARRAY_BUFFER, this.uvBuffer);
-        gl.vertexAttribPointer(this.shaderProgram.attributeLocations.aUv, 2, gl.FLOAT, false, 0, 0);
-        gl.enableVertexAttribArray(this.shaderProgram.attributeLocations.aUv);
-
-        gl.drawElements(gl.TRIANGLE_STRIP, 6, gl.UNSIGNED_SHORT, this.indexBuffer);
     }
 }
 

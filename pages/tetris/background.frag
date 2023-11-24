@@ -2,13 +2,13 @@
 
 precision mediump float;
 
-in vec2 v_uv;
+in vec2 vUv;
 
 out vec4 fragColor;
 
 void main() {
-    vec2 uv = fract(v_uv * vec2(10., 22.));
-    float y = floor(v_uv.y * 22.);
+    vec2 uv = fract(vUv * vec2(10., 22.));
+    float y = floor(vUv.y * 22.);
     uv -= .5;
 
     float d = max(abs(uv.x), abs(uv.y));

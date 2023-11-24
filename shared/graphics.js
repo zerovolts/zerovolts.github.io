@@ -1,3 +1,98 @@
+// Goals
+// - Separate mesh and material so they can be interchanged easily
+// - Reduce the need for custom WebGL when creating new objects
+// Uniforms
+// - Global - time, resolution
+// - Per material - color
+// - Per instance - transform
+export class Renderer {
+    constructor(gl, uniforms) {
+        this.gl = gl;
+        this.uniforms = uniforms;
+    }
+
+    createMesh(positions, uvs, indices) {
+        const gl = this.gl;
+
+        const positionBuffer = gl.createBuffer();
+        gl.bindBuffer(gl.ARRAY_BUFFER, positionBuffer);
+        gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(positions), gl.STATIC_DRAW);
+
+        const uvBuffer = gl.createBuffer();
+        gl.bindBuffer(gl.ARRAY_BUFFER, uvBuffer);
+        gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(uvs), gl.STATIC_DRAW);
+
+        const indexBuffer = gl.createBuffer();
+        gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, indexBuffer);
+        gl.bufferData(gl.ELEMENT_ARRAY_BUFFER, new Uint16Array(indices), gl.STATIC_DRAW);
+
+        return {
+            positionBuffer,
+            uvBuffer,
+            indexBuffer,
+        };
+    }
+
+    // TODO: iterate on shader/material abstraction boundary
+    createMaterial(shaderProgram, uniforms) {
+        const gl = this.gl;
+
+        return {
+            shaderProgram,
+            uniforms,
+        };
+    }
+
+    draw(mesh, material, uniforms) {
+        const gl = this.gl;
+
+        gl.useProgram(material.shaderProgram.program);
+
+        for (const [key, value] of Object.entries(uniforms)) {
+            const location = material.shaderProgram.uniformLocations[key];
+            this.setUniform(location, value);
+        }
+        for (const [key, value] of Object.entries(material.uniforms)) {
+            const location = material.shaderProgram.uniformLocations[key];
+            this.setUniform(location, value);
+        }
+
+        gl.bindBuffer(gl.ARRAY_BUFFER, mesh.positionBuffer);
+        // TODO: Remove hard reference to "aPosition" name
+        gl.vertexAttribPointer(material.shaderProgram.attributeLocations.aPosition, 2, gl.FLOAT, false, 0, 0);
+        gl.enableVertexAttribArray(material.shaderProgram.attributeLocations.aPosition);
+
+        gl.bindBuffer(gl.ARRAY_BUFFER, mesh.uvBuffer);
+        // TODO: Remove hard reference to "aUv" name
+        gl.vertexAttribPointer(material.shaderProgram.attributeLocations.aUv, 2, gl.FLOAT, false, 0, 0);
+        gl.enableVertexAttribArray(material.shaderProgram.attributeLocations.aUv);
+
+        const TODO = 6;
+        gl.drawElements(gl.TRIANGLE_STRIP, TODO, gl.UNSIGNED_SHORT, mesh.indexBuffer);
+    }
+
+    setUniform(location, value) {
+        const gl = this.gl;
+
+        switch (value.length) {
+            case 1:
+                gl.uniform1fv(location, value);
+                break;
+            case 2:
+                gl.uniform2fv(location, value);
+                break;
+            case 3:
+                gl.uniform3fv(location, value);
+                break;
+            case 4:
+                gl.uniform4fv(location, value);
+                break;
+            default:
+                console.error(`Invalid uniform length: ${value.length}`);
+        }
+    }
+}
+
 export class ShaderProgram {
     constructor(gl, vertSource, fragSource, attributeKeys, uniformKeys) {
         const vertShader = gl.createShader(gl.VERTEX_SHADER);
