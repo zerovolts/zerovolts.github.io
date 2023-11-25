@@ -5,91 +5,61 @@
 // - Global - time, resolution
 // - Per material - color
 // - Per instance - transform
-export class Renderer {
-    constructor(gl, uniforms) {
-        this.gl = gl;
-        this.uniforms = uniforms;
+
+export function draw(gl, mesh, shaderProgram, uniforms) {
+    gl.useProgram(shaderProgram.program);
+
+    for (const [key, value] of Object.entries(uniforms)) {
+        const location = shaderProgram.uniformLocations[key];
+        setUniform(gl, location, value);
     }
 
-    createMesh(positions, uvs, indices) {
-        const gl = this.gl;
+    gl.bindBuffer(gl.ARRAY_BUFFER, mesh.positionBuffer);
+    // TODO: Remove hard reference to "aPosition" name
+    gl.vertexAttribPointer(shaderProgram.attributeLocations.aPosition, 2, gl.FLOAT, false, 0, 0);
+    gl.enableVertexAttribArray(shaderProgram.attributeLocations.aPosition);
 
-        const positionBuffer = gl.createBuffer();
-        gl.bindBuffer(gl.ARRAY_BUFFER, positionBuffer);
+    gl.bindBuffer(gl.ARRAY_BUFFER, mesh.uvBuffer);
+    // TODO: Remove hard reference to "aUv" name
+    gl.vertexAttribPointer(shaderProgram.attributeLocations.aUv, 2, gl.FLOAT, false, 0, 0);
+    gl.enableVertexAttribArray(shaderProgram.attributeLocations.aUv);
+
+    const TODO = 6;
+    gl.drawElements(gl.TRIANGLE_STRIP, TODO, gl.UNSIGNED_SHORT, mesh.indexBuffer);
+}
+
+function setUniform(gl, location, value) {
+    switch (value.length) {
+        case 1:
+            gl.uniform1fv(location, value);
+            break;
+        case 2:
+            gl.uniform2fv(location, value);
+            break;
+        case 3:
+            gl.uniform3fv(location, value);
+            break;
+        case 4:
+            gl.uniform4fv(location, value);
+            break;
+        default:
+            console.error(`Invalid uniform length: ${value.length}`);
+    }
+}
+
+export class Mesh {
+    constructor(gl, positions, uvs, indices) {
+        this.positionBuffer = gl.createBuffer();
+        gl.bindBuffer(gl.ARRAY_BUFFER, this.positionBuffer);
         gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(positions), gl.STATIC_DRAW);
 
-        const uvBuffer = gl.createBuffer();
-        gl.bindBuffer(gl.ARRAY_BUFFER, uvBuffer);
+        this.uvBuffer = gl.createBuffer();
+        gl.bindBuffer(gl.ARRAY_BUFFER, this.uvBuffer);
         gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(uvs), gl.STATIC_DRAW);
 
-        const indexBuffer = gl.createBuffer();
-        gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, indexBuffer);
+        this.indexBuffer = gl.createBuffer();
+        gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, this.indexBuffer);
         gl.bufferData(gl.ELEMENT_ARRAY_BUFFER, new Uint16Array(indices), gl.STATIC_DRAW);
-
-        return {
-            positionBuffer,
-            uvBuffer,
-            indexBuffer,
-        };
-    }
-
-    // TODO: iterate on shader/material abstraction boundary
-    createMaterial(shaderProgram, uniforms) {
-        const gl = this.gl;
-
-        return {
-            shaderProgram,
-            uniforms,
-        };
-    }
-
-    draw(mesh, material, uniforms) {
-        const gl = this.gl;
-
-        gl.useProgram(material.shaderProgram.program);
-
-        for (const [key, value] of Object.entries(uniforms)) {
-            const location = material.shaderProgram.uniformLocations[key];
-            this.setUniform(location, value);
-        }
-        for (const [key, value] of Object.entries(material.uniforms)) {
-            const location = material.shaderProgram.uniformLocations[key];
-            this.setUniform(location, value);
-        }
-
-        gl.bindBuffer(gl.ARRAY_BUFFER, mesh.positionBuffer);
-        // TODO: Remove hard reference to "aPosition" name
-        gl.vertexAttribPointer(material.shaderProgram.attributeLocations.aPosition, 2, gl.FLOAT, false, 0, 0);
-        gl.enableVertexAttribArray(material.shaderProgram.attributeLocations.aPosition);
-
-        gl.bindBuffer(gl.ARRAY_BUFFER, mesh.uvBuffer);
-        // TODO: Remove hard reference to "aUv" name
-        gl.vertexAttribPointer(material.shaderProgram.attributeLocations.aUv, 2, gl.FLOAT, false, 0, 0);
-        gl.enableVertexAttribArray(material.shaderProgram.attributeLocations.aUv);
-
-        const TODO = 6;
-        gl.drawElements(gl.TRIANGLE_STRIP, TODO, gl.UNSIGNED_SHORT, mesh.indexBuffer);
-    }
-
-    setUniform(location, value) {
-        const gl = this.gl;
-
-        switch (value.length) {
-            case 1:
-                gl.uniform1fv(location, value);
-                break;
-            case 2:
-                gl.uniform2fv(location, value);
-                break;
-            case 3:
-                gl.uniform3fv(location, value);
-                break;
-            case 4:
-                gl.uniform4fv(location, value);
-                break;
-            default:
-                console.error(`Invalid uniform length: ${value.length}`);
-        }
     }
 }
 
