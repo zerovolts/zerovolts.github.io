@@ -35,44 +35,48 @@ class BezierApp extends GlApp {
         gl.enable(gl.DEPTH_TEST);
         gl.depthFunc(gl.LEQUAL);
 
-        this.shaderType = "default";
+        const [
+            defaultVertSrc,
+            defaultFragSrc,
+            abberationFragSrc,
+            gaussianFragSrc,
+            sharpenFragSrc,
+            edgeFragSrc,
+            noiseFragSrc,
+            crtFragSrc,
+        ] = shaderSources;
+
+        this.vertSrc = defaultVertSrc;
+        this.fragSrc = defaultFragSrc;
+
         document.getElementById("default").addEventListener("click", () => {
-            this.shaderType = "default";
+            this.fragSrc = defaultFragSrc;
             this.step();
         });
         document.getElementById("abberation").addEventListener("click", () => {
-            this.shaderType = "abberation";
+            this.fragSrc = abberationFragSrc;
             this.step();
         });
         document.getElementById("gaussian").addEventListener("click", () => {
-            this.shaderType = "gaussian";
+            this.fragSrc = gaussianFragSrc;
             this.step();
         });
         document.getElementById("sharpen").addEventListener("click", () => {
-            this.shaderType = "sharpen";
+            this.fragSrc = sharpenFragSrc;
             this.step();
         });
         document.getElementById("edge").addEventListener("click", () => {
-            this.shaderType = "edge";
+            this.fragSrc = edgeFragSrc;
             this.step();
         });
         document.getElementById("noise").addEventListener("click", () => {
-            this.shaderType = "noise";
+            this.fragSrc = noiseFragSrc;
             this.step();
         });
         document.getElementById("crt").addEventListener("click", () => {
-            this.shaderType = "crt";
+            this.fragSrc = crtFragSrc;
             this.step();
         });
-
-        const [defaultVertSrc, defaultFragSrc] = shaderSources;
-        this.shaderProgram = new ShaderProgram(
-            gl,
-            defaultVertSrc,
-            defaultFragSrc,
-            ["aPosition", "aTextureCoord"],
-            ["uSampler", "uDimensions"],
-        );
 
         const positions = new Float32Array([
             -1, -1,
@@ -112,44 +116,12 @@ class BezierApp extends GlApp {
     }
 
     render(gl) {
-        const [
-            vertSrc,
-            defaultFragSrc,
-            abberationFragSrc,
-            gaussianFragSrc,
-            sharpenFragSrc,
-            edgeFragSrc,
-            noiseFragSrc,
-            crtFragSrc,
-        ] = shaderSources;
-
-        let fragSrc = defaultFragSrc;
-        switch (this.shaderType) {
-            case "default":
-                break;
-            case "abberation":
-                fragSrc = abberationFragSrc;
-                break;
-            case "gaussian":
-                fragSrc = gaussianFragSrc;
-                break;
-            case "sharpen":
-                fragSrc = sharpenFragSrc;
-                break;
-            case "edge":
-                fragSrc = edgeFragSrc;
-                break;
-            case "noise":
-                fragSrc = noiseFragSrc;
-                break;
-            case "crt":
-                fragSrc = crtFragSrc;
-                break;
-        }
+        // We're only re-rendering when the shaders change, otherwise we would
+        // not want to do this every render.
         this.shaderProgram = new ShaderProgram(
             gl,
-            vertSrc,
-            fragSrc,
+            this.vertSrc,
+            this.fragSrc,
             ["aPosition", "aTextureCoord"],
             ["uSampler", "uDimensions"],
         );
