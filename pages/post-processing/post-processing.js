@@ -1,5 +1,5 @@
 import { GlApp } from "/shared/gl-app.js"
-import { ShaderProgram } from "/shared/graphics.js";
+import { ShaderProgram, Mesh, Texture, draw } from "/shared/graphics.js";
 
 // Initiate the fetch first to reduce perceived loading.
 let shaderSources = Promise.all([
@@ -78,38 +78,14 @@ class BezierApp extends GlApp {
             this.step();
         });
 
-        const positions = new Float32Array([
-            -1, -1,
-            1, -1,
-            1, 1,
-            -1, 1
-        ]);
-        this.imageBuffer = gl.createBuffer();
-        gl.bindBuffer(gl.ARRAY_BUFFER, this.imageBuffer);
-        gl.bufferData(gl.ARRAY_BUFFER, positions, gl.STATIC_DRAW);
+        this.mesh = new Mesh(
+            gl,
+            [-1, -1, 1, -1, 1, 1, -1, 1],
+            undefined,
+            [0, 1, 2, 2, 3, 0],
+        );
 
-        gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL, true);
-
-        const texture = gl.createTexture();
-        gl.bindTexture(gl.TEXTURE_2D, texture);
-        gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, image);
-        gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE);
-        gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
-        gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.NEAREST);
-        gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.NEAREST);
-
-        this.textureCoordBuffer = gl.createBuffer();
-        gl.bindBuffer(gl.ARRAY_BUFFER, this.textureCoordBuffer);
-        const textureCoords = [
-            0, 0,
-            1, 0,
-            1, 1,
-            0, 1,
-        ];
-        gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(textureCoords), gl.STATIC_DRAW);
-
-        gl.activeTexture(gl.TEXTURE0);
-        gl.bindTexture(gl.TEXTURE_2D, texture);
+        this.texture = new Texture(gl, image);
     }
 
     update(_delta) {
@@ -122,23 +98,18 @@ class BezierApp extends GlApp {
             gl,
             this.vertSrc,
             this.fragSrc,
-            { aPosition: "f", aTextureCoord: "f" },
+            { aPosition: "f", aTexCoord: "f" },
             { uSampler: "i", uDimensions: "f" },
         );
 
         gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
-        gl.useProgram(this.shaderProgram.program);
 
-        gl.uniform1i(this.shaderProgram.uniforms.uSampler.location, 0);
-        gl.uniform2fv(this.shaderProgram.uniforms.uDimensions.location, [this.width, this.height]);
-
-        gl.bindBuffer(gl.ARRAY_BUFFER, this.textureCoordBuffer);
-        gl.vertexAttribPointer(this.shaderProgram.attributes.aTextureCoord.location, 2, gl.FLOAT, false, 0, 0);
-        gl.enableVertexAttribArray(this.shaderProgram.attributes.aTextureCoord.location);
-
-        gl.bindBuffer(gl.ARRAY_BUFFER, this.imageBuffer);
-        gl.vertexAttribPointer(this.shaderProgram.attributes.aPosition.location, 2, gl.FLOAT, false, 0, 0);
-        gl.enableVertexAttribArray(this.shaderProgram.attributes.aPosition.location);
-        gl.drawArrays(gl.TRIANGLE_FAN, 0, 4);
+        draw(
+            gl,
+            this.mesh,
+            this.shaderProgram,
+            [this.texture],
+            { uDimensions: [this.width, this.height], uSampler: [0] }
+        );
     }
 }
