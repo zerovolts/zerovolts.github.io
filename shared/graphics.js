@@ -10,36 +10,52 @@ export function draw(gl, mesh, shaderProgram, uniforms) {
     gl.useProgram(shaderProgram.program);
 
     for (const [key, value] of Object.entries(uniforms)) {
-        const location = shaderProgram.uniformLocations[key];
-        setUniform(gl, location, value);
+        const { location, type } = shaderProgram.uniforms[key];
+        setUniform(gl, location, type, value);
     }
 
     gl.bindBuffer(gl.ARRAY_BUFFER, mesh.positionBuffer);
     // TODO: Remove hard reference to "aPosition" name
-    gl.vertexAttribPointer(shaderProgram.attributeLocations.aPosition, 2, gl.FLOAT, false, 0, 0);
-    gl.enableVertexAttribArray(shaderProgram.attributeLocations.aPosition);
+    gl.vertexAttribPointer(shaderProgram.attributes.aPosition.location, 2, gl.FLOAT, false, 0, 0);
+    gl.enableVertexAttribArray(shaderProgram.attributes.aPosition.location);
 
     gl.bindBuffer(gl.ARRAY_BUFFER, mesh.uvBuffer);
     // TODO: Remove hard reference to "aUv" name
-    gl.vertexAttribPointer(shaderProgram.attributeLocations.aUv, 2, gl.FLOAT, false, 0, 0);
-    gl.enableVertexAttribArray(shaderProgram.attributeLocations.aUv);
+    gl.vertexAttribPointer(shaderProgram.attributes.aUv.location, 2, gl.FLOAT, false, 0, 0);
+    gl.enableVertexAttribArray(shaderProgram.attributes.aUv.location);
 
     gl.drawElements(gl.TRIANGLE_STRIP, mesh.indexCount, gl.UNSIGNED_SHORT, mesh.indexBuffer);
 }
 
-function setUniform(gl, location, value) {
+function setUniform(gl, location, type, value) {
     switch (value.length) {
         case 1:
-            gl.uniform1fv(location, value);
+            if (type === "f") {
+                gl.uniform1fv(location, value);
+            } else if (type === "i") {
+                gl.uniform1iv(location, value);
+            }
             break;
         case 2:
-            gl.uniform2fv(location, value);
+            if (type === "f") {
+                gl.uniform2fv(location, value);
+            } else if (type === "i") {
+                gl.uniform2iv(location, value);
+            }
             break;
         case 3:
-            gl.uniform3fv(location, value);
+            if (type === "f") {
+                gl.uniform3fv(location, value);
+            } else if (type === "i") {
+                gl.uniform3iv(location, value);
+            }
             break;
         case 4:
-            gl.uniform4fv(location, value);
+            if (type === "f") {
+                gl.uniform4fv(location, value);
+            } else if (type === "i") {
+                gl.uniform4iv(location, value);
+            }
             break;
         default:
             console.error(`Invalid uniform length: ${value.length}`);
@@ -65,7 +81,7 @@ export class Mesh {
 }
 
 export class ShaderProgram {
-    constructor(gl, vertSource, fragSource, attributeKeys, uniformKeys) {
+    constructor(gl, vertSource, fragSource, attributeInfo, uniformInfo) {
         const vertShader = gl.createShader(gl.VERTEX_SHADER);
         gl.shaderSource(vertShader, vertSource);
         gl.compileShader(vertShader);
@@ -79,14 +95,20 @@ export class ShaderProgram {
         gl.attachShader(this.program, fragShader);
         gl.linkProgram(this.program);
 
-        this.attributeLocations = {};
-        for (const key of attributeKeys) {
-            this.attributeLocations[key] = gl.getAttribLocation(this.program, key);
+        this.attributes = {};
+        for (const [key, value] of Object.entries(attributeInfo)) {
+            this.attributes[key] = {
+                location: gl.getAttribLocation(this.program, key),
+                type: value,
+            };
         }
 
-        this.uniformLocations = {};
-        for (const key of uniformKeys) {
-            this.uniformLocations[key] = gl.getUniformLocation(this.program, key);
+        this.uniforms = {};
+        for (const [key, value] of Object.entries(uniformInfo)) {
+            this.uniforms[key] = {
+                location: gl.getUniformLocation(this.program, key),
+                type: value,
+            };
         }
     }
 }

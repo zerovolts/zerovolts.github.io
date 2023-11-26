@@ -122,23 +122,23 @@ class BezierApp extends GlApp {
             gl,
             this.vertSrc,
             this.fragSrc,
-            ["aPosition", "aTextureCoord"],
-            ["uSampler", "uDimensions"],
+            { aPosition: "f", aTextureCoord: "f" },
+            { uSampler: "i", uDimensions: "f" },
         );
 
         gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
         gl.useProgram(this.shaderProgram.program);
 
-        gl.uniform1i(this.shaderProgram.uniformLocations.uSampler, 0);
-        gl.uniform2fv(this.shaderProgram.uniformLocations.uDimensions, [this.width, this.height]);
+        gl.uniform1i(this.shaderProgram.uniforms.uSampler.location, 0);
+        gl.uniform2fv(this.shaderProgram.uniforms.uDimensions.location, [this.width, this.height]);
 
         gl.bindBuffer(gl.ARRAY_BUFFER, this.textureCoordBuffer);
-        gl.vertexAttribPointer(this.shaderProgram.attributeLocations.aTextureCoord, 2, gl.FLOAT, false, 0, 0);
-        gl.enableVertexAttribArray(this.shaderProgram.attributeLocations.aTextureCoord);
+        gl.vertexAttribPointer(this.shaderProgram.attributes.aTextureCoord.location, 2, gl.FLOAT, false, 0, 0);
+        gl.enableVertexAttribArray(this.shaderProgram.attributes.aTextureCoord.location);
 
         gl.bindBuffer(gl.ARRAY_BUFFER, this.imageBuffer);
-        gl.vertexAttribPointer(this.shaderProgram.attributeLocations.aPosition, 2, gl.FLOAT, false, 0, 0);
-        gl.enableVertexAttribArray(this.shaderProgram.attributeLocations.aPosition);
+        gl.vertexAttribPointer(this.shaderProgram.attributes.aPosition.location, 2, gl.FLOAT, false, 0, 0);
+        gl.enableVertexAttribArray(this.shaderProgram.attributes.aPosition.location);
         gl.drawArrays(gl.TRIANGLE_FAN, 0, 4);
     }
 }

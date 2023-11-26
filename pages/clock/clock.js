@@ -36,8 +36,8 @@ class BezierApp extends GlApp {
             gl,
             vertexSource,
             fragmentSource,
-            ["position"],
-            ["color", "rotation"],
+            { position: "f" },
+            { color: "f", rotation: "f" },
         );
 
         this.shouldRender = true;
@@ -184,85 +184,85 @@ class BezierApp extends GlApp {
 
         // Border
         {
-            gl.uniform4fv(this.shaderProgram.uniformLocations.color, COLOR_BLACK);
-            gl.uniformMatrix4fv(this.shaderProgram.uniformLocations.rotation, false, MAT4_IDENTITY);
+            gl.uniform4fv(this.shaderProgram.uniforms.color.location, COLOR_BLACK);
+            gl.uniformMatrix4fv(this.shaderProgram.uniforms.rotation.location, false, MAT4_IDENTITY);
             gl.bindBuffer(gl.ARRAY_BUFFER, this.border.positionBuffer);
-            gl.vertexAttribPointer(this.shaderProgram.attributeLocations.position, 2, gl.FLOAT, false, 0, 0);
-            gl.enableVertexAttribArray(this.shaderProgram.attributeLocations.position);
+            gl.vertexAttribPointer(this.shaderProgram.attributes.position.location, 2, gl.FLOAT, false, 0, 0);
+            gl.enableVertexAttribArray(this.shaderProgram.attributes.position.location);
             gl.drawArrays(gl.TRIANGLE_FAN, 0, this.border.vertexCount);
         }
 
         // Face
         {
-            gl.uniform4fv(this.shaderProgram.uniformLocations.color, COLOR_WHITE);
-            gl.uniformMatrix4fv(this.shaderProgram.uniformLocations.rotation, false, MAT4_IDENTITY);
+            gl.uniform4fv(this.shaderProgram.uniforms.color.location, COLOR_WHITE);
+            gl.uniformMatrix4fv(this.shaderProgram.uniforms.rotation.location, false, MAT4_IDENTITY);
             gl.bindBuffer(gl.ARRAY_BUFFER, this.face.positionBuffer);
-            gl.vertexAttribPointer(this.shaderProgram.attributeLocations.position, 2, gl.FLOAT, false, 0, 0);
-            gl.enableVertexAttribArray(this.shaderProgram.attributeLocations.position);
+            gl.vertexAttribPointer(this.shaderProgram.attributes.position.location, 2, gl.FLOAT, false, 0, 0);
+            gl.enableVertexAttribArray(this.shaderProgram.attributes.position.location);
             gl.drawArrays(gl.TRIANGLE_FAN, 0, this.face.vertexCount);
         }
 
         // Marks
         for (const mark of this.marks) {
-            gl.uniform4fv(this.shaderProgram.uniformLocations.color, COLOR_BLACK);
-            gl.uniformMatrix4fv(this.shaderProgram.uniformLocations.rotation, false, MAT4_IDENTITY);
+            gl.uniform4fv(this.shaderProgram.uniforms.color.location, COLOR_BLACK);
+            gl.uniformMatrix4fv(this.shaderProgram.uniforms.rotation.location, false, MAT4_IDENTITY);
             gl.bindBuffer(gl.ARRAY_BUFFER, mark.positionBuffer);
-            gl.vertexAttribPointer(this.shaderProgram.attributeLocations.position, 2, gl.FLOAT, false, 0, 0);
-            gl.enableVertexAttribArray(this.shaderProgram.attributeLocations.position);
+            gl.vertexAttribPointer(this.shaderProgram.attributes.position.location, 2, gl.FLOAT, false, 0, 0);
+            gl.enableVertexAttribArray(this.shaderProgram.attributes.position.location);
             gl.drawArrays(gl.TRIANGLE_FAN, 0, mark.vertexCount);
         }
 
         // Hour Hand
         {
             const rotationMatrix = new Float32Array(Mat4.fromRotation2D(this.hourHandRadians))
-            gl.uniform4fv(this.shaderProgram.uniformLocations.color, COLOR_BLACK);
-            gl.uniformMatrix4fv(this.shaderProgram.uniformLocations.rotation, false, rotationMatrix);
+            gl.uniform4fv(this.shaderProgram.uniforms.color.location, COLOR_BLACK);
+            gl.uniformMatrix4fv(this.shaderProgram.uniforms.rotation.location, false, rotationMatrix);
             gl.bindBuffer(gl.ARRAY_BUFFER, this.hourHand.positionBuffer);
-            gl.vertexAttribPointer(this.shaderProgram.attributeLocations.position, 2, gl.FLOAT, false, 0, 0);
-            gl.enableVertexAttribArray(this.shaderProgram.attributeLocations.position);
+            gl.vertexAttribPointer(this.shaderProgram.attributes.position.location, 2, gl.FLOAT, false, 0, 0);
+            gl.enableVertexAttribArray(this.shaderProgram.attributes.position.location);
             gl.drawArrays(gl.TRIANGLE_FAN, 0, this.hourHand.vertexCount);
         }
 
         // Minute Hand
         {
             const rotationMatrix = new Float32Array(Mat4.fromRotation2D(this.minuteHandRadians))
-            gl.uniform4fv(this.shaderProgram.uniformLocations.color, COLOR_BLACK);
-            gl.uniformMatrix4fv(this.shaderProgram.uniformLocations.rotation, false, rotationMatrix);
+            gl.uniform4fv(this.shaderProgram.uniforms.color.location, COLOR_BLACK);
+            gl.uniformMatrix4fv(this.shaderProgram.uniforms.rotation.location, false, rotationMatrix);
             gl.bindBuffer(gl.ARRAY_BUFFER, this.minuteHand.positionBuffer);
-            gl.vertexAttribPointer(this.shaderProgram.attributeLocations.position, 2, gl.FLOAT, false, 0, 0);
-            gl.enableVertexAttribArray(this.shaderProgram.attributeLocations.position);
+            gl.vertexAttribPointer(this.shaderProgram.attributes.position.location, 2, gl.FLOAT, false, 0, 0);
+            gl.enableVertexAttribArray(this.shaderProgram.attributes.position.location);
             gl.drawArrays(gl.TRIANGLE_FAN, 0, this.minuteHand.vertexCount);
         }
 
         // Second Hand
         {
             const rotationMatrix = new Float32Array(Mat4.fromRotation2D(this.secondHandRadians))
-            gl.uniform4fv(this.shaderProgram.uniformLocations.color, COLOR_ACCENT);
-            gl.uniformMatrix4fv(this.shaderProgram.uniformLocations.rotation, false, rotationMatrix);
+            gl.uniform4fv(this.shaderProgram.uniforms.color.location, COLOR_ACCENT);
+            gl.uniformMatrix4fv(this.shaderProgram.uniforms.rotation.location, false, rotationMatrix);
             gl.bindBuffer(gl.ARRAY_BUFFER, this.secondHand.positionBuffer);
-            gl.vertexAttribPointer(this.shaderProgram.attributeLocations.position, 2, gl.FLOAT, false, 0, 0);
-            gl.enableVertexAttribArray(this.shaderProgram.attributeLocations.position);
+            gl.vertexAttribPointer(this.shaderProgram.attributes.position.location, 2, gl.FLOAT, false, 0, 0);
+            gl.enableVertexAttribArray(this.shaderProgram.attributes.position.location);
             gl.drawArrays(gl.TRIANGLE_FAN, 0, this.secondHand.vertexCount);
         }
 
         // Second Hand Back
         {
             const rotationMatrix = new Float32Array(Mat4.fromRotation2D(this.secondHandRadians))
-            gl.uniform4fv(this.shaderProgram.uniformLocations.color, COLOR_ACCENT);
-            gl.uniformMatrix4fv(this.shaderProgram.uniformLocations.rotation, false, rotationMatrix);
+            gl.uniform4fv(this.shaderProgram.uniforms.color.location, COLOR_ACCENT);
+            gl.uniformMatrix4fv(this.shaderProgram.uniforms.rotation.location, false, rotationMatrix);
             gl.bindBuffer(gl.ARRAY_BUFFER, this.secondHandBack.positionBuffer);
-            gl.vertexAttribPointer(this.shaderProgram.attributeLocations.position, 2, gl.FLOAT, false, 0, 0);
-            gl.enableVertexAttribArray(this.shaderProgram.attributeLocations.position);
+            gl.vertexAttribPointer(this.shaderProgram.attributes.position.location, 2, gl.FLOAT, false, 0, 0);
+            gl.enableVertexAttribArray(this.shaderProgram.attributes.position.location);
             gl.drawArrays(gl.TRIANGLE_FAN, 0, this.secondHandBack.vertexCount);
         }
 
         // Hand Cover
         {
-            gl.uniform4fv(this.shaderProgram.uniformLocations.color, COLOR_BLACK);
-            gl.uniformMatrix4fv(this.shaderProgram.uniformLocations.rotation, false, MAT4_IDENTITY);
+            gl.uniform4fv(this.shaderProgram.uniforms.color.location, COLOR_BLACK);
+            gl.uniformMatrix4fv(this.shaderProgram.uniforms.rotation.location, false, MAT4_IDENTITY);
             gl.bindBuffer(gl.ARRAY_BUFFER, this.handCover.positionBuffer);
-            gl.vertexAttribPointer(this.shaderProgram.attributeLocations.position, 2, gl.FLOAT, false, 0, 0);
-            gl.enableVertexAttribArray(this.shaderProgram.attributeLocations.position);
+            gl.vertexAttribPointer(this.shaderProgram.attributes.position.location, 2, gl.FLOAT, false, 0, 0);
+            gl.enableVertexAttribArray(this.shaderProgram.attributes.position.location);
             gl.drawArrays(gl.TRIANGLE_FAN, 0, this.handCover.vertexCount);
         }
     }

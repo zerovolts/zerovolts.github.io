@@ -24,8 +24,8 @@ class BezierApp extends GlApp {
             gl,
             vertexSource,
             fragmentSource,
-            ["aPosition", "aColor"],
-            ["uDimensions"],
+            { aPosition: "f", aColor: "f" },
+            { uDimensions: "f" },
         );
 
         {
@@ -60,15 +60,15 @@ class BezierApp extends GlApp {
         gl.useProgram(this.shaderProgram.program);
 
         {
-            gl.uniform2fv(this.shaderProgram.uniformLocations.uDimensions, [this.width, this.height]);
+            gl.uniform2fv(this.shaderProgram.uniforms.uDimensions.location, [this.width, this.height]);
 
             gl.bindBuffer(gl.ARRAY_BUFFER, this.triangle.positionBuffer);
-            gl.vertexAttribPointer(this.shaderProgram.attributeLocations.aPosition, 2, gl.FLOAT, false, 0, 0);
-            gl.enableVertexAttribArray(this.shaderProgram.attributeLocations.aPosition);
+            gl.vertexAttribPointer(this.shaderProgram.attributes.aPosition.location, 2, gl.FLOAT, false, 0, 0);
+            gl.enableVertexAttribArray(this.shaderProgram.attributes.aPosition.location);
 
             gl.bindBuffer(gl.ARRAY_BUFFER, this.triangle.colorBuffer);
-            gl.vertexAttribPointer(this.shaderProgram.attributeLocations.aColor, 4, gl.FLOAT, false, 0, 0);
-            gl.enableVertexAttribArray(this.shaderProgram.attributeLocations.aColor);
+            gl.vertexAttribPointer(this.shaderProgram.attributes.aColor.location, 4, gl.FLOAT, false, 0, 0);
+            gl.enableVertexAttribArray(this.shaderProgram.attributes.aColor.location);
 
             gl.drawArrays(gl.TRIANGLE_FAN, 0, this.triangle.vertexCount);
         }

@@ -36,8 +36,8 @@ class BezierApp extends GlApp {
             gl,
             vertexSource,
             fragmentSource,
-            ["position"],
-            ["dimensions"]
+            { position: "f" },
+            { dimensions: "f" }
         );
     }
 
@@ -66,7 +66,7 @@ class BezierApp extends GlApp {
     render(gl) {
         gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
         gl.useProgram(this.shaderProgram.program);
-        gl.uniform2fv(this.shaderProgram.uniformLocations.dimensions, [this.width, this.height]);
+        gl.uniform2fv(this.shaderProgram.uniforms.dimensions.location, [this.width, this.height]);
 
         for (const path of this.paths) {
             const positions = new Float32Array(extrudeLine(path, 4).flat());
@@ -75,8 +75,8 @@ class BezierApp extends GlApp {
             gl.bindBuffer(gl.ARRAY_BUFFER, positionBuffer);
             gl.bufferData(gl.ARRAY_BUFFER, positions, gl.STATIC_DRAW);
 
-            gl.vertexAttribPointer(this.shaderProgram.attributeLocations.position, 3, gl.FLOAT, false, 0, 0);
-            gl.enableVertexAttribArray(this.shaderProgram.attributeLocations.position);
+            gl.vertexAttribPointer(this.shaderProgram.attributes.position.location, 3, gl.FLOAT, false, 0, 0);
+            gl.enableVertexAttribArray(this.shaderProgram.attributes.position.location);
 
             gl.drawArrays(gl.TRIANGLE_STRIP, 0, positions.length / 3);
         }
