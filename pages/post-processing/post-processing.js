@@ -1,5 +1,5 @@
 import { GlApp } from "/shared/gl-app.js"
-import { createShaderProgram, getAttributeLocations, getUniformLocations } from "/shared/graphics.js";
+import { ShaderProgram } from "/shared/graphics.js";
 
 // Initiate the fetch first to reduce perceived loading.
 let shaderSources = Promise.all([
@@ -65,10 +65,14 @@ class BezierApp extends GlApp {
             this.step();
         });
 
-        const [vertSrc, defaultFragSrc, abberationFragSrc] = shaderSources;
-        this.shaderProgram = createShaderProgram(gl, vertSrc, defaultFragSrc);
-        this.attributeLocations = getAttributeLocations(gl, this.shaderProgram, ["aPosition", "aTextureCoord"]);
-        this.uniformLocations = getUniformLocations(gl, this.shaderProgram, ["uSampler", "uDimensions"]);
+        const [defaultVertSrc, defaultFragSrc] = shaderSources;
+        this.shaderProgram = new ShaderProgram(
+            gl,
+            defaultVertSrc,
+            defaultFragSrc,
+            ["aPosition", "aTextureCoord"],
+            ["uSampler", "uDimensions"],
+        );
 
         const positions = new Float32Array([
             -1, -1,
@@ -119,45 +123,50 @@ class BezierApp extends GlApp {
             crtFragSrc,
         ] = shaderSources;
 
+        let fragSrc = defaultFragSrc;
         switch (this.shaderType) {
             case "default":
-                this.shaderProgram = createShaderProgram(gl, vertSrc, defaultFragSrc);
                 break;
             case "abberation":
-                this.shaderProgram = createShaderProgram(gl, vertSrc, abberationFragSrc);
+                fragSrc = abberationFragSrc;
                 break;
             case "gaussian":
-                this.shaderProgram = createShaderProgram(gl, vertSrc, gaussianFragSrc);
+                fragSrc = gaussianFragSrc;
                 break;
             case "sharpen":
-                this.shaderProgram = createShaderProgram(gl, vertSrc, sharpenFragSrc);
+                fragSrc = sharpenFragSrc;
                 break;
             case "edge":
-                this.shaderProgram = createShaderProgram(gl, vertSrc, edgeFragSrc);
+                fragSrc = edgeFragSrc;
                 break;
             case "noise":
-                this.shaderProgram = createShaderProgram(gl, vertSrc, noiseFragSrc);
+                fragSrc = noiseFragSrc;
                 break;
             case "crt":
-                this.shaderProgram = createShaderProgram(gl, vertSrc, crtFragSrc);
+                fragSrc = crtFragSrc;
                 break;
         }
-        this.attributeLocations = getAttributeLocations(gl, this.shaderProgram, ["aPosition", "aTextureCoord"]);
-        this.uniformLocations = getUniformLocations(gl, this.shaderProgram, ["uSampler", "uDimensions"]);
+        this.shaderProgram = new ShaderProgram(
+            gl,
+            vertSrc,
+            fragSrc,
+            ["aPosition", "aTextureCoord"],
+            ["uSampler", "uDimensions"],
+        );
 
         gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
-        gl.useProgram(this.shaderProgram);
+        gl.useProgram(this.shaderProgram.program);
 
-        gl.uniform1i(this.uniformLocations.uSampler, 0);
-        gl.uniform2fv(this.uniformLocations.uDimensions, [this.width, this.height]);
+        gl.uniform1i(this.shaderProgram.uniformLocations.uSampler, 0);
+        gl.uniform2fv(this.shaderProgram.uniformLocations.uDimensions, [this.width, this.height]);
 
         gl.bindBuffer(gl.ARRAY_BUFFER, this.textureCoordBuffer);
-        gl.vertexAttribPointer(this.attributeLocations.aTextureCoord, 2, gl.FLOAT, false, 0, 0);
-        gl.enableVertexAttribArray(this.attributeLocations.aTextureCoord);
+        gl.vertexAttribPointer(this.shaderProgram.attributeLocations.aTextureCoord, 2, gl.FLOAT, false, 0, 0);
+        gl.enableVertexAttribArray(this.shaderProgram.attributeLocations.aTextureCoord);
 
         gl.bindBuffer(gl.ARRAY_BUFFER, this.imageBuffer);
-        gl.vertexAttribPointer(this.attributeLocations.aPosition, 2, gl.FLOAT, false, 0, 0);
-        gl.enableVertexAttribArray(this.attributeLocations.aPosition);
+        gl.vertexAttribPointer(this.shaderProgram.attributeLocations.aPosition, 2, gl.FLOAT, false, 0, 0);
+        gl.enableVertexAttribArray(this.shaderProgram.attributeLocations.aPosition);
         gl.drawArrays(gl.TRIANGLE_FAN, 0, 4);
     }
 }

@@ -1,5 +1,5 @@
 import { GlApp } from "../../shared/gl-app.js"
-import { createShaderProgram, getAttributeLocations, getUniformLocations } from "/shared/graphics.js";
+import { ShaderProgram } from "/shared/graphics.js";
 import * as Vec2 from "/shared/vec2.js";
 import * as Vec3 from "/shared/vec3.js";
 
@@ -32,9 +32,13 @@ class BezierApp extends GlApp {
         gl.blendFunc(gl.SRC_ALPHA, gl.ONE_MINUS_SRC_ALPHA);
 
         const [vertexSource, fragmentSource] = shaderSources;
-        this.shaderProgram = createShaderProgram(gl, vertexSource, fragmentSource);
-        this.attributeLocations = getAttributeLocations(gl, this.shaderProgram, ["position"]);
-        this.uniformLocations = getUniformLocations(gl, this.shaderProgram, ["dimensions"]);
+        this.shaderProgram = new ShaderProgram(
+            gl,
+            vertexSource,
+            fragmentSource,
+            ["position"],
+            ["dimensions"]
+        );
     }
 
     update(_delta) {
@@ -61,8 +65,8 @@ class BezierApp extends GlApp {
 
     render(gl) {
         gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
-        gl.useProgram(this.shaderProgram);
-        gl.uniform2fv(this.uniformLocations.dimensions, [this.width, this.height]);
+        gl.useProgram(this.shaderProgram.program);
+        gl.uniform2fv(this.shaderProgram.uniformLocations.dimensions, [this.width, this.height]);
 
         for (const path of this.paths) {
             const positions = new Float32Array(extrudeLine(path, 4).flat());
@@ -71,8 +75,8 @@ class BezierApp extends GlApp {
             gl.bindBuffer(gl.ARRAY_BUFFER, positionBuffer);
             gl.bufferData(gl.ARRAY_BUFFER, positions, gl.STATIC_DRAW);
 
-            gl.vertexAttribPointer(this.attributeLocations.position, 3, gl.FLOAT, false, 0, 0);
-            gl.enableVertexAttribArray(this.attributeLocations.position);
+            gl.vertexAttribPointer(this.shaderProgram.attributeLocations.position, 3, gl.FLOAT, false, 0, 0);
+            gl.enableVertexAttribArray(this.shaderProgram.attributeLocations.position);
 
             gl.drawArrays(gl.TRIANGLE_STRIP, 0, positions.length / 3);
         }

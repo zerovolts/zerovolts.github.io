@@ -1,5 +1,5 @@
 import { GlApp } from "/shared/gl-app.js"
-import { createShaderProgram, getAttributeLocations, getUniformLocations } from "/shared/graphics.js";
+import { ShaderProgram } from "/shared/graphics.js";
 
 // Initiate the fetch first to reduce perceived loading.
 let shaderSources = Promise.all([
@@ -20,9 +20,13 @@ class BezierApp extends GlApp {
         gl.clearColor(0.1, 0.1, 0.1, 1.0);
 
         const [vertexSource, fragmentSource] = shaderSources;
-        this.shaderProgram = createShaderProgram(gl, vertexSource, fragmentSource);
-        this.attributeLocations = getAttributeLocations(gl, this.shaderProgram, ["aPosition", "aColor"]);
-        this.uniformLocations = getUniformLocations(gl, this.shaderProgram, ["uDimensions"]);
+        this.shaderProgram = new ShaderProgram(
+            gl,
+            vertexSource,
+            fragmentSource,
+            ["aPosition", "aColor"],
+            ["uDimensions"],
+        );
 
         {
             this.triangle = {
@@ -53,18 +57,18 @@ class BezierApp extends GlApp {
 
     render(gl) {
         gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
-        gl.useProgram(this.shaderProgram);
+        gl.useProgram(this.shaderProgram.program);
 
         {
-            gl.uniform2fv(this.uniformLocations.uDimensions, [this.width, this.height]);
+            gl.uniform2fv(this.shaderProgram.uniformLocations.uDimensions, [this.width, this.height]);
 
             gl.bindBuffer(gl.ARRAY_BUFFER, this.triangle.positionBuffer);
-            gl.vertexAttribPointer(this.attributeLocations.aPosition, 2, gl.FLOAT, false, 0, 0);
-            gl.enableVertexAttribArray(this.attributeLocations.aPosition);
+            gl.vertexAttribPointer(this.shaderProgram.attributeLocations.aPosition, 2, gl.FLOAT, false, 0, 0);
+            gl.enableVertexAttribArray(this.shaderProgram.attributeLocations.aPosition);
 
             gl.bindBuffer(gl.ARRAY_BUFFER, this.triangle.colorBuffer);
-            gl.vertexAttribPointer(this.attributeLocations.aColor, 4, gl.FLOAT, false, 0, 0);
-            gl.enableVertexAttribArray(this.attributeLocations.aColor);
+            gl.vertexAttribPointer(this.shaderProgram.attributeLocations.aColor, 4, gl.FLOAT, false, 0, 0);
+            gl.enableVertexAttribArray(this.shaderProgram.attributeLocations.aColor);
 
             gl.drawArrays(gl.TRIANGLE_FAN, 0, this.triangle.vertexCount);
         }
