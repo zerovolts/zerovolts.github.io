@@ -24,8 +24,7 @@ export function draw(gl, mesh, shaderProgram, uniforms) {
     gl.vertexAttribPointer(shaderProgram.attributeLocations.aUv, 2, gl.FLOAT, false, 0, 0);
     gl.enableVertexAttribArray(shaderProgram.attributeLocations.aUv);
 
-    const TODO = 6;
-    gl.drawElements(gl.TRIANGLE_STRIP, TODO, gl.UNSIGNED_SHORT, mesh.indexBuffer);
+    gl.drawElements(gl.TRIANGLE_STRIP, mesh.indexCount, gl.UNSIGNED_SHORT, mesh.indexBuffer);
 }
 
 function setUniform(gl, location, value) {
@@ -60,6 +59,8 @@ export class Mesh {
         this.indexBuffer = gl.createBuffer();
         gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, this.indexBuffer);
         gl.bufferData(gl.ELEMENT_ARRAY_BUFFER, new Uint16Array(indices), gl.STATIC_DRAW);
+
+        this.indexCount = indices.length;
     }
 }
 
