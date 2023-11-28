@@ -11,6 +11,7 @@ let shaderSources = Promise.all([
     fetch("/pages/post-processing/edge.frag").then(res => res.text()),
     fetch("/pages/post-processing/noise.frag").then(res => res.text()),
     fetch("/pages/post-processing/crt.frag").then(res => res.text()),
+    fetch("/pages/post-processing/tiles.frag").then(res => res.text()),
 ]);
 
 const image = new Image();
@@ -44,6 +45,7 @@ class BezierApp extends GlApp {
             edgeFragSrc,
             noiseFragSrc,
             crtFragSrc,
+            tilesFragSrc,
         ] = shaderSources;
 
         this.vertSrc = defaultVertSrc;
@@ -75,6 +77,10 @@ class BezierApp extends GlApp {
         });
         document.getElementById("crt").addEventListener("click", () => {
             this.fragSrc = crtFragSrc;
+            this.step();
+        });
+        document.getElementById("tiles").addEventListener("click", () => {
+            this.fragSrc = tilesFragSrc;
             this.step();
         });
 
