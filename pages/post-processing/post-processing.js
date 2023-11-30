@@ -14,6 +14,17 @@ let shaderSources = Promise.all([
     fetch("/pages/post-processing/tiles.frag").then(res => res.text()),
 ]);
 
+const buttonIds = [
+    "default",
+    "abberation",
+    "gaussian",
+    "sharpen",
+    "edge",
+    "noise",
+    "crt",
+    "tiles",
+];
+
 const image = new Image();
 
 document.addEventListener("DOMContentLoaded", async () => {
@@ -36,53 +47,15 @@ class BezierApp extends GlApp {
         gl.enable(gl.DEPTH_TEST);
         gl.depthFunc(gl.LEQUAL);
 
-        const [
-            defaultVertSrc,
-            defaultFragSrc,
-            abberationFragSrc,
-            gaussianFragSrc,
-            sharpenFragSrc,
-            edgeFragSrc,
-            noiseFragSrc,
-            crtFragSrc,
-            tilesFragSrc,
-        ] = shaderSources;
+        this.vertSrc = shaderSources[0];
+        this.fragSrc = shaderSources[1];
 
-        this.vertSrc = defaultVertSrc;
-        this.fragSrc = defaultFragSrc;
-
-        document.getElementById("default").addEventListener("click", () => {
-            this.fragSrc = defaultFragSrc;
-            this.step();
-        });
-        document.getElementById("abberation").addEventListener("click", () => {
-            this.fragSrc = abberationFragSrc;
-            this.step();
-        });
-        document.getElementById("gaussian").addEventListener("click", () => {
-            this.fragSrc = gaussianFragSrc;
-            this.step();
-        });
-        document.getElementById("sharpen").addEventListener("click", () => {
-            this.fragSrc = sharpenFragSrc;
-            this.step();
-        });
-        document.getElementById("edge").addEventListener("click", () => {
-            this.fragSrc = edgeFragSrc;
-            this.step();
-        });
-        document.getElementById("noise").addEventListener("click", () => {
-            this.fragSrc = noiseFragSrc;
-            this.step();
-        });
-        document.getElementById("crt").addEventListener("click", () => {
-            this.fragSrc = crtFragSrc;
-            this.step();
-        });
-        document.getElementById("tiles").addEventListener("click", () => {
-            this.fragSrc = tilesFragSrc;
-            this.step();
-        });
+        for (let i = 0; i < buttonIds.length; i++) {
+            document.getElementById(buttonIds[i]).addEventListener("click", () => {
+                this.fragSrc = shaderSources[i + 1];
+                this.step();
+            });
+        }
 
         this.mesh = new Mesh(
             gl,
