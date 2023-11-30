@@ -1,5 +1,6 @@
 import { GlApp } from "/shared/gl-app.js"
 import { ShaderProgram, Mesh, Texture, draw } from "/shared/graphics.js";
+import { loadImage } from "/shared/util.js";
 
 // Initiate the fetch first to reduce perceived loading.
 let shaderSources = Promise.all([
@@ -25,18 +26,15 @@ const buttonIds = [
     "tiles",
 ];
 
-const image = new Image();
+let image = loadImage("/assets/images/gallery/pumpkin.png");
 
 document.addEventListener("DOMContentLoaded", async () => {
     shaderSources = await shaderSources;
+    image = await image;
 
     const canvas = document.getElementById("main-canvas");
-
-    image.addEventListener("load", () => {
-        const app = new BezierApp(canvas);
-        app.step();
-    });
-    image.src = "/assets/images/gallery/pumpkin.png";
+    const app = new BezierApp(canvas);
+    app.step();
 });
 
 class BezierApp extends GlApp {
