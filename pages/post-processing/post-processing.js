@@ -114,7 +114,7 @@ class BezierApp extends GlApp {
             this.mesh,
             this.shaderProgram,
             [this.texture],
-            { uDimensions: [this.width, this.height], uSampler: [0] }
+            { uDimensions: [this.width, this.height], uSampler: 0 }
         );
     }
 }

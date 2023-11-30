@@ -33,10 +33,18 @@ function setUniform(gl, location, typeStr, value) {
     const { isMatrix, length, type } = parseType(typeStr);
     switch (length) {
         case 1:
-            if (type === "f") {
-                gl.uniform1fv(location, value);
-            } else if (type === "i") {
-                gl.uniform1iv(location, value);
+            if (Array.isArray(value)) {
+                if (type === "f") {
+                    gl.uniform1fv(location, value);
+                } else if (type === "i") {
+                    gl.uniform1iv(location, value);
+                }
+            } else {
+                if (type === "f") {
+                    gl.uniform1f(location, value);
+                } else if (type === "i") {
+                    gl.uniform1i(location, value);
+                }
             }
             break;
         case 2:
