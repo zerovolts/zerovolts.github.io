@@ -87,15 +87,14 @@ class BezierApp extends GlApp {
         this.mesh = new Mesh(
             gl,
             [-1, -1, 1, -1, 1, 1, -1, 1],
-            undefined,
+            [0, 0, 1, 0, 1, 1, 0, 1],
             [0, 1, 2, 2, 3, 0],
         );
 
         this.texture = new Texture(gl, image);
     }
 
-    update(_delta) {
-    }
+    update(_delta) {}
 
     render(gl) {
         // We're only re-rendering when the shaders change, otherwise we would
@@ -104,8 +103,8 @@ class BezierApp extends GlApp {
             gl,
             this.vertSrc,
             this.fragSrc,
-            { aPosition: "f", aTexCoord: "f" },
-            { uSampler: "i", uDimensions: "f" },
+            { aPosition: "2f", aUv: "2f" },
+            { uSampler: "1i", uDimensions: "2f" },
         );
 
         gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);

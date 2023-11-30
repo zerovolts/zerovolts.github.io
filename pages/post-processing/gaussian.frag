@@ -2,7 +2,7 @@
 
 precision mediump float;
 
-in highp vec2 vTextureCoord;
+in highp vec2 vUv;
 
 out vec4 fragColor;
 
@@ -15,7 +15,7 @@ void main() {
         2.0, 4.0, 2.0,
         1.0, 2.0, 1.0
     );
-    vec2 textureCoordPx = vTextureCoord * uDimensions;
+    vec2 textureCoordPx = vUv * uDimensions;
     vec4 color = vec4(0.0);
     for (int y = -1; y < 2; y++) {
         for (int x = -1; x < 2; x++) {

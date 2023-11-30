@@ -36,8 +36,8 @@ class BezierApp extends GlApp {
             gl,
             vertexSource,
             fragmentSource,
-            { position: "f" },
-            { color: "f", rotation: "f" },
+            { position: "2f" },
+            { color: "4f", rotation: "m4f" },
         );
 
         this.shouldRender = true;

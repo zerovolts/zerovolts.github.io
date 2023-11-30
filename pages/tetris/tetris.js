@@ -26,7 +26,7 @@ class TetrisApp extends GlApp {
             gl,
             shaderSources[0],
             shaderSources[1],
-            { aPosition: "f", aUv: "f" },
+            { aPosition: "2f", aUv: "2f" },
             {},
         );
         this.backgroundMesh = new Mesh(
@@ -40,8 +40,8 @@ class TetrisApp extends GlApp {
             gl,
             shaderSources[2],
             shaderSources[3],
-            { aPosition: "f", aUv: "f" },
-            { uCoord: "f", uColor: "f" },
+            { aPosition: "2f", aUv: "2f" },
+            { uCoord: "2f", uColor: "3f" },
         );
         this.blockMesh = new Mesh(
             gl,

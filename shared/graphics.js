@@ -15,33 +15,23 @@ export function draw(gl, mesh, shaderProgram, textures, uniforms) {
     }
 
     for (let i = 0; i < textures.length; i++) {
-        const texture = textures[i];
-
         gl.activeTexture(gl.TEXTURE0 + i);
-        gl.bindTexture(gl.TEXTURE_2D, texture.texture);
-
-        gl.bindBuffer(gl.ARRAY_BUFFER, texture.texCoordBuffer);
-        gl.vertexAttribPointer(shaderProgram.attributes.aTexCoord.location, 2, gl.FLOAT, false, 0, 0);
-        gl.enableVertexAttribArray(shaderProgram.attributes.aTexCoord.location);
+        gl.bindTexture(gl.TEXTURE_2D, textures[i].texture);
     }
 
-    gl.bindBuffer(gl.ARRAY_BUFFER, mesh.positionBuffer);
-    // TODO: Remove hard reference to "aPosition" name
-    gl.vertexAttribPointer(shaderProgram.attributes.aPosition.location, 2, gl.FLOAT, false, 0, 0);
-    gl.enableVertexAttribArray(shaderProgram.attributes.aPosition.location);
-
-    if (mesh.uvBuffer !== undefined) {
-        gl.bindBuffer(gl.ARRAY_BUFFER, mesh.uvBuffer);
-        // TODO: Remove hard reference to "aUv" name
-        gl.vertexAttribPointer(shaderProgram.attributes.aUv.location, 2, gl.FLOAT, false, 0, 0);
-        gl.enableVertexAttribArray(shaderProgram.attributes.aUv.location);
+    for (const [key, attribute] of Object.entries(shaderProgram.attributes)) {
+        const { length } = parseType(attribute.type);
+        gl.bindBuffer(gl.ARRAY_BUFFER, mesh.attributes[key]);
+        gl.vertexAttribPointer(attribute.location, length, gl.FLOAT, false, 0, 0);
+        gl.enableVertexAttribArray(attribute.location);
     }
 
     gl.drawElements(gl.TRIANGLE_STRIP, mesh.indexCount, gl.UNSIGNED_SHORT, mesh.indexBuffer);
 }
 
-function setUniform(gl, location, type, value) {
-    switch (value.length) {
+function setUniform(gl, location, typeStr, value) {
+    const { isMatrix, length, type } = parseType(typeStr);
+    switch (length) {
         case 1:
             if (type === "f") {
                 gl.uniform1fv(location, value);
@@ -50,21 +40,27 @@ function setUniform(gl, location, type, value) {
             }
             break;
         case 2:
-            if (type === "f") {
+            if (isMatrix) {
+                gl.uniformMatrix2fv(location, false, value);
+            } else if (type === "f") {
                 gl.uniform2fv(location, value);
             } else if (type === "i") {
                 gl.uniform2iv(location, value);
             }
             break;
         case 3:
-            if (type === "f") {
+            if (isMatrix) {
+                gl.uniformMatrix3fv(location, false, value);
+            } if (type === "f") {
                 gl.uniform3fv(location, value);
             } else if (type === "i") {
                 gl.uniform3iv(location, value);
             }
             break;
         case 4:
-            if (type === "f") {
+            if (isMatrix) {
+                gl.uniformMatrix4fv(location, false, value);
+            } if (type === "f") {
                 gl.uniform4fv(location, value);
             } else if (type === "i") {
                 gl.uniform4iv(location, value);
@@ -88,27 +84,25 @@ export class Texture {
         gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
         gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.NEAREST);
         gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.NEAREST);
-
-        this.texCoordBuffer = gl.createBuffer();
-        gl.bindBuffer(gl.ARRAY_BUFFER, this.texCoordBuffer);
-        gl.bufferData(gl.ARRAY_BUFFER, new Float32Array([0, 0, 1, 0, 1, 1, 0, 1]), gl.STATIC_DRAW);
     }
 }
 
 export class Mesh {
     constructor(gl, positions, uvs, indices) {
-        this.positionBuffer = gl.createBuffer();
-        gl.bindBuffer(gl.ARRAY_BUFFER, this.positionBuffer);
+        this.attributes = {};
+
+        this.attributes.aPosition = gl.createBuffer();
+        gl.bindBuffer(gl.ARRAY_BUFFER, this.attributes.aPosition);
         gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(positions), gl.STATIC_DRAW);
 
         if (uvs !== undefined) {
-            this.uvBuffer = gl.createBuffer();
-            gl.bindBuffer(gl.ARRAY_BUFFER, this.uvBuffer);
+            this.attributes.aUv = gl.createBuffer();
+            gl.bindBuffer(gl.ARRAY_BUFFER, this.attributes.aUv);
             gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(uvs), gl.STATIC_DRAW);
         }
 
-        this.indexBuffer = gl.createBuffer();
-        gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, this.indexBuffer);
+        const indexBuffer = gl.createBuffer();
+        gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, indexBuffer);
         gl.bufferData(gl.ELEMENT_ARRAY_BUFFER, new Uint16Array(indices), gl.STATIC_DRAW);
 
         this.indexCount = indices.length;
@@ -145,5 +139,22 @@ export class ShaderProgram {
                 type: value,
             };
         }
+    }
+}
+
+function parseType(type) {
+    const params = type.split("");
+    if (params.length === 2) {
+        return {
+            isMatrix: false,
+            length: Number(params[0]),
+            type: params[1],
+        };
+    } else if (params.length === 3) {
+        return {
+            isMatrix: true,
+            length: Number(params[1]),
+            type: params[2],
+        };
     }
 }

@@ -2,7 +2,7 @@
 
 precision mediump float;
 
-in highp vec2 vTextureCoord;
+in highp vec2 vUv;
 
 out vec4 fragColor;
 

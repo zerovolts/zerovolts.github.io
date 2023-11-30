@@ -24,8 +24,8 @@ class BezierApp extends GlApp {
             gl,
             vertexSource,
             fragmentSource,
-            { aPosition: "f", aColor: "f" },
-            { uDimensions: "f" },
+            { aPosition: "2f", aColor: "4f" },
+            { uDimensions: "2f" },
         );
 
         {

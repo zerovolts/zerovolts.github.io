@@ -2,7 +2,7 @@
 
 precision mediump float;
 
-in highp vec2 vTextureCoord;
+in highp vec2 vUv;
 
 out vec4 fragColor;
 
@@ -14,8 +14,8 @@ float rand(in vec2 _st) {
 }
 
 void main() {
-    vec2 textureCoordPx = vTextureCoord * uDimensions;
-    vec4 color = texture(uSampler, vTextureCoord);
-    float r = (rand(vec2(vTextureCoord)) - 0.5) * 0.1;
+    vec2 textureCoordPx = vUv * uDimensions;
+    vec4 color = texture(uSampler, vUv);
+    float r = (rand(vec2(vUv)) - 0.5) * 0.1;
     fragColor = vec4(color.rgb + r, 1.0);
 }

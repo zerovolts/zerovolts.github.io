@@ -2,15 +2,15 @@
 
 precision mediump float;
 
-in highp vec2 vTextureCoord;
+in highp vec2 vUv;
 
 out vec4 fragColor;
 
 uniform sampler2D uSampler;
 
 void main() {
-    vec2 uv = fract(vTextureCoord * 32.) - .5;
-    vec3 texColor = texture(uSampler, vTextureCoord).rgb;
+    vec2 uv = fract(vUv * 32.) - .5;
+    vec3 texColor = texture(uSampler, vUv).rgb;
 
     float d = max(abs(uv.x), abs(uv.y));
     float border_mask = step(.4, d);
