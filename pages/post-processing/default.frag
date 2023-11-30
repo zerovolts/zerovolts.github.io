@@ -6,8 +6,8 @@ in highp vec2 vUv;
 
 out vec4 fragColor;
 
-uniform sampler2D uSampler;
+uniform sampler2D uTexture;
 
 void main() {
-    fragColor = texture(uSampler, vUv);
+    fragColor = texture(uTexture, vUv);
 }

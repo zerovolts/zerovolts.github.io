@@ -6,7 +6,7 @@ in highp vec2 vUv;
 
 out vec4 fragColor;
 
-uniform sampler2D uSampler;
+uniform sampler2D uTexture;
 uniform vec2 uDimensions;
 
 float rand(in vec2 _st) {
@@ -15,7 +15,7 @@ float rand(in vec2 _st) {
 
 void main() {
     vec2 textureCoordPx = vUv * uDimensions;
-    vec4 color = texture(uSampler, vUv);
+    vec4 color = texture(uTexture, vUv);
     float r = (rand(vec2(vUv)) - 0.5) * 0.1;
     fragColor = vec4(color.rgb + r, 1.0);
 }

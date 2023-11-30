@@ -6,7 +6,7 @@ in highp vec2 vUv;
 
 out vec4 fragColor;
 
-uniform sampler2D uSampler;
+uniform sampler2D uTexture;
 uniform vec2 uDimensions;
 
 float rand(in vec2 _st) {
@@ -30,12 +30,12 @@ void main() {
             vec2 coord = gl_FragCoord.xy + vec2(x, y);
             vec2 scanlineCoord = floor(coord) / 3.0;
             vec2 uv = coord / uDimensions;
-            vec4 texColor = texture(uSampler, uv);
+            vec4 texColor = texture(uTexture, uv);
             // chromatic abberation
             vec4 abberation = vec4(
-                texture(uSampler, uv + vec2(0.004, 0.0)).r,
-                texture(uSampler, uv).g,
-                texture(uSampler, uv + vec2(-0.004, 0.0)).b,
+                texture(uTexture, uv + vec2(0.004, 0.0)).r,
+                texture(uTexture, uv).g,
+                texture(uTexture, uv + vec2(-0.004, 0.0)).b,
                 1.0
             );
             // scanlines

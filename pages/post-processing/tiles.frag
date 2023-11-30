@@ -6,11 +6,11 @@ in highp vec2 vUv;
 
 out vec4 fragColor;
 
-uniform sampler2D uSampler;
+uniform sampler2D uTexture;
 
 void main() {
     vec2 uv = fract(vUv * 32.) - .5;
-    vec3 texColor = texture(uSampler, vUv).rgb;
+    vec3 texColor = texture(uTexture, vUv).rgb;
 
     float d = max(abs(uv.x), abs(uv.y));
     float border_mask = step(.4, d);

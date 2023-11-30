@@ -104,7 +104,7 @@ class BezierApp extends GlApp {
             this.vertSrc,
             this.fragSrc,
             { aPosition: "2f", aUv: "2f" },
-            { uSampler: "1i", uDimensions: "2f" },
+            { uTexture: "1i", uDimensions: "2f" },
         );
 
         gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
@@ -114,7 +114,7 @@ class BezierApp extends GlApp {
             this.mesh,
             this.shaderProgram,
             [this.texture],
-            { uDimensions: [this.width, this.height], uSampler: 0 }
+            { uDimensions: [this.width, this.height], uTexture: 0 }
         );
     }
 }

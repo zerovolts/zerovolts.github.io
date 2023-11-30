@@ -6,7 +6,7 @@ in highp vec2 vUv;
 
 out vec4 fragColor;
 
-uniform sampler2D uSampler;
+uniform sampler2D uTexture;
 uniform vec2 uDimensions;
 
 void main() {
@@ -19,7 +19,7 @@ void main() {
     vec4 color = vec4(0.0);
     for (int y = -1; y < 2; y++) {
         for (int x = -1; x < 2; x++) {
-            vec4 pxColor = texture(uSampler, (textureCoordPx + vec2(x, y)) / uDimensions);
+            vec4 pxColor = texture(uTexture, (textureCoordPx + vec2(x, y)) / uDimensions);
             color += pxColor * kernel[y + 1][x + 1];
         }
     }
