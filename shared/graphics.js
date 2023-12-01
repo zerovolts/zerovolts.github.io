@@ -59,7 +59,7 @@ function setUniform(gl, location, typeStr, value) {
         case 3:
             if (isMatrix) {
                 gl.uniformMatrix3fv(location, false, value);
-            } if (type === "f") {
+            } else if (type === "f") {
                 gl.uniform3fv(location, value);
             } else if (type === "i") {
                 gl.uniform3iv(location, value);
@@ -68,7 +68,7 @@ function setUniform(gl, location, typeStr, value) {
         case 4:
             if (isMatrix) {
                 gl.uniformMatrix4fv(location, false, value);
-            } if (type === "f") {
+            } else if (type === "f") {
                 gl.uniform4fv(location, value);
             } else if (type === "i") {
                 gl.uniform4iv(location, value);
