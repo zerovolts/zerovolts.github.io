@@ -3,7 +3,7 @@ import { GlApp } from "/shared/gl-app.js"
 import { circleMesh, lineMesh } from "/shared/geometry.js";
 import { ShaderProgram, draw } from "/shared/graphics.js";
 import * as Vec2 from "/shared/vec2.js";
-import * as Mat4 from "/shared/mat4.js";
+import { Mat4 } from "/shared/mat4.js";
 
 const COLOR_WHITE = [1.0, 1.0, 1.0, 1.0];
 const COLOR_BLACK = [0.17, 0.24, 0.31, 1.0];
@@ -119,7 +119,7 @@ class BezierApp extends GlApp {
         gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
         gl.useProgram(this.shaderProgram.program);
 
-        const MAT4_IDENTITY = new Float32Array(Mat4.identity())
+        const MAT4_IDENTITY = new Float32Array(Mat4.identity().data)
 
         // Border
         draw(gl, this.borderMesh, this.shaderProgram, [], { uColor: COLOR_BLACK, uRotation: MAT4_IDENTITY });
@@ -141,7 +141,7 @@ class BezierApp extends GlApp {
             this.hourHandMesh,
             this.shaderProgram,
             [],
-            { uColor: COLOR_BLACK, uRotation: new Float32Array(Mat4.fromRotation2D(this.hourHandRadians)) }
+            { uColor: COLOR_BLACK, uRotation: new Float32Array(Mat4.rotationZ(this.hourHandRadians).data) }
         );
 
         draw(
@@ -149,7 +149,7 @@ class BezierApp extends GlApp {
             this.minuteHandMesh,
             this.shaderProgram,
             [],
-            { uColor: COLOR_BLACK, uRotation: new Float32Array(Mat4.fromRotation2D(this.minuteHandRadians)) }
+            { uColor: COLOR_BLACK, uRotation: new Float32Array(Mat4.rotationZ(this.minuteHandRadians).data) }
         );
 
         draw(
@@ -157,7 +157,7 @@ class BezierApp extends GlApp {
             this.secondHandMesh,
             this.shaderProgram,
             [],
-            { uColor: COLOR_ACCENT, uRotation: new Float32Array(Mat4.fromRotation2D(this.secondHandRadians)) }
+            { uColor: COLOR_ACCENT, uRotation: new Float32Array(Mat4.rotationZ(this.secondHandRadians).data) }
         );
 
         draw(
@@ -165,7 +165,7 @@ class BezierApp extends GlApp {
             this.secondHandTailMesh,
             this.shaderProgram,
             [],
-            { uColor: COLOR_ACCENT, uRotation: new Float32Array(Mat4.fromRotation2D(this.secondHandRadians)) }
+            { uColor: COLOR_ACCENT, uRotation: new Float32Array(Mat4.rotationZ(this.secondHandRadians).data) }
         );
 
         draw(gl, this.handCoverMesh, this.shaderProgram, [], { uColor: COLOR_BLACK, uRotation: MAT4_IDENTITY });
