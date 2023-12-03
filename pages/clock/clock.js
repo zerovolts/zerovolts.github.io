@@ -37,7 +37,7 @@ class BezierApp extends GlApp {
             vertexSource,
             fragmentSource,
             { aPosition: "2f" },
-            { uColor: "4f", uRotation: "m4f" },
+            { uColor: "4f", uTransform: "m4f" },
         );
 
         this.shouldRender = true;
@@ -45,21 +45,23 @@ class BezierApp extends GlApp {
         this.borderMesh = circleMesh(gl, 1, 100);
         this.faceMesh = circleMesh(gl, 0.95, 100);
 
-        this.markMeshes = [];
-        for (let i = 0; i < 60; i++) {
-            const radians = (i / 60) * TAU;
-            const width = i % 5 === 0 ? 0.02 : 0.01;
-            const start = i % 5 === 0 ? 0.8 : 0.85;
+        this.markMesh = lineMesh(
+            gl,
+            Vec2.scale(Vec2.up(), .85),
+            Vec2.scale(Vec2.up(), .9),
+            .01,
+            10,
+            true,
+        );
 
-            this.markMeshes.push(lineMesh(
-                gl,
-                Vec2.scaleMut(Vec2.fromAngle(radians), start),
-                Vec2.scaleMut(Vec2.fromAngle(radians), 0.9),
-                width,
-                10,
-                true,
-            ));
-        }
+        this.fiveMarkMesh = lineMesh(
+            gl,
+            Vec2.scale(Vec2.up(), .8),
+            Vec2.scale(Vec2.up(), .9),
+            .02,
+            10,
+            true,
+        );
 
         this.hourHandMesh = lineMesh(
             gl,
@@ -121,19 +123,29 @@ class BezierApp extends GlApp {
 
         const MAT4_IDENTITY = new Float32Array(Mat4.identity().data)
 
-        // Border
-        draw(gl, this.borderMesh, this.shaderProgram, [], { uColor: COLOR_BLACK, uRotation: MAT4_IDENTITY });
-        draw(gl, this.faceMesh, this.shaderProgram, [], { uColor: COLOR_WHITE, uRotation: MAT4_IDENTITY });
+        draw(gl, this.borderMesh, this.shaderProgram, [], { uColor: COLOR_BLACK, uTransform: MAT4_IDENTITY });
+        draw(gl, this.faceMesh, this.shaderProgram, [], { uColor: COLOR_WHITE, uTransform: MAT4_IDENTITY });
 
-        // Marks
-        for (const markMesh of this.markMeshes) {
-            draw(
-                gl,
-                markMesh,
-                this.shaderProgram,
-                [],
-                { uColor: COLOR_BLACK, uRotation: MAT4_IDENTITY }
-            );
+        for (let i = 0; i < 60; i++) {
+            const angle = (i / 60) * TAU;
+
+            if (i % 5 === 0) {
+                draw(
+                    gl,
+                    this.fiveMarkMesh,
+                    this.shaderProgram,
+                    [],
+                    { uColor: COLOR_BLACK, uTransform: Mat4.rotationZ(angle).data }
+                );
+            } else {
+                draw(
+                    gl,
+                    this.markMesh,
+                    this.shaderProgram,
+                    [],
+                    { uColor: COLOR_BLACK, uTransform: Mat4.rotationZ(angle).data }
+                );
+            }
         }
 
         draw(
@@ -141,7 +153,7 @@ class BezierApp extends GlApp {
             this.hourHandMesh,
             this.shaderProgram,
             [],
-            { uColor: COLOR_BLACK, uRotation: new Float32Array(Mat4.rotationZ(this.hourHandRadians).data) }
+            { uColor: COLOR_BLACK, uTransform: new Float32Array(Mat4.rotationZ(this.hourHandRadians).data) }
         );
 
         draw(
@@ -149,7 +161,7 @@ class BezierApp extends GlApp {
             this.minuteHandMesh,
             this.shaderProgram,
             [],
-            { uColor: COLOR_BLACK, uRotation: new Float32Array(Mat4.rotationZ(this.minuteHandRadians).data) }
+            { uColor: COLOR_BLACK, uTransform: new Float32Array(Mat4.rotationZ(this.minuteHandRadians).data) }
         );
 
         draw(
@@ -157,7 +169,7 @@ class BezierApp extends GlApp {
             this.secondHandMesh,
             this.shaderProgram,
             [],
-            { uColor: COLOR_ACCENT, uRotation: new Float32Array(Mat4.rotationZ(this.secondHandRadians).data) }
+            { uColor: COLOR_ACCENT, uTransform: new Float32Array(Mat4.rotationZ(this.secondHandRadians).data) }
         );
 
         draw(
@@ -165,9 +177,9 @@ class BezierApp extends GlApp {
             this.secondHandTailMesh,
             this.shaderProgram,
             [],
-            { uColor: COLOR_ACCENT, uRotation: new Float32Array(Mat4.rotationZ(this.secondHandRadians).data) }
+            { uColor: COLOR_ACCENT, uTransform: new Float32Array(Mat4.rotationZ(this.secondHandRadians).data) }
         );
 
-        draw(gl, this.handCoverMesh, this.shaderProgram, [], { uColor: COLOR_BLACK, uRotation: MAT4_IDENTITY });
+        draw(gl, this.handCoverMesh, this.shaderProgram, [], { uColor: COLOR_BLACK, uTransform: MAT4_IDENTITY });
     }
 }
