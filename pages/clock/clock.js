@@ -1,7 +1,7 @@
 import { TAU } from "/shared/math.js"
 import { GlApp } from "/shared/gl-app.js"
-import { Circle, Line } from "/shared/geometry.js";
-import { ShaderProgram } from "/shared/graphics.js";
+import { circleMesh, lineMesh } from "/shared/geometry.js";
+import { ShaderProgram, draw } from "/shared/graphics.js";
 import * as Vec2 from "/shared/vec2.js";
 import * as Mat4 from "/shared/mat4.js";
 
@@ -36,129 +36,68 @@ class BezierApp extends GlApp {
             gl,
             vertexSource,
             fragmentSource,
-            { position: "2f" },
-            { color: "4f", rotation: "m4f" },
+            { aPosition: "2f" },
+            { uColor: "4f", uRotation: "m4f" },
         );
 
         this.shouldRender = true;
 
-        // Border
-        {
-            const positions = new Circle(1, Vec2.zero()).toVertexBuffer(100);
-            this.border = {
-                vertexCount: positions.length / 2,
-                positionBuffer: gl.createBuffer(),
-            };
-            gl.bindBuffer(gl.ARRAY_BUFFER, this.border.positionBuffer);
-            gl.bufferData(gl.ARRAY_BUFFER, positions, gl.STATIC_DRAW);
-        }
+        this.borderMesh = circleMesh(gl, 1, 100);
+        this.faceMesh = circleMesh(gl, 0.95, 100);
 
-        // Face
-        {
-            const positions = new Circle(0.95, Vec2.zero()).toVertexBuffer(100);
-            this.face = {
-                vertexCount: positions.length / 2,
-                positionBuffer: gl.createBuffer(),
-            }
-            gl.bindBuffer(gl.ARRAY_BUFFER, this.face.positionBuffer);
-            gl.bufferData(gl.ARRAY_BUFFER, positions, gl.STATIC_DRAW);
-        }
-
-        // Marks
-        this.marks = [];
+        this.markMeshes = [];
         for (let i = 0; i < 60; i++) {
             const radians = (i / 60) * TAU;
             const width = i % 5 === 0 ? 0.02 : 0.01;
             const start = i % 5 === 0 ? 0.8 : 0.85;
-            const positions = new Line(
+
+            this.markMeshes.push(lineMesh(
+                gl,
                 Vec2.scaleMut(Vec2.fromAngle(radians), start),
                 Vec2.scaleMut(Vec2.fromAngle(radians), 0.9),
                 width,
+                10,
                 true,
-            ).toVertexBuffer(10);
-            const mark = {
-                vertexCount: positions.length / 2,
-                positionBuffer: gl.createBuffer(),
-            };
-            this.marks.push(mark);
-            gl.bindBuffer(gl.ARRAY_BUFFER, mark.positionBuffer);
-            gl.bufferData(gl.ARRAY_BUFFER, positions, gl.STATIC_DRAW);
+            ));
         }
 
-        // Hour Hand
-        {
-            const positions = new Line(
-                Vec2.scaleMut(Vec2.down(), 0.1),
-                Vec2.scaleMut(Vec2.up(), 0.4),
-                0.025,
-                true,
-            ).toVertexBuffer(10);
-            this.hourHand = {
-                vertexCount: positions.length / 2,
-                positionBuffer: gl.createBuffer(),
-            };
-            gl.bindBuffer(gl.ARRAY_BUFFER, this.hourHand.positionBuffer);
-            gl.bufferData(gl.ARRAY_BUFFER, positions, gl.STATIC_DRAW);
-        }
+        this.hourHandMesh = lineMesh(
+            gl,
+            Vec2.scaleMut(Vec2.down(), 0.1),
+            Vec2.scaleMut(Vec2.up(), 0.4),
+            0.025,
+            10,
+            true,
+        );
 
-        // Minute Hand
-        {
-            const positions = new Line(
-                Vec2.scaleMut(Vec2.down(), 0.1),
-                Vec2.scaleMut(Vec2.up(), 0.7),
-                0.02,
-                true,
-            ).toVertexBuffer(10);
-            this.minuteHand = {
-                vertexCount: positions.length / 2,
-                positionBuffer: gl.createBuffer(),
-            };
-            gl.bindBuffer(gl.ARRAY_BUFFER, this.minuteHand.positionBuffer);
-            gl.bufferData(gl.ARRAY_BUFFER, positions, gl.STATIC_DRAW);
-        }
+        this.minuteHandMesh = lineMesh(
+            gl,
+            Vec2.scaleMut(Vec2.down(), 0.1),
+            Vec2.scaleMut(Vec2.up(), 0.7),
+            0.02,
+            10,
+            true,
+        );
 
-        // Second Hand
-        {
-            const positions = new Line(
-                Vec2.scaleMut(Vec2.down(), 0.1),
-                Vec2.scaleMut(Vec2.up(), 0.9),
-                0.01,
-                true,
-            ).toVertexBuffer(10);
-            this.secondHand = {
-                vertexCount: positions.length / 2,
-                positionBuffer: gl.createBuffer(),
-            };
-            gl.bindBuffer(gl.ARRAY_BUFFER, this.secondHand.positionBuffer);
-            gl.bufferData(gl.ARRAY_BUFFER, positions, gl.STATIC_DRAW);
-        }
+        this.secondHandMesh = lineMesh(
+            gl,
+            Vec2.scaleMut(Vec2.down(), 0.1),
+            Vec2.scaleMut(Vec2.up(), 0.9),
+            0.01,
+            10,
+            true,
+        );
 
-        // Second Hand Back
-        {
-            const positions = new Line(
-                Vec2.scaleMut(Vec2.down(), 0.2),
-                Vec2.scaleMut(Vec2.down(), 0.1),
-                0.02,
-                true,
-            ).toVertexBuffer(10);
-            this.secondHandBack = {
-                vertexCount: positions.length / 2,
-                positionBuffer: gl.createBuffer(),
-            };
-            gl.bindBuffer(gl.ARRAY_BUFFER, this.secondHandBack.positionBuffer);
-            gl.bufferData(gl.ARRAY_BUFFER, positions, gl.STATIC_DRAW);
-        }
+        this.secondHandTailMesh = lineMesh(
+            gl,
+            Vec2.scaleMut(Vec2.down(), 0.2),
+            Vec2.scaleMut(Vec2.down(), 0.1),
+            0.02,
+            10,
+            true,
+        );
 
-        // Hand Cover
-        {
-            const positions = new Circle(0.03, Vec2.zero()).toVertexBuffer(20);
-            this.handCover = {
-                vertexCount: positions.length / 2,
-                positionBuffer: gl.createBuffer(),
-            };
-            gl.bindBuffer(gl.ARRAY_BUFFER, this.handCover.positionBuffer);
-            gl.bufferData(gl.ARRAY_BUFFER, positions, gl.STATIC_DRAW);
-        }
+        this.handCoverMesh = circleMesh(gl, 0.03, 20);
     }
 
     update(_delta) {
@@ -183,87 +122,52 @@ class BezierApp extends GlApp {
         const MAT4_IDENTITY = new Float32Array(Mat4.identity())
 
         // Border
-        {
-            gl.uniform4fv(this.shaderProgram.uniforms.color.location, COLOR_BLACK);
-            gl.uniformMatrix4fv(this.shaderProgram.uniforms.rotation.location, false, MAT4_IDENTITY);
-            gl.bindBuffer(gl.ARRAY_BUFFER, this.border.positionBuffer);
-            gl.vertexAttribPointer(this.shaderProgram.attributes.position.location, 2, gl.FLOAT, false, 0, 0);
-            gl.enableVertexAttribArray(this.shaderProgram.attributes.position.location);
-            gl.drawArrays(gl.TRIANGLE_FAN, 0, this.border.vertexCount);
-        }
-
-        // Face
-        {
-            gl.uniform4fv(this.shaderProgram.uniforms.color.location, COLOR_WHITE);
-            gl.uniformMatrix4fv(this.shaderProgram.uniforms.rotation.location, false, MAT4_IDENTITY);
-            gl.bindBuffer(gl.ARRAY_BUFFER, this.face.positionBuffer);
-            gl.vertexAttribPointer(this.shaderProgram.attributes.position.location, 2, gl.FLOAT, false, 0, 0);
-            gl.enableVertexAttribArray(this.shaderProgram.attributes.position.location);
-            gl.drawArrays(gl.TRIANGLE_FAN, 0, this.face.vertexCount);
-        }
+        draw(gl, this.borderMesh, this.shaderProgram, [], { uColor: COLOR_BLACK, uRotation: MAT4_IDENTITY });
+        draw(gl, this.faceMesh, this.shaderProgram, [], { uColor: COLOR_WHITE, uRotation: MAT4_IDENTITY });
 
         // Marks
-        for (const mark of this.marks) {
-            gl.uniform4fv(this.shaderProgram.uniforms.color.location, COLOR_BLACK);
-            gl.uniformMatrix4fv(this.shaderProgram.uniforms.rotation.location, false, MAT4_IDENTITY);
-            gl.bindBuffer(gl.ARRAY_BUFFER, mark.positionBuffer);
-            gl.vertexAttribPointer(this.shaderProgram.attributes.position.location, 2, gl.FLOAT, false, 0, 0);
-            gl.enableVertexAttribArray(this.shaderProgram.attributes.position.location);
-            gl.drawArrays(gl.TRIANGLE_FAN, 0, mark.vertexCount);
+        for (const markMesh of this.markMeshes) {
+            draw(
+                gl,
+                markMesh,
+                this.shaderProgram,
+                [],
+                { uColor: COLOR_BLACK, uRotation: MAT4_IDENTITY }
+            );
         }
 
-        // Hour Hand
-        {
-            const rotationMatrix = new Float32Array(Mat4.fromRotation2D(this.hourHandRadians))
-            gl.uniform4fv(this.shaderProgram.uniforms.color.location, COLOR_BLACK);
-            gl.uniformMatrix4fv(this.shaderProgram.uniforms.rotation.location, false, rotationMatrix);
-            gl.bindBuffer(gl.ARRAY_BUFFER, this.hourHand.positionBuffer);
-            gl.vertexAttribPointer(this.shaderProgram.attributes.position.location, 2, gl.FLOAT, false, 0, 0);
-            gl.enableVertexAttribArray(this.shaderProgram.attributes.position.location);
-            gl.drawArrays(gl.TRIANGLE_FAN, 0, this.hourHand.vertexCount);
-        }
+        draw(
+            gl,
+            this.hourHandMesh,
+            this.shaderProgram,
+            [],
+            { uColor: COLOR_BLACK, uRotation: new Float32Array(Mat4.fromRotation2D(this.hourHandRadians)) }
+        );
 
-        // Minute Hand
-        {
-            const rotationMatrix = new Float32Array(Mat4.fromRotation2D(this.minuteHandRadians))
-            gl.uniform4fv(this.shaderProgram.uniforms.color.location, COLOR_BLACK);
-            gl.uniformMatrix4fv(this.shaderProgram.uniforms.rotation.location, false, rotationMatrix);
-            gl.bindBuffer(gl.ARRAY_BUFFER, this.minuteHand.positionBuffer);
-            gl.vertexAttribPointer(this.shaderProgram.attributes.position.location, 2, gl.FLOAT, false, 0, 0);
-            gl.enableVertexAttribArray(this.shaderProgram.attributes.position.location);
-            gl.drawArrays(gl.TRIANGLE_FAN, 0, this.minuteHand.vertexCount);
-        }
+        draw(
+            gl,
+            this.minuteHandMesh,
+            this.shaderProgram,
+            [],
+            { uColor: COLOR_BLACK, uRotation: new Float32Array(Mat4.fromRotation2D(this.minuteHandRadians)) }
+        );
 
-        // Second Hand
-        {
-            const rotationMatrix = new Float32Array(Mat4.fromRotation2D(this.secondHandRadians))
-            gl.uniform4fv(this.shaderProgram.uniforms.color.location, COLOR_ACCENT);
-            gl.uniformMatrix4fv(this.shaderProgram.uniforms.rotation.location, false, rotationMatrix);
-            gl.bindBuffer(gl.ARRAY_BUFFER, this.secondHand.positionBuffer);
-            gl.vertexAttribPointer(this.shaderProgram.attributes.position.location, 2, gl.FLOAT, false, 0, 0);
-            gl.enableVertexAttribArray(this.shaderProgram.attributes.position.location);
-            gl.drawArrays(gl.TRIANGLE_FAN, 0, this.secondHand.vertexCount);
-        }
+        draw(
+            gl,
+            this.secondHandMesh,
+            this.shaderProgram,
+            [],
+            { uColor: COLOR_ACCENT, uRotation: new Float32Array(Mat4.fromRotation2D(this.secondHandRadians)) }
+        );
 
-        // Second Hand Back
-        {
-            const rotationMatrix = new Float32Array(Mat4.fromRotation2D(this.secondHandRadians))
-            gl.uniform4fv(this.shaderProgram.uniforms.color.location, COLOR_ACCENT);
-            gl.uniformMatrix4fv(this.shaderProgram.uniforms.rotation.location, false, rotationMatrix);
-            gl.bindBuffer(gl.ARRAY_BUFFER, this.secondHandBack.positionBuffer);
-            gl.vertexAttribPointer(this.shaderProgram.attributes.position.location, 2, gl.FLOAT, false, 0, 0);
-            gl.enableVertexAttribArray(this.shaderProgram.attributes.position.location);
-            gl.drawArrays(gl.TRIANGLE_FAN, 0, this.secondHandBack.vertexCount);
-        }
+        draw(
+            gl,
+            this.secondHandTailMesh,
+            this.shaderProgram,
+            [],
+            { uColor: COLOR_ACCENT, uRotation: new Float32Array(Mat4.fromRotation2D(this.secondHandRadians)) }
+        );
 
-        // Hand Cover
-        {
-            gl.uniform4fv(this.shaderProgram.uniforms.color.location, COLOR_BLACK);
-            gl.uniformMatrix4fv(this.shaderProgram.uniforms.rotation.location, false, MAT4_IDENTITY);
-            gl.bindBuffer(gl.ARRAY_BUFFER, this.handCover.positionBuffer);
-            gl.vertexAttribPointer(this.shaderProgram.attributes.position.location, 2, gl.FLOAT, false, 0, 0);
-            gl.enableVertexAttribArray(this.shaderProgram.attributes.position.location);
-            gl.drawArrays(gl.TRIANGLE_FAN, 0, this.handCover.vertexCount);
-        }
+        draw(gl, this.handCoverMesh, this.shaderProgram, [], { uColor: COLOR_BLACK, uRotation: MAT4_IDENTITY });
     }
 }

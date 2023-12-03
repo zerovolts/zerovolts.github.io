@@ -1,9 +1,9 @@
 #version 300 es
 
-in vec4 position;
+in vec4 aPosition;
 
-uniform mat4 rotation;
+uniform mat4 uRotation;
 
 void main() {
-    gl_Position = position * rotation;
+    gl_Position = aPosition * uRotation;
 }

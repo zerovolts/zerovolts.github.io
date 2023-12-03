@@ -1,69 +1,71 @@
 import { TAU } from "/shared/math.js";
 import { pipe } from "/shared/util.js";
+import { Mesh } from "/shared/graphics.js"
 import * as Vec2 from "/shared/vec2.js";
 
-export class Circle {
-    constructor(radius, position) {
-        this.radius = radius;
-        this.position = position;
+export function circleMesh(gl, radius, segmentCount) {
+    const segmentAngle = TAU / segmentCount;
+
+    const positions = [];
+    for (let i = 0; i < segmentCount; i++) {
+        pipe(
+            Vec2.fromAngle(segmentAngle * i),
+            v => Vec2.scale(v, radius),
+            v => positions.push(v),
+        );
     }
 
-    toVec2(segmentCount) {
-        const segmentAngle = TAU / segmentCount;
-        const vertices = [];
-        for (let i = 0; i < segmentCount; i++) {
-            pipe(
-                Vec2.fromAngle(segmentAngle * i),
-                v => Vec2.scale(v, this.radius),
-                v => Vec2.add(v, this.position),
-                v => vertices.push(v),
-            );
-        }
-        return vertices;
+    const indices = [];
+    for (let i = 1; i < segmentCount - 1; i++) {
+        indices.push(0);
+        indices.push(i);
+        indices.push(i + 1);
     }
 
-    toVertexBuffer(segmentCount) {
-        return new Float32Array(this.toVec2(segmentCount).flat())
-    }
+    return new Mesh(
+        gl,
+        positions.flat(),
+        undefined,
+        indices,
+    );
 }
 
-export class Line {
-    constructor(start, end, width, rounded = false) {
-        this.start = start;
-        this.end = end;
-        this.width = width;
-        this.rounded = rounded;
-    }
+export function lineMesh(gl, start, end, width, segmentCount, rounded = false) {
+    const halfWidth = width / 2;
+    const lineAngle = Vec2.angleBetween(start, end);
+    const leftOffset = Vec2.scaleMut(Vec2.fromAngle(lineAngle + (Math.PI / 2)), halfWidth);
+    const rightOffset = leftOffset.map(x => -x);
+    const segmentAngle = (1 / segmentCount) * TAU;
 
-    toVec2(segmentCount) {
-        const halfWidth = this.width / 2;
-        const lineAngle = Vec2.angleBetween(this.start, this.end);
-        const leftOffset = Vec2.scaleMut(Vec2.fromAngle(lineAngle + (Math.PI / 2)), halfWidth);
-        const rightOffset = leftOffset.map(x => -x);
-        const segmentAngle = (1 / segmentCount) * TAU;
-
-        const vertices = []
-        vertices.push(Vec2.add(this.start, leftOffset));
-        if (this.rounded) {
-            for (let i = 1; i < segmentCount / 2; i++) {
-                const angle = lineAngle + (Math.PI / 2) + (segmentAngle * i);
-                vertices.push(Vec2.addMut(Vec2.scaleMut(Vec2.fromAngle(angle), halfWidth), this.start));
-            }
+    const positions = []
+    positions.push(Vec2.add(start, leftOffset));
+    if (rounded) {
+        for (let i = 1; i < segmentCount / 2; i++) {
+            const angle = lineAngle + (Math.PI / 2) + (segmentAngle * i);
+            positions.push(Vec2.addMut(Vec2.scaleMut(Vec2.fromAngle(angle), halfWidth), start));
         }
-        vertices.push(Vec2.add(this.start, rightOffset));
-        vertices.push(Vec2.add(this.end, rightOffset));
-        if (this.rounded) {
-            for (let i = 1; i < segmentCount / 2; i++) {
-                const angle = lineAngle - (Math.PI / 2) + (segmentAngle * i);
-                vertices.push(Vec2.addMut(Vec2.scaleMut(Vec2.fromAngle(angle), halfWidth), this.end));
-            }
+    }
+    positions.push(Vec2.add(start, rightOffset));
+    positions.push(Vec2.add(end, rightOffset));
+    if (rounded) {
+        for (let i = 1; i < segmentCount / 2; i++) {
+            const angle = lineAngle - (Math.PI / 2) + (segmentAngle * i);
+            positions.push(Vec2.addMut(Vec2.scaleMut(Vec2.fromAngle(angle), halfWidth), end));
         }
-        vertices.push(Vec2.add(this.end, leftOffset));
+    }
+    positions.push(Vec2.add(end, leftOffset));
 
-        return vertices;
+    const indices = [];
+    for (let i = 1; i < (segmentCount + 2) - 1; i++) {
+        indices.push(0);
+        indices.push(i);
+        indices.push(i + 1);
     }
 
-    toVertexBuffer(segmentCount) {
-        return new Float32Array(this.toVec2(segmentCount).flat())
-    }
+    return new Mesh(
+        gl,
+        positions.flat(),
+        undefined,
+        indices,
+    );
 }
