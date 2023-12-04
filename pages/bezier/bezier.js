@@ -13,14 +13,14 @@ document.addEventListener("DOMContentLoaded", async () => {
     shaderSources = await shaderSources;
 
     const canvas = document.getElementById("main-canvas");
-    const app = new BezierApp(canvas);
+    const app = new App(canvas);
     app.step();
 
     const button = document.getElementById("generate");
     button.onclick = app.step;
 });
 
-class BezierApp extends GlApp {
+class App extends GlApp {
     setup(gl) {
         gl.clearColor(0.1, 0.1, 0.1, 1.0);
         gl.clearDepth(1.0);
