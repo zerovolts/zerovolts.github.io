@@ -1,6 +1,6 @@
 import { GlApp } from "/shared/gl-app.js"
 import { Mat4 } from "/shared/mat4.js"
-import { ShaderProgram } from "/shared/graphics.js";
+import { ShaderProgram, Mesh, draw } from "/shared/graphics.js";
 
 // Initiate the fetch first to reduce perceived loading.
 let shaderSources = Promise.all([
@@ -37,19 +37,10 @@ class BezierApp extends GlApp {
 
         this.t = 0;
 
-        {
-            this.cube = {
-                vertexCount: 0,
-                indexCount: 0,
-                positionBuffer: gl.createBuffer(),
-                indexBuffer: gl.createBuffer(),
-                colorBuffer: gl.createBuffer(),
-                uvBuffer: gl.createBuffer(),
-                normalBuffer: gl.createBuffer(),
-            };
-            const a = -.5;
-            const z = .5;
-            const positions = new Float32Array([
+        const a = -.5;
+        const z = .5;
+        this.cubeMesh = new Mesh(gl, {
+            position: [
                 // Front
                 a, a, a,
                 a, z, a,
@@ -80,12 +71,8 @@ class BezierApp extends GlApp {
                 z, z, a,
                 z, z, z,
                 z, a, z,
-            ]);
-            this.cube.vertexCount = positions.length / 3;
-            gl.bindBuffer(gl.ARRAY_BUFFER, this.cube.positionBuffer);
-            gl.bufferData(gl.ARRAY_BUFFER, positions, gl.STATIC_DRAW);
-
-            const indices = new Uint16Array([
+            ],
+            index: [
                 // Front
                 0, 1, 2,
                 2, 3, 0,
@@ -104,12 +91,24 @@ class BezierApp extends GlApp {
                 // Right
                 20, 21, 22,
                 22, 23, 20,
-            ]);
-            this.cube.indexCount = indices.length;
-            gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, this.cube.indexBuffer);
-            gl.bufferData(gl.ELEMENT_ARRAY_BUFFER, indices, gl.STATIC_DRAW);
-
-            const colors = new Float32Array([
+            ],
+            uv: [
+                1, 0, 0, 0, 0, 1, 1, 1,
+                1, 0, 0, 0, 0, 1, 1, 1,
+                1, 0, 0, 0, 0, 1, 1, 1,
+                1, 0, 0, 0, 0, 1, 1, 1,
+                1, 0, 0, 0, 0, 1, 1, 1,
+                1, 0, 0, 0, 0, 1, 1, 1,
+            ],
+            normal: [
+                0, 0, -1, 0, 0, -1, 0, 0, -1, 0, 0, -1,
+                0, 0, 1, 0, 0, 1, 0, 0, 1, 0, 0, 1,
+                0, -1, 0, 0, -1, 0, 0, -1, 0, 0, -1, 0,
+                0, 1, 0, 0, 1, 0, 0, 1, 0, 0, 1, 0,
+                -1, 0, 0, -1, 0, 0, -1, 0, 0, -1, 0, 0,
+                1, 0, 0, 1, 0, 0, 1, 0, 0, 1, 0, 0,
+            ],
+            color: [
                 // Front
                 1, 0, 0, 1,
                 1, 0, 0, 1,
@@ -140,33 +139,8 @@ class BezierApp extends GlApp {
                 1, 0, 1, 1,
                 1, 0, 1, 1,
                 1, 0, 1, 1,
-            ]);
-            gl.bindBuffer(gl.ARRAY_BUFFER, this.cube.colorBuffer);
-            gl.bufferData(gl.ARRAY_BUFFER, colors, gl.STATIC_DRAW);
-
-            const uvs = new Float32Array([
-                1, 0, 0, 0, 0, 1, 1, 1,
-                1, 0, 0, 0, 0, 1, 1, 1,
-                1, 0, 0, 0, 0, 1, 1, 1,
-                1, 0, 0, 0, 0, 1, 1, 1,
-                1, 0, 0, 0, 0, 1, 1, 1,
-                1, 0, 0, 0, 0, 1, 1, 1,
-            ]);
-            gl.bindBuffer(gl.ARRAY_BUFFER, this.cube.uvBuffer);
-            gl.bufferData(gl.ARRAY_BUFFER, uvs, gl.STATIC_DRAW);
-
-
-            const normals = new Float32Array([
-                0, 0, -1, 0, 0, -1, 0, 0, -1, 0, 0, -1,
-                0, 0, 1, 0, 0, 1, 0, 0, 1, 0, 0, 1,
-                0, -1, 0, 0, -1, 0, 0, -1, 0, 0, -1, 0,
-                0, 1, 0, 0, 1, 0, 0, 1, 0, 0, 1, 0,
-                -1, 0, 0, -1, 0, 0, -1, 0, 0, -1, 0, 0,
-                1, 0, 0, 1, 0, 0, 1, 0, 0, 1, 0, 0,
-            ]);
-            gl.bindBuffer(gl.ARRAY_BUFFER, this.cube.normalBuffer);
-            gl.bufferData(gl.ARRAY_BUFFER, normals, gl.STATIC_DRAW);
-        }
+            ],
+        });
     }
 
     update(delta) {
@@ -179,29 +153,12 @@ class BezierApp extends GlApp {
 
         const model = Mat4.scalar(.5, .5, .5).rotate(Math.PI / 4, this.t, this.t);
 
-        {
-            gl.uniform2fv(this.shaderProgram.uniforms.uDimensions.location, [this.width, this.height]);
-            gl.uniformMatrix4fv(this.shaderProgram.uniforms.uTransform.location, false, model.data);
-
-            gl.bindBuffer(gl.ARRAY_BUFFER, this.cube.positionBuffer);
-            gl.vertexAttribPointer(this.shaderProgram.attributes.aPosition.location, 3, gl.FLOAT, false, 0, 0);
-            gl.enableVertexAttribArray(this.shaderProgram.attributes.aPosition.location);
-
-            gl.bindBuffer(gl.ARRAY_BUFFER, this.cube.colorBuffer);
-            gl.vertexAttribPointer(this.shaderProgram.attributes.aColor.location, 4, gl.FLOAT, false, 0, 0);
-            gl.enableVertexAttribArray(this.shaderProgram.attributes.aColor.location);
-
-            gl.bindBuffer(gl.ARRAY_BUFFER, this.cube.uvBuffer);
-            gl.vertexAttribPointer(this.shaderProgram.attributes.aUv.location, 2, gl.FLOAT, false, 0, 0);
-            gl.enableVertexAttribArray(this.shaderProgram.attributes.aUv.location);
-
-            gl.bindBuffer(gl.ARRAY_BUFFER, this.cube.normalBuffer);
-            gl.vertexAttribPointer(this.shaderProgram.attributes.aNormal.location, 3, gl.FLOAT, false, 0, 0);
-            gl.enableVertexAttribArray(this.shaderProgram.attributes.aNormal.location);
-
-            gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, this.cube.indexBuffer);
-
-            gl.drawElements(gl.TRIANGLES, this.cube.indexCount, gl.UNSIGNED_SHORT, 0);
-        }
+        draw(
+            gl,
+            this.cubeMesh,
+            this.shaderProgram,
+            [],
+            { uDimensions: [this.width, this.height], uTransform: model.data }
+        );
     }
 }
