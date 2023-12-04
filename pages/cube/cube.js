@@ -151,7 +151,10 @@ class BezierApp extends GlApp {
         gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
         gl.useProgram(this.shaderProgram.program);
 
-        const model = Mat4.scalar(.5, .5, .5).rotate(Math.PI / 4, this.t, this.t);
+        const model = Mat4.scalar(.5, .5, .5)
+            .rotate(Math.PI / 4, this.t, this.t)
+            .translate(0, 0, -2)
+            .mul(Mat4.projection(.8, 1, .1, 100));
 
         draw(
             gl,

@@ -18,10 +18,10 @@ export class Mat4 {
 
     static translation(x, y, z) {
         return new Mat4([
-            1, 0, 0, x,
-            0, 1, 0, y,
-            0, 0, 1, z,
-            0, 0, 0, 1,
+            1, 0, 0, 0,
+            0, 1, 0, 0,
+            0, 0, 1, 0,
+            x, y, z, 1,
         ]);
     }
 
@@ -58,6 +58,18 @@ export class Mat4 {
             Math.sin(angle), Math.cos(angle), 0, 0,
             0, 0, 1, 0,
             0, 0, 0, 1,
+        ]);
+    }
+
+    static projection(fov, aspect, near, far) {
+        const f = 1 / Math.tan(fov / 2);
+        const invRange = 1 / (near - far);
+
+        return new Mat4([
+            f / aspect, 0, 0, 0,
+            0, f, 0, 0,
+            0, 0, (near + far) * invRange, -1,
+            0, 0, near * far * invRange * 2, 0,
         ]);
     }
 
