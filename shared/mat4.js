@@ -82,4 +82,19 @@ export class Mat4 {
         }
         return result;
     }
+
+    translate(x, y, z) {
+        return this.mul(Mat4.translation(x, y, z));
+    }
+
+    scale(x, y, z) {
+        return this.mul(Mat4.scalar(x, y, z));
+    }
+
+    rotate(x, y, z) {
+        return this
+            .mul(Mat4.rotationX(x))
+            .mul(Mat4.rotationY(y))
+            .mul(Mat4.rotationZ(z));
+    }
 }
