@@ -109,4 +109,8 @@ export class Mat4 {
             .mul(Mat4.rotationY(y))
             .mul(Mat4.rotationZ(z));
     }
+
+    project(fov, aspect, near, far) {
+        return this.mul(Mat4.projection(fov, aspect, near, far));
+    }
 }
