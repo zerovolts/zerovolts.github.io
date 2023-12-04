@@ -22,12 +22,10 @@ export function circleMesh(gl, radius, segmentCount) {
         indices.push(i + 1);
     }
 
-    return new Mesh(
-        gl,
-        positions.flat(),
-        undefined,
-        indices,
-    );
+    return new Mesh(gl, {
+        position: positions.flat(),
+        index: indices,
+    });
 }
 
 export function lineMesh(gl, start, end, width, segmentCount, rounded = false) {
@@ -62,10 +60,8 @@ export function lineMesh(gl, start, end, width, segmentCount, rounded = false) {
         indices.push(i + 1);
     }
 
-    return new Mesh(
-        gl,
-        positions.flat(),
-        undefined,
-        indices,
-    );
+    return new Mesh(gl, {
+        position: positions.flat(),
+        index: indices,
+    });
 }

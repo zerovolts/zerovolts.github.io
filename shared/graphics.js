@@ -98,24 +98,37 @@ export class Texture {
 }
 
 export class Mesh {
-    constructor(gl, positions, uvs, indices) {
+    // Possible attributes: position, index, uv, normal, color
+    constructor(gl, attributes) {
         this.attributes = {};
 
         this.attributes.aPosition = gl.createBuffer();
         gl.bindBuffer(gl.ARRAY_BUFFER, this.attributes.aPosition);
-        gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(positions), gl.STATIC_DRAW);
+        gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(attributes.position), gl.STATIC_DRAW);
 
-        if (uvs !== undefined) {
+        if (attributes.uv !== undefined) {
             this.attributes.aUv = gl.createBuffer();
             gl.bindBuffer(gl.ARRAY_BUFFER, this.attributes.aUv);
-            gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(uvs), gl.STATIC_DRAW);
+            gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(attributes.uv), gl.STATIC_DRAW);
+        }
+
+        if (attributes.normal !== undefined) {
+            this.attributes.aNormal = gl.createBuffer();
+            gl.bindBuffer(gl.ARRAY_BUFFER, this.attributes.aNormal);
+            gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(attributes.normal), gl.STATIC_DRAW);
+        }
+
+        if (attributes.color !== undefined) {
+            this.attributes.aColor = gl.createBuffer();
+            gl.bindBuffer(gl.ARRAY_BUFFER, this.attributes.aColor);
+            gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(attributes.color), gl.STATIC_DRAW);
         }
 
         this.indexBuffer = gl.createBuffer();
         gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, this.indexBuffer);
-        gl.bufferData(gl.ELEMENT_ARRAY_BUFFER, new Uint16Array(indices), gl.STATIC_DRAW);
+        gl.bufferData(gl.ELEMENT_ARRAY_BUFFER, new Uint16Array(attributes.index), gl.STATIC_DRAW);
 
-        this.indexCount = indices.length;
+        this.indexCount = attributes.index.length;
     }
 }
 

@@ -29,12 +29,11 @@ class TetrisApp extends GlApp {
             { aPosition: "2f", aUv: "2f" },
             {},
         );
-        this.backgroundMesh = new Mesh(
-            gl,
-            [-1, -1, 1, -1, 1, 1, -1, 1],
-            [0, 0, 1, 0, 1, 1, 0, 1],
-            [0, 1, 2, 2, 3, 0],
-        );
+        this.backgroundMesh = new Mesh(gl, {
+            position: [-1, -1, 1, -1, 1, 1, -1, 1],
+            uv: [0, 0, 1, 0, 1, 1, 0, 1],
+            index: [0, 1, 2, 2, 3, 0],
+        });
 
         this.blockShader = new ShaderProgram(
             gl,
@@ -43,12 +42,11 @@ class TetrisApp extends GlApp {
             { aPosition: "2f", aUv: "2f" },
             { uCoord: "2f", uColor: "3f" },
         );
-        this.blockMesh = new Mesh(
-            gl,
-            [0, 0, 1, 0, 1, 1, 0, 1],
-            [0, 0, 1, 0, 1, 1, 0, 1],
-            [0, 1, 2, 2, 3, 0],
-        );
+        this.blockMesh = new Mesh(gl, {
+            position: [0, 0, 1, 0, 1, 1, 0, 1],
+            uv: [0, 0, 1, 0, 1, 1, 0, 1],
+            index: [0, 1, 2, 2, 3, 0],
+        });
 
         this.timer = 0;
         this.grid = new GameGrid(10, 22);
