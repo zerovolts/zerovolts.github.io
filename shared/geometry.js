@@ -65,3 +65,78 @@ export function lineMesh(gl, start, end, width, segmentCount, rounded = false) {
         index: indices,
     });
 }
+
+export function cubeMesh(gl) {
+    const a = -.5;
+    const z = .5;
+    return new Mesh(gl, {
+        position: [
+            // Front
+            a, a, a,
+            a, z, a,
+            z, z, a,
+            z, a, a,
+            // Back
+            z, a, z,
+            z, z, z,
+            a, z, z,
+            a, a, z,
+            // Top
+            a, a, z,
+            a, a, a,
+            z, a, a,
+            z, a, z,
+            // Bottom
+            a, z, a,
+            a, z, z,
+            z, z, z,
+            z, z, a,
+            // Left
+            a, a, z,
+            a, z, z,
+            a, z, a,
+            a, a, a,
+            // Right
+            z, a, a,
+            z, z, a,
+            z, z, z,
+            z, a, z,
+        ],
+        index: [
+            // Front
+            0, 1, 2,
+            2, 3, 0,
+            // Back
+            4, 5, 6,
+            6, 7, 4,
+            // Top
+            8, 9, 10,
+            10, 11, 8,
+            // Bottom
+            12, 13, 14,
+            14, 15, 12,
+            // Left
+            16, 17, 18,
+            18, 19, 16,
+            // Right
+            20, 21, 22,
+            22, 23, 20,
+        ],
+        uv: [
+            1, 0, 0, 0, 0, 1, 1, 1,
+            1, 0, 0, 0, 0, 1, 1, 1,
+            1, 0, 0, 0, 0, 1, 1, 1,
+            1, 0, 0, 0, 0, 1, 1, 1,
+            1, 0, 0, 0, 0, 1, 1, 1,
+            1, 0, 0, 0, 0, 1, 1, 1,
+        ],
+        normal: [
+            0, 0, -1, 0, 0, -1, 0, 0, -1, 0, 0, -1,
+            0, 0, 1, 0, 0, 1, 0, 0, 1, 0, 0, 1,
+            0, -1, 0, 0, -1, 0, 0, -1, 0, 0, -1, 0,
+            0, 1, 0, 0, 1, 0, 0, 1, 0, 0, 1, 0,
+            -1, 0, 0, -1, 0, 0, -1, 0, 0, -1, 0, 0,
+            1, 0, 0, 1, 0, 0, 1, 0, 0, 1, 0, 0,
+        ],
+    });
+}
