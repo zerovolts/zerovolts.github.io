@@ -103,11 +103,16 @@ export class Mat4 {
         return this.mul(Mat4.scalar(x, y, z));
     }
 
-    rotate(x, y, z) {
-        return this
-            .mul(Mat4.rotationX(x))
-            .mul(Mat4.rotationY(y))
-            .mul(Mat4.rotationZ(z));
+    rotateX(angle) {
+        return this.mul(Mat4.rotationX(angle));
+    }
+
+    rotateY(angle) {
+        return this.mul(Mat4.rotationY(angle));
+    }
+
+    rotateZ(angle) {
+        return this.mul(Mat4.rotationZ(angle));
     }
 
     project(fov, aspect, near, far) {

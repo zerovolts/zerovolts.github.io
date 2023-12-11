@@ -83,7 +83,9 @@ class App extends GlApp {
         gl.useProgram(this.shaderProgram.program);
 
         const model = Mat4.scalar(.5, .5, .5)
-            .rotate(Math.PI / 4, this.t, this.t)
+            .rotateX(Math.PI / 4)
+            .rotateY(this.t)
+            .rotateZ(this.t)
             .translate(0, 0, -2)
             .project(.8, 1, .1, 100);
 
