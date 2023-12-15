@@ -1,100 +1,95 @@
-import { lerp as lerpScalar } from "./math.js";
+import { VecBase } from "./vec-base.js";
+import { v2 } from "./vec2.js";
+import { lerp } from "./math.js";
 
-export function zero() { return [0, 0, 0]; }
-export function one() { return [1, 1, 1]; }
+export function v3(x, y, z) { return new Vec3(x, y, z); }
 
-export function right() { return [1, 0, 0]; }
-export function left() { return [-1, 0, 0]; }
-export function up() { return [0, 1, 0]; }
-export function down() { return [0, -1, 0]; }
-export function back() { return [0, 0, 1]; }
-export function forward() { return [0, 0, -1]; }
+export class Vec3 extends VecBase {
+    static zero() { return v3(0, 0, 0); }
+    static one() { return v3(1, 1, 1); }
 
-export function copy(self) {
-    return [self[0], self[1], self[2]];
-}
+    static right() { return v3(1, 0, 0); }
+    static left() { return v3(-1, 0, 0); }
+    static up() { return v3(0, 1, 0); }
+    static down() { return v3(0, -1, 0); }
+    static back() { return v3(0, 0, 1); }
+    static forward() { return v3(0, 0, -1); }
 
-export function addMut(self, other) {
-    self[0] += other[0];
-    self[1] += other[1];
-    self[2] += other[2];
-    return self;
-};
+    constructor(x, y, z) {
+        super();
+        this.data = [x, y, z];
+    }
 
-export function add(self, other) {
-    return addMut(copy(self), other);
-};
+    get x() {
+        return this.data[0];
+    }
 
-export function subMut(self, other) {
-    self[0] -= other[0];
-    self[1] -= other[1];
-    self[2] -= other[2];
-    return self;
-};
+    get y() {
+        return this.data[1];
+    }
 
-export function sub(self, other) {
-    return subMut(copy(self), other);
-};
+    get z() {
+        return this.data[2];
+    }
 
-export function scaleMut(self, scalar) {
-    self[0] *= scalar;
-    self[1] *= scalar;
-    self[2] *= scalar;
-    return self;
-};
+    set x(value) {
+        this.data[0] = value;
+    }
 
-export function scale(self, scalar) {
-    return scaleMut(copy(self), scalar);
-};
+    set y(value) {
+        this.data[1] = value;
+    }
 
-export function cross(self, other) {
-    return [
-        (self[1] * other[2]) - (self[2] * other[1]),
-        (self[2] * other[0]) - (self[0] * other[2]),
-        (self[0] * other[1]) - (self[1] * other[0]),
-    ];
-}
+    set z(value) {
+        this.data[2] = value;
+    }
 
-export function dot(self, other) {
-    return (self[0] * other[0]) + (self[1] * other[1]) + (self[2] * other[2]);
-};
+    copy() {
+        return v3(this.x, this.y, this.z);
+    }
 
-export function lengthSq(self) {
-    return dot(self, self);
-};
+    addMut(other) {
+        this.x += other.x;
+        this.y += other.y;
+        this.z += other.z;
+        return this;
+    };
 
-export function length(self) {
-    return Math.sqrt(lengthSq(self));
-};
+    subMut(other) {
+        this.x -= other.x;
+        this.y -= other.y;
+        this.z -= other.z;
+        return this;
+    };
 
-export function normalizeMut(self) {
-    return scaleMut(self, 1 / length(self));
-};
+    scaleMut(scalar) {
+        this.x *= scalar;
+        this.y *= scalar;
+        this.z *= scalar;
+        return this;
+    };
 
-export function normalize(self) {
-    return normalizeMut(copy(self));
-};
+    cross(other) {
+        return [
+            (this.y * other.z) - (this.z * other.y),
+            (this.z * other.x) - (this.x * other.z),
+            (this.x * other.y) - (this.y * other.x),
+        ];
+    }
 
-export function lerp(from, to, progress) {
-    return [
-        lerpScalar(from[0], to[0], progress),
-        lerpScalar(from[1], to[1], progress),
-        lerpScalar(from[2], to[2], progress),
-    ];
-};
+    dot(other) {
+        return (this.x * other.x) + (this.y * other.y) + (this.z * other.z);
+    };
 
-export function quadLerp(from, ctrl, to, progress) {
-    return lerp(
-        lerp(from, ctrl, progress),
-        lerp(ctrl, to, progress,),
-        progress,
-    );
-}
+    truncate() {
+        return v2(this.x, this.y);
+    }
 
-export function cubicLerp(from, ctrlFrom, ctrlTo, to, progress) {
-    return lerp(
-        quadLerp(from, ctrlFrom, ctrlTo, progress),
-        quadLerp(ctrlFrom, ctrlTo, to, progress),
-        progress,
-    );
+    lerp(to, progress) {
+        return v3(
+            lerp(this.x, to.x, progress),
+            lerp(this.y, to.y, progress),
+            lerp(this.z, to.z, progress),
+        );
+    };
 }

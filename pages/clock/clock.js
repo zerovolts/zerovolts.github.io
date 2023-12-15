@@ -2,7 +2,7 @@ import { TAU } from "/shared/math.js"
 import { GlApp } from "/shared/gl-app.js"
 import { circleMesh, lineMesh } from "/shared/geometry.js";
 import { ShaderProgram, draw } from "/shared/graphics.js";
-import * as Vec2 from "/shared/vec2.js";
+import { Vec2 } from "/shared/vec2.js";
 import { Mat4 } from "/shared/mat4.js";
 
 const COLOR_WHITE = [1.0, 1.0, 1.0, 1.0];
@@ -43,12 +43,12 @@ class App extends GlApp {
         this.shouldRender = true;
 
         this.borderMesh = circleMesh(gl, 1, 100);
-        this.faceMesh = circleMesh(gl, 0.95, 100);
+        this.faceMesh = circleMesh(gl, .95, 100);
 
         this.markMesh = lineMesh(
             gl,
-            Vec2.scale(Vec2.up(), .85),
-            Vec2.scale(Vec2.up(), .9),
+            Vec2.up().scaleMut(.85),
+            Vec2.up().scaleMut(.9),
             .01,
             10,
             true,
@@ -56,8 +56,8 @@ class App extends GlApp {
 
         this.fiveMarkMesh = lineMesh(
             gl,
-            Vec2.scale(Vec2.up(), .8),
-            Vec2.scale(Vec2.up(), .9),
+            Vec2.up().scaleMut(.8),
+            Vec2.up().scaleMut(.9),
             .02,
             10,
             true,
@@ -65,41 +65,41 @@ class App extends GlApp {
 
         this.hourHandMesh = lineMesh(
             gl,
-            Vec2.scaleMut(Vec2.down(), 0.1),
-            Vec2.scaleMut(Vec2.up(), 0.4),
-            0.025,
+            Vec2.down().scaleMut(.1),
+            Vec2.up().scaleMut(.4),
+            .025,
             10,
             true,
         );
 
         this.minuteHandMesh = lineMesh(
             gl,
-            Vec2.scaleMut(Vec2.down(), 0.1),
-            Vec2.scaleMut(Vec2.up(), 0.7),
-            0.02,
+            Vec2.down().scaleMut(.1),
+            Vec2.up().scaleMut(.7),
+            .02,
             10,
             true,
         );
 
         this.secondHandMesh = lineMesh(
             gl,
-            Vec2.scaleMut(Vec2.down(), 0.1),
-            Vec2.scaleMut(Vec2.up(), 0.9),
-            0.01,
+            Vec2.down().scaleMut(.1),
+            Vec2.up().scaleMut(.9),
+            .01,
             10,
             true,
         );
 
         this.secondHandTailMesh = lineMesh(
             gl,
-            Vec2.scaleMut(Vec2.down(), 0.2),
-            Vec2.scaleMut(Vec2.down(), 0.1),
-            0.02,
+            Vec2.down().scaleMut(.2),
+            Vec2.down().scaleMut(.1),
+            .02,
             10,
             true,
         );
 
-        this.handCoverMesh = circleMesh(gl, 0.03, 20);
+        this.handCoverMesh = circleMesh(gl, .03, 20);
     }
 
     update(_delta) {

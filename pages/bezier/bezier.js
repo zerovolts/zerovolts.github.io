@@ -1,7 +1,6 @@
 import { GlApp } from "../../shared/gl-app.js"
 import { ShaderProgram } from "/shared/graphics.js";
-import * as Vec2 from "/shared/vec2.js";
-import * as Vec3 from "/shared/vec3.js";
+import { Vec2 } from "/shared/vec2.js";
 
 // Initiate the fetch first to reduce perceived loading.
 let shaderSources = Promise.all([
@@ -53,10 +52,10 @@ class App extends GlApp {
             const segments = 32;
             const path = [];
             for (let i = 0; i < segments; i++) {
-                path.push([
-                    ...Vec2.cubicLerp(from, fromCtrl, toCtrl, to, i / segments),
-                    Math.sin(((i / (segments - 1)) - 1) * Math.PI),
-                ]);
+                path.push(
+                    from.cubicLerp(fromCtrl, toCtrl, to, i / segments)
+                        .extend(Math.sin(((i / (segments - 1)) - 1) * Math.PI))
+                );
             }
 
             this.paths.push(path);
@@ -69,7 +68,7 @@ class App extends GlApp {
         gl.uniform2fv(this.shaderProgram.uniforms.dimensions.location, [this.width, this.height]);
 
         for (const path of this.paths) {
-            const positions = new Float32Array(extrudeLine(path, 4).flat());
+            const positions = new Float32Array(extrudeLine(path, 4).map(x => x.data).flat());
 
             const positionBuffer = gl.createBuffer();
             gl.bindBuffer(gl.ARRAY_BUFFER, positionBuffer);
@@ -87,15 +86,15 @@ class App extends GlApp {
  * Expects a list of 3d vectors, but mostly ignores the z component.
  */
 function extrudeLine(points, width) {
-    const pointAngles = [Vec2.angleBetween(points[0], points[1])];
+    const pointAngles = [points[0].truncate().angleTo(points[0].truncate())];
     // Iterate over all but the first and last.
     for (let i = 1; i < points.length - 1; i++) {
         const before = points[i - 1];
         const position = points[i];
         const after = points[i + 1];
 
-        const beforeAngle = Vec2.angleBetween(before, position);
-        const afterAngle = Vec2.angleBetween(position, after);
+        const beforeAngle = before.truncate().angleTo(position.truncate());
+        const afterAngle = position.truncate().angleTo(after.truncate());
 
         const angleDiff = afterAngle - beforeAngle;
         const flipped = angleDiff <= -Math.PI || angleDiff >= Math.PI
@@ -108,21 +107,22 @@ function extrudeLine(points, width) {
             pointAngles.push((beforeAngle + afterAngle) / 2);
         }
     }
-    pointAngles.push(Vec2.angleBetween(points.at(-2), points.at(-1)));
+    pointAngles.push(points.at(-2).truncate().angleTo(points.at(-1).truncate()));
 
     const extrudedPoints = [];
     for (let i = 0; i < points.length; i++) {
         const point = points[i];
         const angle = pointAngles[i];
 
-        const leftOffset = [...Vec2.scale(Vec2.fromAngle(angle + (Math.PI / 2)), width / 2), 0];
-        const rightOffset = leftOffset.map(x => -x);
+        const leftOffset = Vec2.fromAngle(angle + (Math.PI / 2)).scaleMut(width / 2).extend(0);
+        const rightOffset = leftOffset.scale(-1);
 
-        const leftPoint = Vec3.add(point, leftOffset);
-        const rightPoint = Vec3.add(point, rightOffset)
+        const leftPoint = point.add(leftOffset);
+        const rightPoint = point.add(rightOffset);
 
         extrudedPoints.push(leftPoint);
         extrudedPoints.push(rightPoint);
     }
+
     return extrudedPoints;
 };

@@ -1,14 +1,16 @@
+export function m4(data) { return new Mat4(data); }
+
 export class Mat4 {
     constructor(data) {
         this.data = data;
     }
 
     static empty() {
-        return new Mat4(Array(16));
+        return m4(Array(16));
     }
 
     static identity() {
-        return new Mat4([
+        return m4([
             1, 0, 0, 0,
             0, 1, 0, 0,
             0, 0, 1, 0,
@@ -17,7 +19,7 @@ export class Mat4 {
     }
 
     static translation(x, y, z) {
-        return new Mat4([
+        return m4([
             1, 0, 0, 0,
             0, 1, 0, 0,
             0, 0, 1, 0,
@@ -26,7 +28,7 @@ export class Mat4 {
     }
 
     static scalar(x, y, z) {
-        return new Mat4([
+        return m4([
             x, 0, 0, 0,
             0, y, 0, 0,
             0, 0, z, 0,
@@ -35,7 +37,7 @@ export class Mat4 {
     }
 
     static rotationX(angle) {
-        return new Mat4([
+        return m4([
             1, 0, 0, 0,
             0, Math.cos(angle), -Math.sin(angle), 0,
             0, Math.sin(angle), Math.cos(angle), 0,
@@ -44,7 +46,7 @@ export class Mat4 {
     }
 
     static rotationY(angle) {
-        return new Mat4([
+        return m4([
             Math.cos(angle), 0, Math.sin(angle), 0,
             0, 1, 0, 0,
             -Math.sin(angle), 0, Math.cos(angle), 0,
@@ -53,7 +55,7 @@ export class Mat4 {
     }
 
     static rotationZ(angle) {
-        return new Mat4([
+        return m4([
             Math.cos(angle), -Math.sin(angle), 0, 0,
             Math.sin(angle), Math.cos(angle), 0, 0,
             0, 0, 1, 0,
@@ -65,7 +67,7 @@ export class Mat4 {
         const f = 1 / Math.tan(fov / 2);
         const invRange = 1 / (near - far);
 
-        return new Mat4([
+        return m4([
             f / aspect, 0, 0, 0,
             0, f, 0, 0,
             0, 0, (near + far) * invRange, -1,

@@ -1,18 +1,13 @@
 import { TAU } from "/shared/math.js";
-import { pipe } from "/shared/util.js";
 import { Mesh } from "/shared/graphics.js"
-import * as Vec2 from "/shared/vec2.js";
+import { Vec2 } from "./vec2.js";
 
 export function circleMesh(gl, radius, segmentCount) {
     const segmentAngle = TAU / segmentCount;
 
     const positions = [];
     for (let i = 0; i < segmentCount; i++) {
-        pipe(
-            Vec2.fromAngle(segmentAngle * i),
-            v => Vec2.scale(v, radius),
-            v => positions.push(v),
-        );
+        positions.push(Vec2.fromAngle(segmentAngle * i).scaleMut(radius));
     }
 
     const indices = [];
@@ -23,35 +18,35 @@ export function circleMesh(gl, radius, segmentCount) {
     }
 
     return new Mesh(gl, {
-        position: positions.flat(),
+        position: positions.map(x => x.data).flat(),
         index: indices,
     });
 }
 
 export function lineMesh(gl, start, end, width, segmentCount, rounded = false) {
     const halfWidth = width / 2;
-    const lineAngle = Vec2.angleBetween(start, end);
-    const leftOffset = Vec2.scaleMut(Vec2.fromAngle(lineAngle + (Math.PI / 2)), halfWidth);
-    const rightOffset = leftOffset.map(x => -x);
+    const lineAngle = start.angleTo(end);
+    const leftOffset = Vec2.fromAngle(lineAngle + (Math.PI / 2)).scaleMut(halfWidth);
+    const rightOffset = leftOffset.scale(-1);
     const segmentAngle = (1 / segmentCount) * TAU;
 
     const positions = []
-    positions.push(Vec2.add(start, leftOffset));
+    positions.push(start.add(leftOffset));
     if (rounded) {
         for (let i = 1; i < segmentCount / 2; i++) {
             const angle = lineAngle + (Math.PI / 2) + (segmentAngle * i);
-            positions.push(Vec2.addMut(Vec2.scaleMut(Vec2.fromAngle(angle), halfWidth), start));
+            positions.push(Vec2.fromAngle(angle).scaleMut(halfWidth).addMut(start));
         }
     }
-    positions.push(Vec2.add(start, rightOffset));
-    positions.push(Vec2.add(end, rightOffset));
+    positions.push(start.add(rightOffset));
+    positions.push(end.add(rightOffset));
     if (rounded) {
         for (let i = 1; i < segmentCount / 2; i++) {
             const angle = lineAngle - (Math.PI / 2) + (segmentAngle * i);
-            positions.push(Vec2.addMut(Vec2.scaleMut(Vec2.fromAngle(angle), halfWidth), end));
+            positions.push(Vec2.fromAngle(angle).scaleMut(halfWidth).addMut(end));
         }
     }
-    positions.push(Vec2.add(end, leftOffset));
+    positions.push(end.add(leftOffset));
 
     const indices = [];
     for (let i = 1; i < (segmentCount + 2) - 1; i++) {
@@ -61,7 +56,7 @@ export function lineMesh(gl, start, end, width, segmentCount, rounded = false) {
     }
 
     return new Mesh(gl, {
-        position: positions.flat(),
+        position: positions.map(x => x.data).flat(),
         index: indices,
     });
 }

@@ -1,115 +1,100 @@
-import { lerp as lerpScalar } from "./math.js";
+import { VecBase } from "./vec-base.js";
+import { v3 } from "./vec3.js";
+import { lerp } from "./math.js";
 
-export function zero() { return [0, 0]; }
-export function one() { return [1, 1]; }
+export function v2(x, y) { return new Vec2(x, y); }
 
-export function right() { return [1, 0]; }
-export function left() { return [-1, 0]; }
-export function up() { return [0, 1]; }
-export function down() { return [0, -1]; }
+export class Vec2 extends VecBase {
+    static zero() { return v2(0, 0); }
+    static one() { return v2(1, 1); }
 
-export function copy(self) {
-    return [self[0], self[1]];
-}
+    static right() { return v2(1, 0); }
+    static left() { return v2(-1, 0); }
+    static up() { return v2(0, 1); }
+    static down() { return v2(0, -1); }
 
-export function randomRange(min, max) {
-    const range = max - min;
-    return [
-        Math.random() * range + min,
-        Math.random() * range + min,
-    ];
-}
+    constructor(x, y) {
+        super();
+        this.data = [x, y];
+    }
 
-/** Returns a random point on the unit circle. */
-export function randomUnit() {
-    return fromAngle(Math.random() * Math.PI * 2);
-};
+    get x() {
+        return this.data[0];
+    }
 
-export function fromAngle(angle) {
-    return [Math.cos(angle), Math.sin(angle)];
-};
+    get y() {
+        return this.data[1];
+    }
 
-export function toAngle(self) {
-    return Math.atan2(self[1], self[0]);
-};
+    set x(value) {
+        this.data[0] = value;
+    }
 
-export function angleBetween(from, to) {
-    return toAngle(sub(to, from));
-};
+    set y(value) {
+        this.data[1] = value;
+    }
 
-export function addMut(self, other) {
-    self[0] += other[0];
-    self[1] += other[1];
-    return self;
-};
+    copy() {
+        return v2(this.x, this.y);
+    }
 
-export function add(self, other) {
-    return addMut(copy(self), other);
-};
+    dot(other) {
+        return (this.x * other.x) + (this.y * other.y);
+    }
 
-export function subMut(self, other) {
-    self[0] -= other[0];
-    self[1] -= other[1];
-    return self;
-};
+    addMut(other) {
+        this.x += other.x;
+        this.y += other.y;
+        return this;
+    }
 
-export function sub(self, other) {
-    return subMut(copy(self), other);
-};
+    subMut(other) {
+        this.x -= other.x;
+        this.y -= other.y;
+        return this;
+    }
 
-export function scaleMut(self, scalar) {
-    self[0] *= scalar;
-    self[1] *= scalar;
-    return self;
-};
+    scaleMut(scalar) {
+        this.x *= scalar;
+        this.y *= scalar;
+        return this;
+    }
 
-export function scale(self, scalar) {
-    return scaleMut(copy(self), scalar);
-};
+    // Vec2-specific functions
 
-export function dot(self, other) {
-    return (self[0] * other[0]) + (self[1] * other[1]);
-};
+    static fromAngle(angle) {
+        return v2(Math.cos(angle), Math.sin(angle));
+    }
 
-export function lengthSq(self) {
-    return dot(self, self);
-};
+    static randomRange(min, max) {
+        const range = max - min;
+        return v2(
+            Math.random() * range + min,
+            Math.random() * range + min,
+        );
+    }
 
-export function length(self) {
-    return Math.sqrt(lengthSq(self));
-};
+    /** Returns a random point on the unit circle. */
+    static randomUnit() {
+        return Vec2.fromAngle(Math.random() * Math.PI * 2);
+    };
 
-export function normalizeMut(self) {
-    return scaleMut(self, 1 / length(self));
-};
+    toAngle() {
+        return Math.atan2(this.y, this.x);
+    }
 
-export function normalize(self) {
-    return normalizeMut(copy(self))
-};
+    angleTo(to) {
+        return to.sub(this).toAngle();
+    }
 
-export function extend([x, y], z) {
-    return [x, y, z];
-}
+    extend(z) {
+        return v3(this.x, this.y, z);
+    }
 
-export function lerp(from, to, progress) {
-    return [
-        lerpScalar(from[0], to[0], progress),
-        lerpScalar(from[1], to[1], progress),
-    ];
-};
-
-export function quadLerp(from, ctrl, to, progress) {
-    return lerp(
-        lerp(from, ctrl, progress),
-        lerp(ctrl, to, progress),
-        progress,
-    );
-}
-
-export function cubicLerp(from, ctrlFrom, ctrlTo, to, progress) {
-    return lerp(
-        quadLerp(from, ctrlFrom, ctrlTo, progress),
-        quadLerp(ctrlFrom, ctrlTo, to, progress),
-        progress,
-    );
+    lerp(to, progress) {
+        return v2(
+            lerp(this.x, to.x, progress),
+            lerp(this.y, to.y, progress),
+        );
+    };
 }
