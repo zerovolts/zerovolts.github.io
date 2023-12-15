@@ -2,7 +2,7 @@ import { VecBase } from "./vec-base.js";
 import { v2 } from "./vec2.js";
 import { lerp } from "./math.js";
 
-export function v3(x, y, z) { return new Vec3(x, y, z); }
+export function v3(x, y, z) { return new Vec3([x, y, z]); }
 
 export class Vec3 extends VecBase {
     static zero() { return v3(0, 0, 0); }
@@ -14,11 +14,6 @@ export class Vec3 extends VecBase {
     static down() { return v3(0, -1, 0); }
     static back() { return v3(0, 0, 1); }
     static forward() { return v3(0, 0, -1); }
-
-    constructor(x, y, z) {
-        super();
-        this.data = [x, y, z];
-    }
 
     get x() {
         return this.data[0];

@@ -1,4 +1,8 @@
 export class VecBase {
+    constructor(data) {
+        this.data = data;
+    }
+
     lengthSq() {
         return this.dot(this);
     }

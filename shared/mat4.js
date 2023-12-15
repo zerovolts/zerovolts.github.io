@@ -1,4 +1,16 @@
-export function m4(data) { return new Mat4(data); }
+export function m4(
+    x0, x1, x2, x3,
+    x4, x5, x6, x7,
+    x8, x9, x10, x11,
+    x12, x13, x14, x15,
+) {
+    return new Mat4([
+        x0, x1, x2, x3,
+        x4, x5, x6, x7,
+        x8, x9, x10, x11,
+        x12, x13, x14, x15,
+    ]);
+}
 
 export class Mat4 {
     constructor(data) {
@@ -6,73 +18,73 @@ export class Mat4 {
     }
 
     static empty() {
-        return m4(Array(16));
+        return new Mat4(Array(16));
     }
 
     static identity() {
-        return m4([
+        return m4(
             1, 0, 0, 0,
             0, 1, 0, 0,
             0, 0, 1, 0,
             0, 0, 0, 1,
-        ]);
+        );
     }
 
     static translation(x, y, z) {
-        return m4([
+        return m4(
             1, 0, 0, 0,
             0, 1, 0, 0,
             0, 0, 1, 0,
             x, y, z, 1,
-        ]);
+        );
     }
 
     static scalar(x, y, z) {
-        return m4([
+        return m4(
             x, 0, 0, 0,
             0, y, 0, 0,
             0, 0, z, 0,
             0, 0, 0, 1,
-        ]);
+        );
     }
 
     static rotationX(angle) {
-        return m4([
+        return m4(
             1, 0, 0, 0,
             0, Math.cos(angle), -Math.sin(angle), 0,
             0, Math.sin(angle), Math.cos(angle), 0,
             0, 0, 0, 1,
-        ]);
+        );
     }
 
     static rotationY(angle) {
-        return m4([
+        return m4(
             Math.cos(angle), 0, Math.sin(angle), 0,
             0, 1, 0, 0,
             -Math.sin(angle), 0, Math.cos(angle), 0,
             0, 0, 0, 1,
-        ]);
+        );
     }
 
     static rotationZ(angle) {
-        return m4([
+        return m4(
             Math.cos(angle), -Math.sin(angle), 0, 0,
             Math.sin(angle), Math.cos(angle), 0, 0,
             0, 0, 1, 0,
             0, 0, 0, 1,
-        ]);
+        );
     }
 
     static projection(fov, aspect, near, far) {
         const f = 1 / Math.tan(fov / 2);
         const invRange = 1 / (near - far);
 
-        return m4([
+        return m4(
             f / aspect, 0, 0, 0,
             0, f, 0, 0,
             0, 0, (near + far) * invRange, -1,
             0, 0, near * far * invRange * 2, 0,
-        ]);
+        );
     }
 
     get(x, y) {
