@@ -7,5 +7,6 @@ in vec4 vColor;
 out vec4 fragColor;
 
 void main() {
-    fragColor = vColor;
+    vec3 srgb = pow(vColor.rgb, vec3(1. / 2.2));
+    fragColor = vec4(srgb, vColor.a);
 }

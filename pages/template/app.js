@@ -25,14 +25,14 @@ class App extends GlApp {
             vertexSource,
             fragmentSource,
             { aPosition: "2f", aColor: "4f" },
-            { uDimensions: "2f" },
+            {},
         );
 
         this.triangleMesh = new Mesh(gl, {
             position: [
-                this.width / 2, 0,
-                this.width, this.height,
-                0, this.height,
+                0, 1,
+                -1, -1,
+                1, -1,
             ],
             color: [
                 1, 0, 0, 1,
@@ -48,6 +48,6 @@ class App extends GlApp {
     render(gl) {
         gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
 
-        draw(gl, this.triangleMesh, this.shaderProgram, [], { uDimensions: [this.width, this.height] });
+        draw(gl, this.triangleMesh, this.shaderProgram, [], {});
     }
 }
