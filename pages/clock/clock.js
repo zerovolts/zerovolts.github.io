@@ -11,8 +11,8 @@ const COLOR_ACCENT = [1.0, 0.42, 0.31, 1.0];
 
 // Initiate the fetch first to reduce perceived loading.
 let shaderSources = Promise.all([
-    fetch("/pages/clock/hand.vert").then(res => res.text()),
-    fetch("/pages/clock/flat_color.frag").then(res => res.text()),
+    fetch("./hand.vert").then(res => res.text()),
+    fetch("./flat_color.frag").then(res => res.text()),
 ]);
 
 document.addEventListener("DOMContentLoaded", async () => {

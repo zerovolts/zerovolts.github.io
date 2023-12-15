@@ -4,15 +4,15 @@ import { loadImage } from "/shared/util.js";
 
 // Initiate the fetch first to reduce perceived loading.
 let shaderSources = Promise.all([
-    fetch("/pages/post-processing/post-processing.vert").then(res => res.text()),
-    fetch("/pages/post-processing/default.frag").then(res => res.text()),
-    fetch("/pages/post-processing/abberation.frag").then(res => res.text()),
-    fetch("/pages/post-processing/gaussian.frag").then(res => res.text()),
-    fetch("/pages/post-processing/sharpen.frag").then(res => res.text()),
-    fetch("/pages/post-processing/edge.frag").then(res => res.text()),
-    fetch("/pages/post-processing/noise.frag").then(res => res.text()),
-    fetch("/pages/post-processing/crt.frag").then(res => res.text()),
-    fetch("/pages/post-processing/tiles.frag").then(res => res.text()),
+    fetch("./post-processing.vert").then(res => res.text()),
+    fetch("./default.frag").then(res => res.text()),
+    fetch("./abberation.frag").then(res => res.text()),
+    fetch("./gaussian.frag").then(res => res.text()),
+    fetch("./sharpen.frag").then(res => res.text()),
+    fetch("./edge.frag").then(res => res.text()),
+    fetch("./noise.frag").then(res => res.text()),
+    fetch("./crt.frag").then(res => res.text()),
+    fetch("./tiles.frag").then(res => res.text()),
 ]);
 
 const buttonIds = [

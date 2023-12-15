@@ -3,8 +3,8 @@ import { ShaderProgram, Mesh, draw } from "/shared/graphics.js";
 
 // Initiate the fetch first to reduce perceived loading.
 let shaderSources = Promise.all([
-    fetch("/pages/template/template.vert").then(res => res.text()),
-    fetch("/pages/template/template.frag").then(res => res.text()),
+    fetch("./template.vert").then(res => res.text()),
+    fetch("./template.frag").then(res => res.text()),
 ]);
 
 document.addEventListener("DOMContentLoaded", async () => {

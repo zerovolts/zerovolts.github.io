@@ -4,8 +4,8 @@ import { Vec2 } from "/shared/vec2.js";
 
 // Initiate the fetch first to reduce perceived loading.
 let shaderSources = Promise.all([
-    fetch("/pages/bezier/bezier.vert").then(res => res.text()),
-    fetch("/pages/bezier/bezier.frag").then(res => res.text()),
+    fetch("./bezier.vert").then(res => res.text()),
+    fetch("./bezier.frag").then(res => res.text()),
 ]);
 
 document.addEventListener("DOMContentLoaded", async () => {

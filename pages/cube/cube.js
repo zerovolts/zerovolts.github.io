@@ -5,8 +5,8 @@ import { cubeMesh } from "/shared/geometry.js";
 
 // Initiate the fetch first to reduce perceived loading.
 let shaderSources = Promise.all([
-    fetch("/pages/cube/cube.vert").then(res => res.text()),
-    fetch("/pages/cube/cube.frag").then(res => res.text()),
+    fetch("./cube.vert").then(res => res.text()),
+    fetch("./cube.frag").then(res => res.text()),
 ]);
 
 document.addEventListener("DOMContentLoaded", async () => {
