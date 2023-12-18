@@ -1,6 +1,7 @@
 import { TAU } from "/shared/math.js";
 import { Mesh } from "/shared/graphics.js"
 import { Vec2 } from "./vec2.js";
+import { Vec3 } from "./vec3.js";
 
 export function circleMesh(gl, radius, segmentCount) {
     const segmentAngle = TAU / segmentCount;
@@ -133,5 +134,105 @@ export function cubeMesh(gl) {
             -1, 0, 0, -1, 0, 0, -1, 0, 0, -1, 0, 0,
             1, 0, 0, 1, 0, 0, 1, 0, 0, 1, 0, 0,
         ],
+    });
+}
+
+export function cylinderMesh(gl, segmentCount) {
+    const positions = [];
+
+    // top
+    for (let i = 0; i < segmentCount; i++) {
+        const angle = (i / segmentCount) * Math.PI * 2;
+        positions.push(...Vec2.fromAngle(angle).extend(1).data);
+    }
+    // side
+    for (let i = 0; i < segmentCount; i++) {
+        const angle = (i / segmentCount) * Math.PI * 2;
+        positions.push(...Vec2.fromAngle(angle).extend(1).data);
+        positions.push(...Vec2.fromAngle(angle).extend(-1).data);
+    }
+    // bottom
+    for (let i = 0; i < segmentCount; i++) {
+        const angle = (i / segmentCount) * Math.PI * 2;
+        positions.push(...Vec2.fromAngle(angle).extend(-1).data);
+    }
+
+    const indices = [];
+    // top
+    for (let i = 1; i < segmentCount - 1; i++) {
+        indices.push(0);
+        indices.push(i);
+        indices.push(i + 1);
+    }
+    // side
+    for (let i = 0; i < segmentCount * 2; i += 2) {
+        const base = segmentCount;
+        const offset = base + i;
+
+        if (i < (segmentCount - 1) * 2) {
+            indices.push(offset + 0);
+            indices.push(offset + 1);
+            indices.push(offset + 2);
+
+            indices.push(offset + 2);
+            indices.push(offset + 1);
+            indices.push(offset + 3);
+        } else {
+            // connect to beginning points
+            indices.push(offset + 0);
+            indices.push(offset + 1);
+            indices.push(base);
+
+            indices.push(base);
+            indices.push(offset + 1);
+            indices.push(base + 1);
+        }
+    }
+    //bottom
+    for (let i = 1; i < segmentCount - 1; i++) {
+        const base = segmentCount * 3;
+        indices.push(base + i + 1);
+        indices.push(base + i);
+        indices.push(base);
+    }
+
+    const normals = [];
+    // top
+    for (let i = 0; i < segmentCount; i++) {
+        normals.push(...Vec3.up().data);
+    }
+    // side
+    for (let i = 0; i < segmentCount; i++) {
+        const angle = (i / segmentCount) * Math.PI * 2;
+        normals.push(...Vec2.fromAngle(angle).extend(0).data);
+        normals.push(...Vec2.fromAngle(angle).extend(0).data);
+    }
+    // bottom
+    for (let i = 0; i < segmentCount; i++) {
+        normals.push(...Vec3.down().data);
+    }
+
+    const uvs = [];
+    for (let i = 0; i < segmentCount; i++) {
+        const angle = (i / segmentCount) * Math.PI * 2;
+        uvs.push(...Vec2.fromAngle(angle).addMut(Vec2.one()).scaleMut(.5).data);
+    }
+    // side
+    for (let i = 0; i < segmentCount; i++) {
+        const progress = i / segmentCount;
+        uvs.push(...[progress, 0]);
+        uvs.push(...[progress, 1]);
+    }
+    // bottom
+    for (let i = 0; i < segmentCount; i++) {
+        const angle = (i / segmentCount) * Math.PI * 2;
+        uvs.push(...Vec2.fromAngle(angle).addMut(Vec2.one()).scaleMut(.5).data);
+    }
+
+    return new Mesh(gl, {
+        position: positions,
+        normal: normals,
+        uv: uvs,
+        index: indices,
     });
 }

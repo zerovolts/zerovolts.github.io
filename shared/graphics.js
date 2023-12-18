@@ -112,6 +112,7 @@ export class Mesh {
         gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, this.indexBuffer);
         gl.bufferData(gl.ELEMENT_ARRAY_BUFFER, new Uint16Array(attributes.index), gl.STATIC_DRAW);
 
+        this.vertexCount = attributes.position.length;
         this.indexCount = attributes.index.length;
     }
 
