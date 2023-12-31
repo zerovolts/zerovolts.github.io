@@ -10,7 +10,7 @@ export class GlApp {
         if (this.gl === null) throw new Error("WebGL2 not supported");
 
         this.width = canvas.width;
-        this.height = canvas.width;
+        this.height = canvas.height;
         this.running = true;
         this.prevTimestamp = 0;
 
