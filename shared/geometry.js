@@ -3,6 +3,27 @@ import { Mesh } from "/shared/graphics.js"
 import { Vec2 } from "./vec2.js";
 import { Vec3 } from "./vec3.js";
 
+export function quadMesh(gl) {
+    return new Mesh(gl, {
+        position: [
+            -1,  -1, 0,
+            -1,  1, 0,
+             1,  1, 0,
+             1, -1, 0,
+        ],
+        index: [
+            0, 3, 2,
+            2, 1, 0,
+        ],
+        uv: [
+            0, 0,
+            1, 0,
+            1, 1,
+            0, 1,
+        ],
+    });
+}
+
 export function circleMesh(gl, radius, segmentCount) {
     const segmentAngle = TAU / segmentCount;
 
