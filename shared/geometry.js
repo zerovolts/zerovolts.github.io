@@ -199,7 +199,7 @@ export function cylinderMesh(gl, segmentCount) {
     const normals = [];
     // top
     for (let i = 0; i < segmentCount; i++) {
-        normals.push(...Vec3.up().data);
+        normals.push(...Vec3.back().data);
     }
     // side
     for (let i = 0; i < segmentCount; i++) {
@@ -209,7 +209,7 @@ export function cylinderMesh(gl, segmentCount) {
     }
     // bottom
     for (let i = 0; i < segmentCount; i++) {
-        normals.push(...Vec3.down().data);
+        normals.push(...Vec3.forward().data);
     }
 
     const uvs = [];
