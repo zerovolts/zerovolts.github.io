@@ -22,7 +22,14 @@ export class Framebuffer {
         return new Framebuffer(gl, fb, texture.width, texture.height);
     }
 
-    draw(mesh, shaderProgram, textures, uniforms, shouldClear) {
+    clear(r, g, b, a) {
+        const gl = this.gl;
+        gl.bindFramebuffer(gl.FRAMEBUFFER, this.framebuffer);
+        gl.clearColor(r, g, b, a);
+        gl.clear(gl.COLOR_BUFFER_BIT);
+    }
+
+    draw(mesh, shaderProgram, textures, uniforms) {
         const gl = this.gl;
         gl.useProgram(shaderProgram.program);
 
@@ -47,10 +54,6 @@ export class Framebuffer {
 
         gl.bindFramebuffer(gl.FRAMEBUFFER, this.framebuffer);
         gl.viewport(0, 0, this.width, this.height);
-
-        if (shouldClear) {
-            gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
-        }
 
         gl.drawElements(gl.TRIANGLES, mesh.indexCount, gl.UNSIGNED_SHORT, 0);
     }

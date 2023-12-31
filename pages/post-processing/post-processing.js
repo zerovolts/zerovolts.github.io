@@ -77,12 +77,13 @@ class App extends GlApp {
             { uTexture: "1i", uDimensions: "2f" },
         );
 
+        this.screen.clear(0, 0, 0, 1);
+
         this.screen.draw(
             this.mesh,
             this.shaderProgram,
             [this.texture],
             { uDimensions: [this.width, this.height], uTexture: 0 },
-            true,
         );
     }
 }

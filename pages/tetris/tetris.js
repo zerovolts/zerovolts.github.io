@@ -102,14 +102,16 @@ class App extends GlApp {
     }
 
     render(gl) {
-        this.screen.draw(this.backgroundMesh, this.backgroundShader, [], {}, true);
+        this.screen.clear(0, 0, 0, 1);
+
+        this.screen.draw(this.backgroundMesh, this.backgroundShader, [], {});
 
         // Grid blocks
         for (let y = 0; y < this.grid.height; y++) {
             for (let x = 0; x < this.grid.width; x++) {
                 const color = this.grid.get(x, y);
                 if (color === null) continue;
-                this.screen.draw(this.blockMesh, this.blockShader, [], { uCoord: [x, y], uColor: color }, false);
+                this.screen.draw(this.blockMesh, this.blockShader, [], { uCoord: [x, y], uColor: color });
             }
         }
 
@@ -119,7 +121,7 @@ class App extends GlApp {
                 if (this.tetromino.isEmpty(x, y)) continue;
                 const color = this.tetromino.get(x, y);
                 const coord = [x + this.tetromino.x, y + this.tetromino.y];
-                this.screen.draw(this.blockMesh, this.blockShader, [], { uCoord: coord, uColor: color }, false);
+                this.screen.draw(this.blockMesh, this.blockShader, [], { uCoord: coord, uColor: color });
             }
         }
     }

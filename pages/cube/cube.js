@@ -86,12 +86,13 @@ class App extends GlApp {
             .translate(0, 0, -2)
             .project(.8, 1, .1, 100);
 
+        this.screen.clear(0, 0, 0, 0);
+
         this.screen.draw(
             this.cubeMesh,
             this.shaderProgram,
             [],
             { uDimensions: [this.width, this.height], uTransform: model.data },
-            true,
         );
     }
 }

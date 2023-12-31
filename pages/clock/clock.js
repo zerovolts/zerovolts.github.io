@@ -25,7 +25,6 @@ document.addEventListener("DOMContentLoaded", async () => {
 
 class App extends GlApp {
     setup(gl) {
-        gl.clearColor(0.1, 0.1, 0.1, 0.0);
         gl.clearDepth(1.0);
 
         gl.enable(gl.DEPTH_TEST);
@@ -120,19 +119,19 @@ class App extends GlApp {
 
         const MAT4_IDENTITY = new Float32Array(Mat4.identity().data)
 
+        this.screen.clear(0, 0, 0, 0);
+
         this.screen.draw(
             this.borderMesh,
             this.shaderProgram,
             [],
             { uColor: COLOR_BLACK, uTransform: MAT4_IDENTITY },
-            false,
         );
         this.screen.draw(
             this.faceMesh,
             this.shaderProgram,
             [],
             { uColor: COLOR_WHITE, uTransform: MAT4_IDENTITY },
-            false,
         );
 
         for (let i = 0; i < 60; i++) {
@@ -144,7 +143,6 @@ class App extends GlApp {
                     this.shaderProgram,
                     [],
                     { uColor: COLOR_BLACK, uTransform: Mat4.rotationZ(angle).data },
-                    false,
                 );
             } else {
                 this.screen.draw(
@@ -152,7 +150,6 @@ class App extends GlApp {
                     this.shaderProgram,
                     [],
                     { uColor: COLOR_BLACK, uTransform: Mat4.rotationZ(angle).data },
-                    false,
                 );
             }
         }
@@ -162,7 +159,6 @@ class App extends GlApp {
             this.shaderProgram,
             [],
             { uColor: COLOR_BLACK, uTransform: new Float32Array(Mat4.rotationZ(this.hourHandRadians).data) },
-            false,
         );
 
         this.screen.draw(
@@ -170,7 +166,6 @@ class App extends GlApp {
             this.shaderProgram,
             [],
             { uColor: COLOR_BLACK, uTransform: new Float32Array(Mat4.rotationZ(this.minuteHandRadians).data) },
-            false,
         );
 
         this.screen.draw(
@@ -178,7 +173,6 @@ class App extends GlApp {
             this.shaderProgram,
             [],
             { uColor: COLOR_ACCENT, uTransform: new Float32Array(Mat4.rotationZ(this.secondHandRadians).data) },
-            false,
         );
 
         this.screen.draw(
@@ -186,7 +180,6 @@ class App extends GlApp {
             this.shaderProgram,
             [],
             { uColor: COLOR_ACCENT, uTransform: new Float32Array(Mat4.rotationZ(this.secondHandRadians).data) },
-            false,
         );
 
         this.screen.draw(
@@ -194,7 +187,6 @@ class App extends GlApp {
             this.shaderProgram,
             [],
             { uColor: COLOR_BLACK, uTransform: MAT4_IDENTITY },
-            false,
         );
     }
 }

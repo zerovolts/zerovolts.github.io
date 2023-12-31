@@ -46,6 +46,7 @@ class App extends GlApp {
     update(_delta) {}
 
     render(gl) {
-        this.screen.draw(this.triangleMesh, this.shaderProgram, [], {}, null, true);
+        this.screen.clear(0, 0, 0, 0);
+        this.screen.draw(this.triangleMesh, this.shaderProgram, [], {});
     }
 }
