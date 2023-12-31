@@ -1,7 +1,7 @@
 import { TAU } from "/shared/math.js"
 import { GlApp } from "/shared/gl-app.js"
 import { circleMesh, lineMesh } from "/shared/geometry.js";
-import { ShaderProgram, draw } from "/shared/graphics.js";
+import { ShaderProgram, Framebuffer } from "/shared/graphics.js";
 import { Vec2 } from "/shared/vec2.js";
 import { Mat4 } from "/shared/mat4.js";
 
@@ -118,68 +118,83 @@ class App extends GlApp {
         if (!this.shouldRender) { return; }
         this.shouldRender = false;
 
-        gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
-        gl.useProgram(this.shaderProgram.program);
-
         const MAT4_IDENTITY = new Float32Array(Mat4.identity().data)
 
-        draw(gl, this.borderMesh, this.shaderProgram, [], { uColor: COLOR_BLACK, uTransform: MAT4_IDENTITY });
-        draw(gl, this.faceMesh, this.shaderProgram, [], { uColor: COLOR_WHITE, uTransform: MAT4_IDENTITY });
+        this.screen.draw(
+            this.borderMesh,
+            this.shaderProgram,
+            [],
+            { uColor: COLOR_BLACK, uTransform: MAT4_IDENTITY },
+            false,
+        );
+        this.screen.draw(
+            this.faceMesh,
+            this.shaderProgram,
+            [],
+            { uColor: COLOR_WHITE, uTransform: MAT4_IDENTITY },
+            false,
+        );
 
         for (let i = 0; i < 60; i++) {
             const angle = (i / 60) * TAU;
 
             if (i % 5 === 0) {
-                draw(
-                    gl,
+                this.screen.draw(
                     this.fiveMarkMesh,
                     this.shaderProgram,
                     [],
-                    { uColor: COLOR_BLACK, uTransform: Mat4.rotationZ(angle).data }
+                    { uColor: COLOR_BLACK, uTransform: Mat4.rotationZ(angle).data },
+                    false,
                 );
             } else {
-                draw(
-                    gl,
+                this.screen.draw(
                     this.markMesh,
                     this.shaderProgram,
                     [],
-                    { uColor: COLOR_BLACK, uTransform: Mat4.rotationZ(angle).data }
+                    { uColor: COLOR_BLACK, uTransform: Mat4.rotationZ(angle).data },
+                    false,
                 );
             }
         }
 
-        draw(
-            gl,
+        this.screen.draw(
             this.hourHandMesh,
             this.shaderProgram,
             [],
-            { uColor: COLOR_BLACK, uTransform: new Float32Array(Mat4.rotationZ(this.hourHandRadians).data) }
+            { uColor: COLOR_BLACK, uTransform: new Float32Array(Mat4.rotationZ(this.hourHandRadians).data) },
+            false,
         );
 
-        draw(
-            gl,
+        this.screen.draw(
             this.minuteHandMesh,
             this.shaderProgram,
             [],
-            { uColor: COLOR_BLACK, uTransform: new Float32Array(Mat4.rotationZ(this.minuteHandRadians).data) }
+            { uColor: COLOR_BLACK, uTransform: new Float32Array(Mat4.rotationZ(this.minuteHandRadians).data) },
+            false,
         );
 
-        draw(
-            gl,
+        this.screen.draw(
             this.secondHandMesh,
             this.shaderProgram,
             [],
-            { uColor: COLOR_ACCENT, uTransform: new Float32Array(Mat4.rotationZ(this.secondHandRadians).data) }
+            { uColor: COLOR_ACCENT, uTransform: new Float32Array(Mat4.rotationZ(this.secondHandRadians).data) },
+            false,
         );
 
-        draw(
-            gl,
+        this.screen.draw(
             this.secondHandTailMesh,
             this.shaderProgram,
             [],
-            { uColor: COLOR_ACCENT, uTransform: new Float32Array(Mat4.rotationZ(this.secondHandRadians).data) }
+            { uColor: COLOR_ACCENT, uTransform: new Float32Array(Mat4.rotationZ(this.secondHandRadians).data) },
+            false,
         );
 
-        draw(gl, this.handCoverMesh, this.shaderProgram, [], { uColor: COLOR_BLACK, uTransform: MAT4_IDENTITY });
+        this.screen.draw(
+            this.handCoverMesh,
+            this.shaderProgram,
+            [],
+            { uColor: COLOR_BLACK, uTransform: MAT4_IDENTITY },
+            false,
+        );
     }
 }

@@ -1,5 +1,5 @@
 import { GlApp } from "/shared/gl-app.js"
-import { ShaderProgram, Mesh, draw } from "/shared/graphics.js";
+import { ShaderProgram, Mesh, Framebuffer } from "/shared/graphics.js";
 import { Grid } from "/shared/grid.js";
 
 // Initiate the fetch first to reduce perceived loading.
@@ -102,16 +102,14 @@ class App extends GlApp {
     }
 
     render(gl) {
-        gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
-
-        draw(gl, this.backgroundMesh, this.backgroundShader, [], {});
+        this.screen.draw(this.backgroundMesh, this.backgroundShader, [], {}, true);
 
         // Grid blocks
         for (let y = 0; y < this.grid.height; y++) {
             for (let x = 0; x < this.grid.width; x++) {
                 const color = this.grid.get(x, y);
                 if (color === null) continue;
-                draw(gl, this.blockMesh, this.blockShader, [], { uCoord: [x, y], uColor: color });
+                this.screen.draw(this.blockMesh, this.blockShader, [], { uCoord: [x, y], uColor: color }, false);
             }
         }
 
@@ -121,7 +119,7 @@ class App extends GlApp {
                 if (this.tetromino.isEmpty(x, y)) continue;
                 const color = this.tetromino.get(x, y);
                 const coord = [x + this.tetromino.x, y + this.tetromino.y];
-                draw(gl, this.blockMesh, this.blockShader, [], { uCoord: coord, uColor: color });
+                this.screen.draw(this.blockMesh, this.blockShader, [], { uCoord: coord, uColor: color }, false);
             }
         }
     }

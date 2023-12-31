@@ -1,5 +1,5 @@
 import { GlApp } from "/shared/gl-app.js"
-import { ShaderProgram, Mesh, draw } from "/shared/graphics.js";
+import { ShaderProgram, Mesh, Framebuffer } from "/shared/graphics.js";
 
 // Initiate the fetch first to reduce perceived loading.
 let shaderSources = Promise.all([
@@ -46,8 +46,6 @@ class App extends GlApp {
     update(_delta) {}
 
     render(gl) {
-        gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
-
-        draw(gl, this.triangleMesh, this.shaderProgram, [], {});
+        this.screen.draw(this.triangleMesh, this.shaderProgram, [], {}, null, true);
     }
 }

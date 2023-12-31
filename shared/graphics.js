@@ -6,29 +6,54 @@
 // - Per material - color
 // - Per instance - transform
 
-export function draw(gl, mesh, shaderProgram, textures, uniforms) {
-    gl.useProgram(shaderProgram.program);
-
-    for (const [key, value] of Object.entries(uniforms)) {
-        const { location, type } = shaderProgram.uniforms[key];
-        setUniform(gl, location, type, value);
+export class Framebuffer {
+    constructor(gl, framebuffer, width, height) {
+        this.gl = gl;
+        this.framebuffer = framebuffer;
+        this.width = width;
+        this.height = height;
     }
 
-    for (let i = 0; i < textures.length; i++) {
-        gl.activeTexture(gl.TEXTURE0 + i);
-        gl.bindTexture(gl.TEXTURE_2D, textures[i].texture);
+    static fromTexture(gl, texture) {
+        const fb = gl.createFramebuffer();
+        gl.bindFramebuffer(gl.FRAMEBUFFER, fb);
+        gl.framebufferTexture2D(gl.FRAMEBUFFER, gl.COLOR_ATTACHMENT0, gl.TEXTURE_2D, texture.texture, 0);
+
+        return new Framebuffer(gl, fb, texture.width, texture.height);
     }
 
-    for (const [key, attribute] of Object.entries(shaderProgram.attributes)) {
-        const { length } = parseType(attribute.type);
-        gl.bindBuffer(gl.ARRAY_BUFFER, mesh.attributes[key]);
-        gl.vertexAttribPointer(attribute.location, length, gl.FLOAT, false, 0, 0);
-        gl.enableVertexAttribArray(attribute.location);
+    draw(mesh, shaderProgram, textures, uniforms, shouldClear) {
+        const gl = this.gl;
+        gl.useProgram(shaderProgram.program);
+
+        for (const [key, value] of Object.entries(uniforms)) {
+            const { location, type } = shaderProgram.uniforms[key];
+            setUniform(gl, location, type, value);
+        }
+
+        for (let i = 0; i < textures.length; i++) {
+            gl.activeTexture(gl.TEXTURE0 + i);
+            gl.bindTexture(gl.TEXTURE_2D, textures[i].texture);
+        }
+
+        for (const [key, attribute] of Object.entries(shaderProgram.attributes)) {
+            const { length } = parseType(attribute.type);
+            gl.bindBuffer(gl.ARRAY_BUFFER, mesh.attributes[key]);
+            gl.vertexAttribPointer(attribute.location, length, gl.FLOAT, false, 0, 0);
+            gl.enableVertexAttribArray(attribute.location);
+        }
+
+        gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, mesh.indexBuffer);
+
+        gl.bindFramebuffer(gl.FRAMEBUFFER, this.framebuffer);
+        gl.viewport(0, 0, this.width, this.height);
+
+        if (shouldClear) {
+            gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
+        }
+
+        gl.drawElements(gl.TRIANGLES, mesh.indexCount, gl.UNSIGNED_SHORT, 0);
     }
-
-    gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, mesh.indexBuffer);
-
-    gl.drawElements(gl.TRIANGLES, mesh.indexCount, gl.UNSIGNED_SHORT, 0);
 }
 
 function setUniform(gl, location, typeStr, value) {
@@ -82,14 +107,16 @@ function setUniform(gl, location, typeStr, value) {
 }
 
 export class Texture {
-    constructor(gl, image) {
+    constructor(gl, image, width, height) {
         this.gl = gl;
+        this.width = width ?? image?.naturalWidth ?? width;
+        this.height = height ?? image?.naturalHeight ?? height;
 
         gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL, true);
 
         this.texture = gl.createTexture();
         gl.bindTexture(gl.TEXTURE_2D, this.texture);
-        gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, image);
+        gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, this.width, this.height, 0, gl.RGBA, gl.UNSIGNED_BYTE, image);
         gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE);
         gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
         gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.NEAREST);

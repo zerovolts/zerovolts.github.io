@@ -1,6 +1,6 @@
 import { GlApp } from "/shared/gl-app.js"
 import { Mat4 } from "/shared/mat4.js"
-import { ShaderProgram, draw } from "/shared/graphics.js";
+import { ShaderProgram, Framebuffer } from "/shared/graphics.js";
 import { cubeMesh } from "/shared/geometry.js";
 
 // Initiate the fetch first to reduce perceived loading.
@@ -79,9 +79,6 @@ class App extends GlApp {
     }
 
     render(gl) {
-        gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
-        gl.useProgram(this.shaderProgram.program);
-
         const model = Mat4.scalar(.5, .5, .5)
             .rotateX(Math.PI / 4)
             .rotateY(this.t)
@@ -89,12 +86,12 @@ class App extends GlApp {
             .translate(0, 0, -2)
             .project(.8, 1, .1, 100);
 
-        draw(
-            gl,
+        this.screen.draw(
             this.cubeMesh,
             this.shaderProgram,
             [],
-            { uDimensions: [this.width, this.height], uTransform: model.data }
+            { uDimensions: [this.width, this.height], uTransform: model.data },
+            true,
         );
     }
 }

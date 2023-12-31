@@ -1,3 +1,5 @@
+import { Framebuffer } from "./graphics.js"
+
 export class GlApp {
     /** @param {HTMLCanvasElement} canvas */
     constructor(canvas) {
@@ -13,6 +15,8 @@ export class GlApp {
         this.height = canvas.height;
         this.running = true;
         this.prevTimestamp = 0;
+
+        this.screen = new Framebuffer(this.gl, null, this.width, this.height);
 
         this.setup(this.gl);
 

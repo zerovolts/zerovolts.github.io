@@ -1,5 +1,5 @@
 import { GlApp } from "/shared/gl-app.js"
-import { ShaderProgram, Mesh, Texture, draw } from "/shared/graphics.js";
+import { ShaderProgram, Mesh, Texture, Framebuffer } from "/shared/graphics.js";
 import { loadImage } from "/shared/util.js";
 
 // Initiate the fetch first to reduce perceived loading.
@@ -61,7 +61,7 @@ class App extends GlApp {
             index: [0, 1, 2, 2, 3, 0],
         });
 
-        this.texture = new Texture(gl, image);
+        this.texture = new Texture(gl, image, null, null);
     }
 
     update(_delta) {}
@@ -77,14 +77,12 @@ class App extends GlApp {
             { uTexture: "1i", uDimensions: "2f" },
         );
 
-        gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
-
-        draw(
-            gl,
+        this.screen.draw(
             this.mesh,
             this.shaderProgram,
             [this.texture],
-            { uDimensions: [this.width, this.height], uTexture: 0 }
+            { uDimensions: [this.width, this.height], uTexture: 0 },
+            true,
         );
     }
 }
