@@ -13,6 +13,9 @@
     --color-accent-shadow: #ff6a50;
     --color-accent-soft: #ffeae4;
 
+    --color-positive: #00dc90;
+    --color-positive-shadow: #00a97c;
+
     --color-text: #2c3e50;
     --color-text-light: white;
 
@@ -169,6 +172,11 @@ button:active {
     transition:
         bottom var(--down-speed),
         box-shadow var(--down-speed);
+}
+
+button.enabled {
+    background: var(--color-positive);
+    box-shadow: 0 3px 0 0 var(--color-positive-shadow);
 }
 
 .row-2,

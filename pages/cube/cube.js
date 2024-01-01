@@ -1,7 +1,7 @@
 import { GlApp } from "/shared/gl-app.js"
 import { Mat4 } from "/shared/mat4.js"
 import { ShaderProgram } from "/shared/graphics.js";
-import { cubeMesh } from "/shared/geometry.js";
+import { cylinderMesh } from "/shared/geometry.js";
 
 // Initiate the fetch first to reduce perceived loading.
 let shaderSources = Promise.all([
@@ -17,8 +17,30 @@ document.addEventListener("DOMContentLoaded", async () => {
     app.run();
 });
 
+const AMBIENT_FLAG = 1;
+const DIFFUSE_FLAG = 2;
+const SPECULAR_FLAG = 4;
+
 class App extends GlApp {
     setup(gl) {
+        this.lightFlags = AMBIENT_FLAG | DIFFUSE_FLAG | SPECULAR_FLAG;
+
+        const ambientButton = document.getElementById("ambient");
+        const diffuseButton = document.getElementById("diffuse");
+        const specularButton = document.getElementById("specular");
+        ambientButton.addEventListener("click", () => {
+            this.lightFlags ^= AMBIENT_FLAG;
+            ambientButton.classList.toggle("enabled");
+        });
+        diffuseButton.addEventListener("click", () => {
+            this.lightFlags ^= DIFFUSE_FLAG;
+            diffuseButton.classList.toggle("enabled");
+        });
+        specularButton.addEventListener("click", () => {
+            this.lightFlags ^= SPECULAR_FLAG;
+            specularButton.classList.toggle("enabled");
+        });
+
         gl.clearColor(0.1, 0.1, 0.1, 1.0);
 
         gl.enable(gl.DEPTH_TEST);
@@ -32,46 +54,13 @@ class App extends GlApp {
             gl,
             vertexSource,
             fragmentSource,
-            { aPosition: "3f", aColor: "4f", aUv: "2f", aNormal: "3f" },
-            { uDimensions: "2f", uTransform: "m4f" },
+            { aPosition: "3f", aUv: "2f", aNormal: "3f" },
+            { uDimensions: "2f", uTransform: "m4f", uLightFlags: "1i" },
         );
 
         this.t = 0;
 
-        this.cubeMesh = cubeMesh(gl);
-
-        this.cubeMesh.setAttribute("aColor", [
-            // Front
-            1, 0, 0, 1,
-            1, 0, 0, 1,
-            1, 0, 0, 1,
-            1, 0, 0, 1,
-            // Back
-            0, 1, 1, 1,
-            0, 1, 1, 1,
-            0, 1, 1, 1,
-            0, 1, 1, 1,
-            // Top
-            0, 0, 1, 1,
-            0, 0, 1, 1,
-            0, 0, 1, 1,
-            0, 0, 1, 1,
-            // Bottom
-            1, 1, 0, 1,
-            1, 1, 0, 1,
-            1, 1, 0, 1,
-            1, 1, 0, 1,
-            // Left
-            0, 1, 0, 1,
-            0, 1, 0, 1,
-            0, 1, 0, 1,
-            0, 1, 0, 1,
-            // Right
-            1, 0, 1, 1,
-            1, 0, 1, 1,
-            1, 0, 1, 1,
-            1, 0, 1, 1,
-        ]);
+        this.cylinderMesh = cylinderMesh(gl, 24);
     }
 
     update(delta) {
@@ -89,10 +78,10 @@ class App extends GlApp {
         this.screen.clear(0, 0, 0, 0);
 
         this.screen.draw(
-            this.cubeMesh,
+            this.cylinderMesh,
             this.shaderProgram,
             [],
-            { uDimensions: [this.width, this.height], uTransform: model.data },
+            { uDimensions: [this.width, this.height], uTransform: model.data, uLightFlags: this.lightFlags },
         );
     }
 }
