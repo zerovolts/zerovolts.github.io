@@ -1,6 +1,6 @@
 import { GlApp } from "/shared/gl-app.js"
 import { Mat4 } from "/shared/mat4.js"
-import { ShaderProgram, Framebuffer } from "/shared/graphics.js";
+import { ShaderProgram } from "/shared/graphics.js";
 import { cubeMesh } from "/shared/geometry.js";
 
 // Initiate the fetch first to reduce perceived loading.

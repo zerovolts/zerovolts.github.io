@@ -1,5 +1,5 @@
 import { GlApp } from "/shared/gl-app.js"
-import { ShaderProgram, Mesh, Framebuffer } from "/shared/graphics.js";
+import { ShaderProgram, Mesh } from "/shared/graphics.js";
 import { Grid } from "/shared/grid.js";
 
 // Initiate the fetch first to reduce perceived loading.

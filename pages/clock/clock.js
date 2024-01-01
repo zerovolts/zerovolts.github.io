@@ -1,7 +1,7 @@
 import { TAU } from "/shared/math.js"
 import { GlApp } from "/shared/gl-app.js"
 import { circleMesh, lineMesh } from "/shared/geometry.js";
-import { ShaderProgram, Framebuffer } from "/shared/graphics.js";
+import { ShaderProgram } from "/shared/graphics.js";
 import { Vec2 } from "/shared/vec2.js";
 import { Mat4 } from "/shared/mat4.js";
 
