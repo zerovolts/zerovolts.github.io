@@ -82,7 +82,15 @@ export class Vec2 extends VecBase {
         return to.sub(this).toAngle();
     }
 
-    extend(z) {
+    extendX(x) {
+        return v3(x, this.x, this.y);
+    }
+
+    extendY(y) {
+        return v3(this.x, y, this.y);
+    }
+
+    extendZ(z) {
         return v3(this.x, this.y, z);
     }
 

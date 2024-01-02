@@ -164,18 +164,18 @@ export function cylinderMesh(gl, segmentCount) {
     // top
     for (let i = 0; i < segmentCount; i++) {
         const angle = (i / segmentCount) * Math.PI * 2;
-        positions.push(...Vec2.fromAngle(angle).extend(1).data);
+        positions.push(...Vec2.fromAngle(angle).extendZ(1).data);
     }
     // side
     for (let i = 0; i < segmentCount; i++) {
         const angle = (i / segmentCount) * Math.PI * 2;
-        positions.push(...Vec2.fromAngle(angle).extend(1).data);
-        positions.push(...Vec2.fromAngle(angle).extend(-1).data);
+        positions.push(...Vec2.fromAngle(angle).extendZ(1).data);
+        positions.push(...Vec2.fromAngle(angle).extendZ(-1).data);
     }
     // bottom
     for (let i = 0; i < segmentCount; i++) {
         const angle = (i / segmentCount) * Math.PI * 2;
-        positions.push(...Vec2.fromAngle(angle).extend(-1).data);
+        positions.push(...Vec2.fromAngle(angle).extendZ(-1).data);
     }
 
     const indices = [];
@@ -225,8 +225,8 @@ export function cylinderMesh(gl, segmentCount) {
     // side
     for (let i = 0; i < segmentCount; i++) {
         const angle = (i / segmentCount) * Math.PI * 2;
-        normals.push(...Vec2.fromAngle(angle).extend(0).data);
-        normals.push(...Vec2.fromAngle(angle).extend(0).data);
+        normals.push(...Vec2.fromAngle(angle).extendZ(0).data);
+        normals.push(...Vec2.fromAngle(angle).extendZ(0).data);
     }
     // bottom
     for (let i = 0; i < segmentCount; i++) {

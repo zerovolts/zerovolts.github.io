@@ -54,7 +54,7 @@ class App extends GlApp {
             for (let i = 0; i < segments; i++) {
                 path.push(
                     from.cubicLerp(fromCtrl, toCtrl, to, i / segments)
-                        .extend(Math.sin(((i / (segments - 1)) - 1) * Math.PI))
+                        .extendZ(Math.sin(((i / (segments - 1)) - 1) * Math.PI))
                 );
             }
 
@@ -114,7 +114,7 @@ function extrudeLine(points, width) {
         const point = points[i];
         const angle = pointAngles[i];
 
-        const leftOffset = Vec2.fromAngle(angle + (Math.PI / 2)).scaleMut(width / 2).extend(0);
+        const leftOffset = Vec2.fromAngle(angle + (Math.PI / 2)).scaleMut(width / 2).extendZ(0);
         const rightOffset = leftOffset.scale(-1);
 
         const leftPoint = point.add(leftOffset);
