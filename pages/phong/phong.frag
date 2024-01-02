@@ -12,10 +12,10 @@ out vec4 fragColor;
 
 const float AMBIENT_INTENSITY = .3;
 const float DIFFUSE_INTENSITY = .6;
-const float SPECULAR_INTENSITY = .5;
+const float SPECULAR_INTENSITY = 1.;
 
 const vec3 CAMERA_DIR = normalize(vec3(0, 0, 1));
-const vec3 LIGHT_DIR = normalize(vec3(1, 1, .5));
+const vec3 LIGHT_DIR = normalize(vec3(1, 1, .6));
 const vec3 LIGHT_COLOR = vec3(1, 1, 1);
 
 const int AMBIENT_FLAG = 1;
@@ -34,13 +34,13 @@ float diffuse(vec3 normal, vec3 light_dir) {
 void main() {
     vec3 color = vec3(0);
     if ((uLightFlags & AMBIENT_FLAG) > 0) {
-        color += AMBIENT_INTENSITY * vec3(0., .75, 1.);
+        color += AMBIENT_INTENSITY * vec3(0.02, 0.19, 0.28);
     }
     if ((uLightFlags & DIFFUSE_FLAG) > 0) {
-        color += diffuse(vNormal, LIGHT_DIR) * DIFFUSE_INTENSITY * vec3(1., 1., .5);
+        color += diffuse(vNormal, LIGHT_DIR) * DIFFUSE_INTENSITY * vec3(0.12, 0.80, 0.23);
     }
     if ((uLightFlags & SPECULAR_FLAG) > 0) {
-        color += specular(vNormal, LIGHT_DIR, CAMERA_DIR, 80.) * SPECULAR_INTENSITY * vec3(1);
+        color += specular(vNormal, LIGHT_DIR, CAMERA_DIR, 100.) * SPECULAR_INTENSITY * vec3(1);
     }
     
     vec3 srgb = pow(color, vec3(1. / 2.2));

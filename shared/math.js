@@ -37,3 +37,7 @@ export function clamp(value, min, max) {
     }
     return value;
 }
+
+export function arccot(x) {
+    return Math.PI / 2 - Math.atan(x);
+}

@@ -1,7 +1,7 @@
 import { GlApp } from "/shared/gl-app.js"
 import { Mat4 } from "/shared/mat4.js"
 import { ShaderProgram } from "/shared/graphics.js";
-import { cylinderMesh } from "/shared/geometry.js";
+import { icosahedronMesh } from "/shared/geometry.js";
 
 // Initiate the fetch first to reduce perceived loading.
 let shaderSources = Promise.all([
@@ -60,7 +60,7 @@ class App extends GlApp {
 
         this.t = 0;
 
-        this.cylinderMesh = cylinderMesh(gl, 24);
+        this.icosahedronMesh = icosahedronMesh(gl);
     }
 
     update(delta) {
@@ -70,15 +70,15 @@ class App extends GlApp {
     render(gl) {
         const model = Mat4.scalar(.5, .5, .5)
             .rotateX(Math.PI / 4)
-            .rotateY(this.t)
-            .rotateZ(this.t)
+            .rotateY(this.t / 2)
+            .rotateZ(this.t / 2)
             .translate(0, 0, -2)
             .project(.8, 1, .1, 100);
 
         this.screen.clear(0, 0, 0, 0);
 
         this.screen.draw(
-            this.cylinderMesh,
+            this.icosahedronMesh,
             this.shaderProgram,
             [],
             { uDimensions: [this.width, this.height], uTransform: model.data, uLightFlags: this.lightFlags },

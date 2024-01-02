@@ -1,7 +1,7 @@
-import { TAU } from "/shared/math.js";
+import { TAU, arccot } from "/shared/math.js";
 import { Mesh } from "/shared/graphics.js"
 import { Vec2 } from "./vec2.js";
-import { Vec3 } from "./vec3.js";
+import { Vec3, v3 } from "./vec3.js";
 
 export function quadMesh(gl) {
     return new Mesh(gl, {
@@ -256,4 +256,84 @@ export function cylinderMesh(gl, segmentCount) {
         uv: uvs,
         index: indices,
     });
+}
+
+export function icosahedronMesh(gl) {
+    const positions = [];
+    const normals = [];
+    const angle = arccot(.5);
+    const height = Math.cos(angle);
+    const radius = Math.sin(angle);
+
+    for (let i = 0; i < 5; i++) {
+        const top = Vec3.up();
+        const bottomLeft = Vec2.fromAngle((i / 5) * Math.PI * 2).scaleMut(radius).extendY(height);
+        const bottomRight = Vec2.fromAngle(((i + 1) / 5) * Math.PI * 2).scaleMut(radius).extendY(height);
+
+        positions.push(top);
+        positions.push(bottomRight);
+        positions.push(bottomLeft);
+
+        const normal = top.add(bottomLeft).add(bottomRight).normalize();
+        normals.push(normal);
+        normals.push(normal);
+        normals.push(normal);
+    }
+    for (let i = 0; i < 5; i++) {
+        const bottom = Vec3.down();
+        const topLeft = Vec2.fromAngle(((i + .5) / 5) * Math.PI * 2).scaleMut(radius).extendY(-height);
+        const topRight = Vec2.fromAngle(((i + 1.5) / 5) * Math.PI * 2).scaleMut(radius).extendY(-height);
+
+        positions.push(bottom);
+        positions.push(topLeft);
+        positions.push(topRight);
+
+        const normal = bottom.add(topLeft).add(topRight).normalize();
+        normals.push(normal);
+        normals.push(normal);
+        normals.push(normal);
+    }
+    for (let i = 0; i < 5; i++) {
+        const topLeft = Vec2.fromAngle((i / 5) * Math.PI * 2).scaleMut(radius).extendY(height);
+        const bottom= Vec2.fromAngle(((i + .5) / 5) * Math.PI * 2).scaleMut(radius).extendY(-height);
+        const topRight= Vec2.fromAngle(((i + 1) / 5) * Math.PI * 2).scaleMut(radius).extendY(height);
+
+        positions.push(topLeft);
+        positions.push(topRight);
+        positions.push(bottom);
+
+        const normal = topLeft.add(topRight).add(bottom).normalize();
+        normals.push(normal);
+        normals.push(normal);
+        normals.push(normal);
+    }
+    for (let i = 0; i < 5; i++) {
+        const bottomLeft = Vec2.fromAngle(((i + .5) / 5) * Math.PI * 2).scaleMut(radius).extendY(-height);
+        const top = Vec2.fromAngle(((i + 1) / 5) * Math.PI * 2).scaleMut(radius).extendY(height);
+        const bottomRight = Vec2.fromAngle(((i + 1.5) / 5) * Math.PI * 2).scaleMut(radius).extendY(-height);
+
+        positions.push(bottomLeft);
+        positions.push(top);
+        positions.push(bottomRight);
+
+        const normal = bottomLeft.add(top).add(bottomRight).normalize();
+        normals.push(normal);
+        normals.push(normal);
+        normals.push(normal);
+    }
+
+    const indices = [];
+    for (let i = 0; i < 20; i++) {
+        indices.push(i * 3);
+        indices.push(i * 3 + 1);
+        indices.push(i * 3 + 2);
+    }
+
+    return new Mesh(gl, {
+        position: positions.map(v => v.data).flat(),
+        normal: normals.map(v => v.data).flat(),
+        // TODO
+        uv: Array(positions.length * 2).fill(0),
+        index: indices,
+    })
 }
