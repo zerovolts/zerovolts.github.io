@@ -13,6 +13,7 @@ let shaderSources = Promise.all([
     fetch("./noise.frag").then(res => res.text()),
     fetch("./crt.frag").then(res => res.text()),
     fetch("./tiles.frag").then(res => res.text()),
+    fetch("./frosted.frag").then(res => res.text()),
 ]);
 
 const buttonIds = [
@@ -24,6 +25,7 @@ const buttonIds = [
     "noise",
     "crt",
     "tiles",
+    "frosted",
 ];
 
 let image = loadImage("/assets/images/gallery/pumpkin.png");
