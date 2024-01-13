@@ -1,7 +1,7 @@
 import { TAU, arccot } from "/shared/math.js";
 import { Mesh } from "/shared/graphics.js"
 import { Vec2 } from "./vec2.js";
-import { Vec3, v3 } from "./vec3.js";
+import { Vec3 } from "./vec3.js";
 
 export function quadMesh2d(gl) {
     return new Mesh(gl, {

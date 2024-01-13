@@ -1,6 +1,6 @@
 import { quadMesh2d } from "/shared/geometry.js";
 import { GlApp } from "/shared/gl-app.js"
-import { ShaderProgram, Mesh, Texture, Framebuffer } from "/shared/graphics.js";
+import { ShaderProgram, Texture, Framebuffer } from "/shared/graphics.js";
 
 // Initiate the fetch first to reduce perceived loading.
 let shaderSources = Promise.all([
