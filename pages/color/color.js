@@ -72,7 +72,7 @@ class App {
         );
     }
 
-    setColor(color) {
+    setColor(color, persistHsv = true) {
         const { red, green, blue } = color;
         this.redSliderEl.value = red;
         this.greenSliderEl.value = green;
@@ -82,13 +82,15 @@ class App {
 
         const oldHsv = this.getHsvColor();
         const { hue, saturation, value } = color.toHsv();
-        const newHsv = new HsvColor(
-            saturation > 0
-                ? oldHsv.hue < 1 ? hue : oldHsv.hue
-                : oldHsv.hue,
-            value > 0 ? saturation : oldHsv.saturation,
-            value,
-        );
+        const newHsv = persistHsv
+            ? new HsvColor(
+                saturation > 0
+                    ? oldHsv.hue < 1 ? hue : oldHsv.hue
+                    : oldHsv.hue,
+                value > 0 ? saturation : oldHsv.saturation,
+                value,
+            )
+            : new HsvColor(hue, saturation, value);
         this.hueSliderEl.value = newHsv.hue;
         this.satSliderEl.value = newHsv.saturation;
         this.valSliderEl.value = newHsv.value;
@@ -151,23 +153,8 @@ class App {
         ));
     }
 
-    nudgeColor() {
-        const nudgeScale = .02;
-        const color = this.getColor();
-
-        this.setColor(new RgbColor(
-            color.red + randomRange(-nudgeScale, nudgeScale),
-            color.green + randomRange(-nudgeScale, nudgeScale),
-            color.blue + randomRange(-nudgeScale, nudgeScale),
-        ));
-    }
-
-    darkenColor() {
-        this.setColor(this.getColor().addValue(-0.05));
-    }
-
-    lightenColor() {
-        this.setColor(this.getColor().addValue(0.05));
+    resetColor() {
+        this.setColor(new RgbColor(0.5, 0.5, 0.5), false);
     }
 
     refreshColor() {
