@@ -70,3 +70,10 @@ input[type="range"]::-webkit-slider-thumb {
     /* includes border width */
     width: 7px;
 }
+
+.label {
+    font-size: 13px;
+    font-family: var(--font-monospace);
+    text-transform: uppercase;
+    color: #b0b0ad;
+}
