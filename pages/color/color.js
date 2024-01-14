@@ -20,6 +20,10 @@ class App {
             this.greenSliderEl.addEventListener("input", this.refreshColor);
             this.blueSliderEl.addEventListener("input", this.refreshColor);
 
+            this.redSliderLabelEl = document.getElementById("red-slider-label");
+            this.greenSliderLabelEl = document.getElementById("green-slider-label");
+            this.blueSliderLabelEl = document.getElementById("blue-slider-label");
+
             this.refreshColor();
         });
     }
@@ -49,6 +53,10 @@ class App {
         }, #${
             new RgbColor(red, green, 1).toHexString()
         })`;
+
+        this.redSliderLabelEl.innerText = red.toFixed(3);
+        this.greenSliderLabelEl.innerText = green.toFixed(3);
+        this.blueSliderLabelEl.innerText = blue.toFixed(3);
 
         const byteString = color.toByteString();
         this.mainColorEl.style.backgroundColor = `rgb(${byteString})`;
