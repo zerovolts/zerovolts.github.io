@@ -93,21 +93,38 @@ class App {
         this.satSliderEl.value = newHsv.saturation;
         this.valSliderEl.value = newHsv.value;
 
-        this.redSliderEl.style = `background: linear-gradient(90deg, #${
-            new RgbColor(0, green, blue).toHexString()
-        }, #${
-            new RgbColor(1, green, blue).toHexString()
-        })`;
-        this.greenSliderEl.style = `background: linear-gradient(90deg, #${
-            new RgbColor(red, 0, blue).toHexString()
-        }, #${
-            new RgbColor(red, 1, blue).toHexString()
-        })`;
-        this.blueSliderEl.style = `background: linear-gradient(90deg, #${
-            new RgbColor(red, green, 0).toHexString()
-        }, #${
-            new RgbColor(red, green, 1).toHexString()
-        })`;
+        // RGB slider background adjustment
+        this.redSliderEl.style = makeGradientString(
+            new RgbColor(0, green, blue),
+            new RgbColor(1, green, blue),
+        );
+        this.greenSliderEl.style = makeGradientString(
+            new RgbColor(red, 0, blue),
+            new RgbColor(red, 1, blue),
+        );
+        this.blueSliderEl.style = makeGradientString(
+            new RgbColor(red, green, 0),
+            new RgbColor(red, green, 1),
+        );
+
+        // HSV slider background adjustment
+        this.hueSliderEl.style = makeGradientString(
+            new HsvColor(0, saturation, value).toRgb(),
+            new HsvColor(1 / 6, saturation, value).toRgb(),
+            new HsvColor(2 / 6, saturation, value).toRgb(),
+            new HsvColor(3 / 6, saturation, value).toRgb(),
+            new HsvColor(4 / 6, saturation, value).toRgb(),
+            new HsvColor(5 / 6, saturation, value).toRgb(),
+            new HsvColor(1, saturation, value).toRgb(),
+        );
+        this.satSliderEl.style = makeGradientString(
+            new HsvColor(hue, 0, value).toRgb(),
+            new HsvColor(hue, 1, value).toRgb(),
+        );
+        this.valSliderEl.style = makeGradientString(
+            new HsvColor(hue, saturation, 0).toRgb(),
+            new HsvColor(hue, saturation, 1).toRgb(),
+        );
 
         this.redSliderLabelEl.innerText = red.toFixed(3);
         this.greenSliderLabelEl.innerText = green.toFixed(3);
@@ -116,32 +133,6 @@ class App {
         this.hueSliderLabelEl.innerText = newHsv.hue.toFixed(3);
         this.satSliderLabelEl.innerText = newHsv.saturation.toFixed(3);
         this.valSliderLabelEl.innerText = newHsv.value.toFixed(3);
-
-        this.hueSliderEl.style = `background: linear-gradient(90deg, #${
-            new HsvColor(0, saturation, value).toRgb().toHexString()
-        }, #${
-            new HsvColor(1 / 6, saturation, value).toRgb().toHexString()
-        }, #${
-            new HsvColor(2 / 6, saturation, value).toRgb().toHexString()
-        }, #${
-            new HsvColor(3 / 6, saturation, value).toRgb().toHexString()
-        }, #${
-            new HsvColor(4 / 6, saturation, value).toRgb().toHexString()
-        }, #${
-            new HsvColor(5 / 6, saturation, value).toRgb().toHexString()
-        }, #${
-            new HsvColor(1, saturation, value).toRgb().toHexString()
-        })`;
-        this.satSliderEl.style = `background: linear-gradient(90deg, #${
-            new HsvColor(hue, 0, value).toRgb().toHexString()
-        }, #${
-            new HsvColor(hue, 1, value).toRgb().toHexString()
-        })`;
-        this.valSliderEl.style = `background: linear-gradient(90deg, #${
-            new HsvColor(hue, saturation, 0).toRgb().toHexString()
-        }, #${
-            new HsvColor(hue, saturation, 1).toRgb().toHexString()
-        })`;
 
         const byteString = color.toByteString();
         this.mainColorEl.style.backgroundColor = `rgb(${byteString})`;
@@ -205,6 +196,11 @@ class App {
 }
 
 window.app = new App();
+
+function makeGradientString(...rgbColors) {
+    const colorStrings = rgbColors.map(c => `#${c.toHexString()}`);
+    return `background: linear-gradient(90deg, ${colorStrings.join(", ")})`;
+}
 
 class RgbColor {
     constructor(red, green, blue) {
