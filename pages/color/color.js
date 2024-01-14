@@ -25,7 +25,7 @@ class App {
     }
 
     getColor() {
-        return RgbColor.fromBytes(
+        return new RgbColor(
             Number(this.redSliderEl.value),
             Number(this.greenSliderEl.value),
             Number(this.blueSliderEl.value),
@@ -33,25 +33,21 @@ class App {
     }
 
     setColor(color) {
-        const [red, green, blue] = color.toBytes();
-        this.redSliderEl.value = red;
-        this.greenSliderEl.value = green;
-        this.blueSliderEl.value = blue;
-
+        const { red, green, blue } = color;
         this.redSliderEl.style = `background: linear-gradient(90deg, #${
-            RgbColor.fromBytes(0, green, blue).toHexString()
+            new RgbColor(0, green, blue).toHexString()
         }, #${
-            RgbColor.fromBytes(255, green, blue).toHexString()
+            new RgbColor(1, green, blue).toHexString()
         })`;
         this.greenSliderEl.style = `background: linear-gradient(90deg, #${
-            RgbColor.fromBytes(red, 0, blue).toHexString()
+            new RgbColor(red, 0, blue).toHexString()
         }, #${
-            RgbColor.fromBytes(red, 255, blue).toHexString()
+            new RgbColor(red, 1, blue).toHexString()
         })`;
         this.blueSliderEl.style = `background: linear-gradient(90deg, #${
-            RgbColor.fromBytes(red, green, 0).toHexString()
+            new RgbColor(red, green, 0).toHexString()
         }, #${
-            RgbColor.fromBytes(red, green, 255).toHexString()
+            new RgbColor(red, green, 1).toHexString()
         })`;
 
         const byteString = color.toByteString();
