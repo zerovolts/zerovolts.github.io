@@ -1,7 +1,10 @@
 import { clamp, randomRange } from "/shared/math.js";
 
+const CHUNK_2 = /(.{1,2})/g;
+
 class App {
     constructor() {
+        this.encodeUrl = this.encodeUrl.bind(this);
         this.refreshColor = this.refreshColor.bind(this);
         this.refreshHsvColor = this.refreshHsvColor.bind(this);
 
@@ -37,8 +40,20 @@ class App {
             this.satSliderLabelEl = document.getElementById("sat-slider-label");
             this.valSliderLabelEl = document.getElementById("val-slider-label");
 
-            this.refreshColor();
+            this.decodeUrl();
         });
+    }
+
+    encodeUrl(color) {
+        const url = new URL(window.location);
+        url.searchParams.set("c", color.toHexString());
+        window.history.replaceState(null, document.title, url.toString());
+    }
+
+    decodeUrl() {
+        const url = new URL(window.location);
+        const hex = url.searchParams.get("c") ?? "7f7f7f";
+        this.setColor(RgbColor.fromHexString(hex));
     }
 
     getColor() {
@@ -62,6 +77,8 @@ class App {
         this.redSliderEl.value = red;
         this.greenSliderEl.value = green;
         this.blueSliderEl.value = blue;
+
+        this.encodeUrl(color);
 
         const oldHsv = this.getHsvColor();
         const { hue, saturation, value } = color.toHsv();
@@ -209,6 +226,11 @@ class RgbColor {
             green / 255,
             blue / 255,
         );
+    }
+
+    static fromHexString(hex) {
+        const bytes = hex.match(CHUNK_2).map(byte => parseInt(byte, 16));
+        return RgbColor.fromBytes(bytes[0], bytes[1], bytes[2]);
     }
 
     toBytes() {
