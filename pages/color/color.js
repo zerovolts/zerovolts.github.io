@@ -63,10 +63,18 @@ class App {
         this.greenSliderEl.value = green;
         this.blueSliderEl.value = blue;
 
+        const oldHsv = this.getHsvColor();
         const { hue, saturation, value } = color.toHsv();
-        this.hueSliderEl.value = hue;
-        this.satSliderEl.value = saturation;
-        this.valSliderEl.value = value;
+        const newHsv = new HsvColor(
+            saturation > 0
+                ? oldHsv.hue < 1 ? hue : oldHsv.hue
+                : oldHsv.hue,
+            value > 0 ? saturation : oldHsv.saturation,
+            value,
+        );
+        this.hueSliderEl.value = newHsv.hue;
+        this.satSliderEl.value = newHsv.saturation;
+        this.valSliderEl.value = newHsv.value;
 
         this.redSliderEl.style = `background: linear-gradient(90deg, #${
             new RgbColor(0, green, blue).toHexString()
@@ -88,9 +96,9 @@ class App {
         this.greenSliderLabelEl.innerText = green.toFixed(3);
         this.blueSliderLabelEl.innerText = blue.toFixed(3);
 
-        this.hueSliderLabelEl.innerText = hue.toFixed(3);
-        this.satSliderLabelEl.innerText = saturation.toFixed(3);
-        this.valSliderLabelEl.innerText = value.toFixed(3);
+        this.hueSliderLabelEl.innerText = newHsv.hue.toFixed(3);
+        this.satSliderLabelEl.innerText = newHsv.saturation.toFixed(3);
+        this.valSliderLabelEl.innerText = newHsv.value.toFixed(3);
 
         this.hueSliderEl.style = `background: linear-gradient(90deg, #${
             new HsvColor(0, saturation, value).toRgb().toHexString()
@@ -242,6 +250,7 @@ class RgbColor {
     }
 
     static fromHsv(hue, sat, val) {
+        hue = modWrap(hue);
         hue *= 6;
 
         // Chroma
@@ -265,7 +274,7 @@ class RgbColor {
 
 class HsvColor {
     constructor(hue, saturation, value) {
-        this.hue = modWrap(hue);
+        this.hue = hue;
         this.saturation = saturation;
         this.value = value;
     }
