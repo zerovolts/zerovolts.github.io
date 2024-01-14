@@ -77,3 +77,9 @@ input[type="range"]::-webkit-slider-thumb {
     text-transform: uppercase;
     color: #b0b0ad;
 }
+
+.slider-container {
+    background: var(--color-background);
+    border-radius: var(--radius);
+    padding: 1rem;
+}

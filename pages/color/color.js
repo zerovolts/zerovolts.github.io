@@ -3,6 +3,7 @@ import { clamp, randomRange } from "/shared/math.js";
 class App {
     constructor() {
         this.refreshColor = this.refreshColor.bind(this);
+        this.refreshHsvColor = this.refreshHsvColor.bind(this);
 
         document.addEventListener("DOMContentLoaded", async () => {
             this.mainColorEl = document.getElementById("color-picker-display");
@@ -24,6 +25,18 @@ class App {
             this.greenSliderLabelEl = document.getElementById("green-slider-label");
             this.blueSliderLabelEl = document.getElementById("blue-slider-label");
 
+            this.hueSliderEl = document.getElementById("hue-slider");
+            this.satSliderEl = document.getElementById("sat-slider");
+            this.valSliderEl = document.getElementById("val-slider");
+
+            this.hueSliderEl.addEventListener("input", this.refreshHsvColor);
+            this.satSliderEl.addEventListener("input", this.refreshHsvColor);
+            this.valSliderEl.addEventListener("input", this.refreshHsvColor);
+
+            this.hueSliderLabelEl = document.getElementById("hue-slider-label");
+            this.satSliderLabelEl = document.getElementById("sat-slider-label");
+            this.valSliderLabelEl = document.getElementById("val-slider-label");
+
             this.refreshColor();
         });
     }
@@ -36,8 +49,25 @@ class App {
         );
     }
 
+    getHsvColor() {
+        return new HsvColor(
+            Number(this.hueSliderEl.value),
+            Number(this.satSliderEl.value),
+            Number(this.valSliderEl.value),
+        );
+    }
+
     setColor(color) {
         const { red, green, blue } = color;
+        this.redSliderEl.value = red;
+        this.greenSliderEl.value = green;
+        this.blueSliderEl.value = blue;
+
+        const { hue, saturation, value } = color.toHsv();
+        this.hueSliderEl.value = hue;
+        this.satSliderEl.value = saturation;
+        this.valSliderEl.value = value;
+
         this.redSliderEl.style = `background: linear-gradient(90deg, #${
             new RgbColor(0, green, blue).toHexString()
         }, #${
@@ -57,6 +87,36 @@ class App {
         this.redSliderLabelEl.innerText = red.toFixed(3);
         this.greenSliderLabelEl.innerText = green.toFixed(3);
         this.blueSliderLabelEl.innerText = blue.toFixed(3);
+
+        this.hueSliderLabelEl.innerText = hue.toFixed(3);
+        this.satSliderLabelEl.innerText = saturation.toFixed(3);
+        this.valSliderLabelEl.innerText = value.toFixed(3);
+
+        this.hueSliderEl.style = `background: linear-gradient(90deg, #${
+            new HsvColor(0, saturation, value).toRgb().toHexString()
+        }, #${
+            new HsvColor(1 / 6, saturation, value).toRgb().toHexString()
+        }, #${
+            new HsvColor(2 / 6, saturation, value).toRgb().toHexString()
+        }, #${
+            new HsvColor(3 / 6, saturation, value).toRgb().toHexString()
+        }, #${
+            new HsvColor(4 / 6, saturation, value).toRgb().toHexString()
+        }, #${
+            new HsvColor(5 / 6, saturation, value).toRgb().toHexString()
+        }, #${
+            new HsvColor(1, saturation, value).toRgb().toHexString()
+        })`;
+        this.satSliderEl.style = `background: linear-gradient(90deg, #${
+            new HsvColor(hue, 0, value).toRgb().toHexString()
+        }, #${
+            new HsvColor(hue, 1, value).toRgb().toHexString()
+        })`;
+        this.valSliderEl.style = `background: linear-gradient(90deg, #${
+            new HsvColor(hue, saturation, 0).toRgb().toHexString()
+        }, #${
+            new HsvColor(hue, saturation, 1).toRgb().toHexString()
+        })`;
 
         const byteString = color.toByteString();
         this.mainColorEl.style.backgroundColor = `rgb(${byteString})`;
@@ -96,6 +156,10 @@ class App {
 
     refreshColor() {
         this.setColor(this.getColor());
+    }
+
+    refreshHsvColor() {
+        this.setColor(this.getHsvColor().toRgb());
     }
 
     copyByteValue() {
@@ -172,6 +236,68 @@ class RgbColor {
             this.blue += amount,
         );
     }
+
+    toHsv() {
+        return HsvColor.fromRgb(this.red, this.green, this.blue);
+    }
+
+    static fromHsv(hue, sat, val) {
+        hue *= 6;
+
+        // Chroma
+        const c = val * sat;
+        // A triangle wave with 3 peaks aligned with the rgb component peaks on
+        // the hue spectrum.
+        const x = c * (1 - Math.abs(hue % 2 - 1));
+        const m = val - c;
+
+        const sector = Math.floor(hue);
+        switch (sector) {
+            case 0: return new RgbColor(c + m, x + m, m);
+            case 1: return new RgbColor(x + m, c + m, m);
+            case 2: return new RgbColor(m, c + m, x + m);
+            case 3: return new RgbColor(m, x + m, c + m);
+            case 4: return new RgbColor(x + m, m, c + m);
+            case 5: return new RgbColor(c + m, m, x + m);
+        }
+    }
+}
+
+class HsvColor {
+    constructor(hue, saturation, value) {
+        this.hue = modWrap(hue);
+        this.saturation = saturation;
+        this.value = value;
+    }
+
+    static fromRgb(red, green, blue) {
+        const cMax = Math.max(red, green, blue);
+        const cMin = Math.min(red, green, blue);
+        const delta = cMax - cMin;
+
+        let hue;
+        if (cMax === cMin) hue = 0;
+        else if (cMax === red) hue = (green - blue) / delta;
+        else if (cMax === green) hue = (blue - red) / delta + 2;
+        else if (cMax === blue) hue = (red - green) / delta + 4;
+        hue /= 6;
+
+        return new HsvColor(
+            modWrap(hue),
+            cMax === 0 ? 0 : delta / cMax,
+            cMax,
+        );
+    }
+
+    toRgb() {
+        return RgbColor.fromHsv(this.hue, this.saturation, this.value);
+    }
+}
+
+function modWrap(x) {
+    if (x < 0) return x + 1;
+    if (x >= 1) return x - 1;
+    return x
 }
 
 function byteToHex(byte) {
