@@ -70,17 +70,3 @@ input[type="range"]::-webkit-slider-thumb {
     /* includes border width */
     width: 7px;
 }
-
-.black-color-icon,
-.red-color-icon,
-.green-color-icon,
-.blue-color-icon {
-    width: 8px;
-    height: 8px;
-    border-radius: 50%;
-}
-
-.black-color-icon { background: #000; }
-.red-color-icon { background: #f00; }
-.green-color-icon { background: #0f0; }
-.blue-color-icon { background: #00f; }
