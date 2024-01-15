@@ -2,115 +2,86 @@ import { RgbColor, HsvColor, rgb, hsv } from "/shared/color.js"
 
 class App {
     constructor() {
-        this.encodeUrl = this.encodeUrl.bind(this);
-        this.refreshColor = this.refreshColor.bind(this);
-        this.refreshHsvColor = this.refreshHsvColor.bind(this);
+        this.encodeUrl = this.setUrlRgbColor.bind(this);
 
         document.addEventListener("DOMContentLoaded", async () => {
             this.mainColorEl = document.getElementById("color-picker-display");
 
             this.byteColorEl = document.getElementById("byte-color");
             this.hexColorEl = document.getElementById("hex-color");
-            this.fractColorEl = document.getElementById("fract-color");
-            this.nonSrgbFractColorEl = document.getElementById("non-srgb-fract-color");
+            this.fractColorEl = document.getElementById("normalized-color");
+            this.nonSrgbFractColorEl = document.getElementById("normalized-non-srgb-color");
 
-            this.redSliderEl = document.getElementById("red-slider");
-            this.greenSliderEl = document.getElementById("green-slider");
-            this.blueSliderEl = document.getElementById("blue-slider");
+            this.rgbSliderEls = ["red-slider", "green-slider", "blue-slider"]
+                .map(id => document.getElementById(id));
+            this.rgbSliderLabelEls = ["red-slider-label", "green-slider-label", "blue-slider-label"]
+                .map(id => document.getElementById(id));
+            this.hsvSliderEls = ["hue-slider", "sat-slider", "val-slider"]
+                .map(id => document.getElementById(id));
+            this.hsvSliderLabelEls = ["hue-slider-label", "sat-slider-label", "val-slider-label"]
+                .map(id => document.getElementById(id));
 
-            this.redSliderEl.addEventListener("input", this.refreshColor);
-            this.greenSliderEl.addEventListener("input", this.refreshColor);
-            this.blueSliderEl.addEventListener("input", this.refreshColor);
+            for (const el of this.rgbSliderEls) {
+                el.addEventListener("input", () => this.updateDocumentWithRgbColor(this.getRgbColorFromDocument()));
+            }
 
-            this.redSliderLabelEl = document.getElementById("red-slider-label");
-            this.greenSliderLabelEl = document.getElementById("green-slider-label");
-            this.blueSliderLabelEl = document.getElementById("blue-slider-label");
+            for (const el of this.hsvSliderEls) {
+                el.addEventListener("input", () => this.updateDocumentWithRgbColor(this.getHsvColorFromDocument().toRgb()));
+            }
 
-            this.hueSliderEl = document.getElementById("hue-slider");
-            this.satSliderEl = document.getElementById("sat-slider");
-            this.valSliderEl = document.getElementById("val-slider");
-
-            this.hueSliderEl.addEventListener("input", this.refreshHsvColor);
-            this.satSliderEl.addEventListener("input", this.refreshHsvColor);
-            this.valSliderEl.addEventListener("input", this.refreshHsvColor);
-
-            this.hueSliderLabelEl = document.getElementById("hue-slider-label");
-            this.satSliderLabelEl = document.getElementById("sat-slider-label");
-            this.valSliderLabelEl = document.getElementById("val-slider-label");
-
-            this.decodeUrl();
+            this.updateDocumentWithRgbColor(this.getUrlRgbColor());
         });
     }
 
-    encodeUrl(color) {
+    setUrlRgbColor(color) {
         const url = new URL(window.location);
-        url.searchParams.set("c", color.toHexString());
+        url.searchParams.set("c", color.toHex());
         window.history.replaceState(null, document.title, url.toString());
     }
 
-    decodeUrl() {
+    getUrlRgbColor() {
         const url = new URL(window.location);
         const hex = url.searchParams.get("c") ?? "7f7f7f";
-        this.setColor(RgbColor.fromHexString(hex));
+        return RgbColor.fromHex(hex);
     }
 
-    getColor() {
-        return rgb(
-            Number(this.redSliderEl.value),
-            Number(this.greenSliderEl.value),
-            Number(this.blueSliderEl.value),
-        );
+    getRgbColorFromDocument() {
+        return new RgbColor(this.rgbSliderEls.map(el => Number(el.value)));
     }
 
-    getHsvColor() {
-        return hsv(
-            Number(this.hueSliderEl.value),
-            Number(this.satSliderEl.value),
-            Number(this.valSliderEl.value),
-        );
+    getHsvColorFromDocument() {
+        return new HsvColor(this.hsvSliderEls.map(el => Number(el.value)));
     }
 
-    setColor(color, persistHsv = true) {
+    updateDocumentWithRgbColor(color, persistHsv = true) {
         const { r, g, b } = color;
-        this.redSliderEl.value = r;
-        this.greenSliderEl.value = g;
-        this.blueSliderEl.value = b;
+        this.rgbSliderEls[0].value = r;
+        this.rgbSliderEls[1].value = g;
+        this.rgbSliderEls[2].value = b;
 
-        this.encodeUrl(color);
-
-        const oldHsv = this.getHsvColor();
-        const newHsv = color.toHsv();
-        // Persist the previous hue and saturation values when the color becomes
-        // pure gray, white, or black.
         const { h, s, v } = persistHsv
-            ? hsv(
-                newHsv.s > 0
-                    ? oldHsv.h < 1 ? newHsv.h : oldHsv.h
-                    : oldHsv.h,
-                newHsv.v > 0 ? newHsv.s : oldHsv.s,
-                newHsv.v,
-            )
-            : newHsv;
-        this.hueSliderEl.value = h;
-        this.satSliderEl.value = s;
-        this.valSliderEl.value = v;
+            ? color.toHsv(this.getHsvColorFromDocument())
+            : color.toHsv();
+        this.hsvSliderEls[0].value = h;
+        this.hsvSliderEls[1].value = s;
+        this.hsvSliderEls[2].value = v;
 
         // RGB slider background adjustment
-        this.redSliderEl.style = makeGradientString(
+        this.rgbSliderEls[0].style = makeGradientString(
             rgb(0, g, b),
             rgb(1, g, b),
         );
-        this.greenSliderEl.style = makeGradientString(
+        this.rgbSliderEls[1].style = makeGradientString(
             rgb(r, 0, b),
             rgb(r, 1, b),
         );
-        this.blueSliderEl.style = makeGradientString(
+        this.rgbSliderEls[2].style = makeGradientString(
             rgb(r, g, 0),
             rgb(r, g, 1),
         );
 
         // HSV slider background adjustment
-        this.hueSliderEl.style = makeGradientString(
+        this.hsvSliderEls[0].style = makeGradientString(
             hsv(0, s, v).toRgb(),
             hsv(1 / 6, s, v).toRgb(),
             hsv(2 / 6, s, v).toRgb(),
@@ -119,34 +90,36 @@ class App {
             hsv(5 / 6, s, v).toRgb(),
             hsv(1, s, v).toRgb(),
         );
-        this.satSliderEl.style = makeGradientString(
+        this.hsvSliderEls[1].style = makeGradientString(
             hsv(h, 0, v).toRgb(),
             hsv(h, 1, v).toRgb(),
         );
-        this.valSliderEl.style = makeGradientString(
+        this.hsvSliderEls[2].style = makeGradientString(
             hsv(h, s, 0).toRgb(),
             hsv(h, s, 1).toRgb(),
         );
 
-        this.redSliderLabelEl.innerText = r.toFixed(3);
-        this.greenSliderLabelEl.innerText = g.toFixed(3);
-        this.blueSliderLabelEl.innerText = b.toFixed(3);
+        this.rgbSliderLabelEls[0].innerText = r.toFixed(3);
+        this.rgbSliderLabelEls[1].innerText = g.toFixed(3);
+        this.rgbSliderLabelEls[2].innerText = b.toFixed(3);
 
-        this.hueSliderLabelEl.innerText = h.toFixed(3);
-        this.satSliderLabelEl.innerText = s.toFixed(3);
-        this.valSliderLabelEl.innerText = v.toFixed(3);
+        this.hsvSliderLabelEls[0].innerText = h.toFixed(3);
+        this.hsvSliderLabelEls[1].innerText = s.toFixed(3);
+        this.hsvSliderLabelEls[2].innerText = v.toFixed(3);
 
-        const byteString = color.toByteString();
+        const byteString = colorToByteString(color);
         this.mainColorEl.style.backgroundColor = `rgb(${byteString})`;
 
         this.byteColorEl.innerText = byteString;
-        this.hexColorEl.innerText = color.toHexString();
-        this.fractColorEl.innerText = color.toFractString();
-        this.nonSrgbFractColorEl.innerText = color.toNonSrgbFractString();
+        this.hexColorEl.innerText = color.toHex();
+        this.fractColorEl.innerText = colorToNormalizedString(color);
+        this.nonSrgbFractColorEl.innerText = colorToNormalizedNonSrgbString(color);
+
+        this.setUrlRgbColor(color);
     }
 
     randomizeColor() {
-        this.setColor(rgb(
+        this.updateDocumentWithRgbColor(rgb(
             Math.random(),
             Math.random(),
             Math.random(),
@@ -154,37 +127,48 @@ class App {
     }
 
     resetColor() {
-        this.setColor(rgb(0.5, 0.5, 0.5), false);
-    }
-
-    refreshColor() {
-        this.setColor(this.getColor());
-    }
-
-    refreshHsvColor() {
-        this.setColor(this.getHsvColor().toRgb());
+        this.updateDocumentWithRgbColor(rgb(0.5, 0.5, 0.5), false);
     }
 
     copyByteValue() {
-        navigator.clipboard.writeText(this.getColor().toByteString());
+        navigator.clipboard.writeText(
+            colorToByteString(this.getRgbColorFromDocument())
+        );
     }
 
     copyHexValue() {
-        navigator.clipboard.writeText(this.getColor().toHexString());
+        navigator.clipboard.writeText(
+            this.getRgbColorFromDocument().toHex()
+        );
     }
 
-    copyFractValue() {
-        navigator.clipboard.writeText(this.getColor().toFractString());
+    copyNormalizedValue() {
+        navigator.clipboard.writeText(
+            colorToNormalizedString(this.getRgbColorFromDocument())
+        );
     }
 
-    copyNonSrgbFractValue() {
-        navigator.clipboard.writeText(this.getColor().toNonSrgbFractString());
+    copyNormalizedNonSrgbValue() {
+        navigator.clipboard.writeText(
+            colorToNormalizedNonSrgbString(this.getRgbColorFromDocument())
+        );
     }
 }
-
 window.app = new App();
 
+function colorToByteString(color) {
+    return color.toBytes().join(", ");
+}
+
+function colorToNormalizedString(color) {
+    return color.data.map(c => c.toFixed(2)).join(", ")
+}
+
+function colorToNormalizedNonSrgbString(color) {
+    return color.data.map(c => Math.pow(c, 2.2).toFixed(2)).join(", ")
+}
+
 function makeGradientString(...rgbColors) {
-    const colorStrings = rgbColors.map(c => `#${c.toHexString()}`);
+    const colorStrings = rgbColors.map(c => `#${c.toHex()}`);
     return `background: linear-gradient(90deg, ${colorStrings.join(", ")})`;
 }

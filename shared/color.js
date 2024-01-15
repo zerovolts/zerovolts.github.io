@@ -1,5 +1,3 @@
-import { clamp } from "/shared/math.js";
-
 const CHUNK_2 = /(.{1,2})/g;
 
 export function rgb(r, g, b) { return new RgbColor([r, g, b]); };
@@ -7,19 +5,6 @@ export function rgb(r, g, b) { return new RgbColor([r, g, b]); };
 export class RgbColor {
     constructor(data) {
         this.data = data;
-    }
-
-    static fromBytes(red, green, blue) {
-        return rgb(
-            red / 255,
-            green / 255,
-            blue / 255,
-        );
-    }
-
-    static fromHexString(hex) {
-        const bytes = hex.match(CHUNK_2).map(byte => parseInt(byte, 16));
-        return RgbColor.fromBytes(bytes[0], bytes[1], bytes[2]);
     }
 
     get r() {
@@ -46,31 +31,30 @@ export class RgbColor {
         this.data[2] = value;
     }
 
-    normalized() {
-        return this.data.map(c => clamp(c, 0, 1));
-    }
-
     toBytes() {
         return this.data.map(c => Math.floor(c * 255));
     }
 
-    toHexString() {
-        return this.toBytes().map(byteToHex).join("");
+    static fromBytes(red, green, blue) {
+        return rgb(
+            red / 255,
+            green / 255,
+            blue / 255,
+        );
     }
 
-    toByteString() {
-        return this.toBytes().join(", ");
+    toHex() {
+        return this.toBytes().map(
+            byte => byte.toString(16).padStart(2, "0")
+        ).join("");
     }
 
-    toFractString() {
-        return this.data.map(c => c.toFixed(2)).join(", ");
+    static fromHex(hex) {
+        const bytes = hex.match(CHUNK_2).map(byte => parseInt(byte, 16));
+        return RgbColor.fromBytes(...bytes);
     }
 
-    toNonSrgbFractString() {
-        return this.data.map(c => Math.pow(c, 2.2).toFixed(2)).join(", ");
-    }
-
-    toHsv() {
+    toHsv(prevHsv) {
         const cMax = Math.max(...this.data);
         const cMin = Math.min(...this.data);
         const delta = cMax - cMin;
@@ -82,11 +66,25 @@ export class RgbColor {
         else if (cMax === this.b) hue = (this.r - this.g) / delta + 4;
         hue /= 6;
 
-        return hsv(
+        const newHsv = hsv(
             modWrap(hue),
             cMax === 0 ? 0 : delta / cMax,
             cMax,
         );
+
+        if (prevHsv !== undefined) {
+            // Prevent information loss when the color becomes pure gray, white,
+            // or black.
+            return hsv(
+                newHsv.s > 0
+                    ? prevHsv.h < 1 ? newHsv.h : prevHsv.h
+                    : prevHsv.h,
+                newHsv.v > 0 ? newHsv.s : prevHsv.s,
+                newHsv.v,
+            )
+        }
+
+        return newHsv;
     }
 }
 
@@ -147,8 +145,4 @@ function modWrap(x) {
     if (x < 0) return x + 1;
     if (x >= 1) return x - 1;
     return x
-}
-
-function byteToHex(byte) {
-    return byte.toString(16).padStart(2, "0");
 }

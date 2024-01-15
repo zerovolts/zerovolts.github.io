@@ -13,8 +13,8 @@
 
 #hex-color,
 #byte-color,
-#fract-color,
-#non-srgb-fract-color {
+#normalized-color,
+#normalized-non-srgb-color {
     cursor: pointer;
 }
 
