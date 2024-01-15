@@ -71,68 +71,70 @@ class App {
     }
 
     setColor(color, persistHsv = true) {
-        const { red, green, blue } = color;
-        this.redSliderEl.value = red;
-        this.greenSliderEl.value = green;
-        this.blueSliderEl.value = blue;
+        const { r, g, b } = color;
+        this.redSliderEl.value = r;
+        this.greenSliderEl.value = g;
+        this.blueSliderEl.value = b;
 
         this.encodeUrl(color);
 
         const oldHsv = this.getHsvColor();
-        const { hue, saturation, value } = color.toHsv();
-        const newHsv = persistHsv
+        const newHsv = color.toHsv();
+        // Persist the previous hue and saturation values when the color becomes
+        // pure gray, white, or black.
+        const { h, s, v } = persistHsv
             ? hsv(
-                saturation > 0
-                    ? oldHsv.hue < 1 ? hue : oldHsv.hue
-                    : oldHsv.hue,
-                value > 0 ? saturation : oldHsv.saturation,
-                value,
+                newHsv.s > 0
+                    ? oldHsv.h < 1 ? newHsv.h : oldHsv.h
+                    : oldHsv.h,
+                newHsv.v > 0 ? newHsv.s : oldHsv.s,
+                newHsv.v,
             )
-            : hsv(hue, saturation, value);
-        this.hueSliderEl.value = newHsv.hue;
-        this.satSliderEl.value = newHsv.saturation;
-        this.valSliderEl.value = newHsv.value;
+            : newHsv;
+        this.hueSliderEl.value = h;
+        this.satSliderEl.value = s;
+        this.valSliderEl.value = v;
 
         // RGB slider background adjustment
         this.redSliderEl.style = makeGradientString(
-            rgb(0, green, blue),
-            rgb(1, green, blue),
+            rgb(0, g, b),
+            rgb(1, g, b),
         );
         this.greenSliderEl.style = makeGradientString(
-            rgb(red, 0, blue),
-            rgb(red, 1, blue),
+            rgb(r, 0, b),
+            rgb(r, 1, b),
         );
         this.blueSliderEl.style = makeGradientString(
-            rgb(red, green, 0),
-            rgb(red, green, 1),
+            rgb(r, g, 0),
+            rgb(r, g, 1),
         );
 
         // HSV slider background adjustment
         this.hueSliderEl.style = makeGradientString(
-            hsv(0, saturation, value).toRgb(),
-            hsv(1 / 6, saturation, value).toRgb(),
-            hsv(2 / 6, saturation, value).toRgb(),
-            hsv(3 / 6, saturation, value).toRgb(),
-            hsv(4 / 6, saturation, value).toRgb(),
-            hsv(5 / 6, saturation, value).toRgb(),
-            hsv(1, saturation, value).toRgb(),
+            hsv(0, s, v).toRgb(),
+            hsv(1 / 6, s, v).toRgb(),
+            hsv(2 / 6, s, v).toRgb(),
+            hsv(3 / 6, s, v).toRgb(),
+            hsv(4 / 6, s, v).toRgb(),
+            hsv(5 / 6, s, v).toRgb(),
+            hsv(1, s, v).toRgb(),
         );
         this.satSliderEl.style = makeGradientString(
-            hsv(hue, 0, value).toRgb(),
-            hsv(hue, 1, value).toRgb(),
+            hsv(h, 0, v).toRgb(),
+            hsv(h, 1, v).toRgb(),
         );
         this.valSliderEl.style = makeGradientString(
-            hsv(hue, saturation, 0).toRgb(),
-            hsv(hue, saturation, 1).toRgb(),
+            hsv(h, s, 0).toRgb(),
+            hsv(h, s, 1).toRgb(),
         );
 
-        this.redSliderLabelEl.innerText = red.toFixed(3);
-        this.greenSliderLabelEl.innerText = green.toFixed(3);
-        this.blueSliderLabelEl.innerText = blue.toFixed(3);
+        this.redSliderLabelEl.innerText = r.toFixed(3);
+        this.greenSliderLabelEl.innerText = g.toFixed(3);
+        this.blueSliderLabelEl.innerText = b.toFixed(3);
 
-        this.hueSliderLabelEl.innerText = newHsv.hue.toFixed(3);
-        this.satSliderLabelEl.innerText = newHsv.saturation.toFixed(3);
-        this.valSliderLabelEl.innerText = newHsv.value.toFixed(3);
+        this.hueSliderLabelEl.innerText = h.toFixed(3);
+        this.satSliderLabelEl.innerText = s.toFixed(3);
+        this.valSliderLabelEl.innerText = v.toFixed(3);
 
         const byteString = color.toByteString();
         this.mainColorEl.style.backgroundColor = `rgb(${byteString})`;
