@@ -22,28 +22,6 @@ export class RgbColor {
         return RgbColor.fromBytes(bytes[0], bytes[1], bytes[2]);
     }
 
-    static fromHsv(h, s, v) {
-        h = modWrap(h);
-        h *= 6;
-
-        // Chroma
-        const c = v * s;
-        // A triangle wave with 3 peaks aligned with the rgb component peaks on
-        // the hue spectrum.
-        const x = c * (1 - Math.abs(h % 2 - 1));
-        const m = v - c;
-
-        const sector = Math.floor(h);
-        switch (sector) {
-            case 0: return rgb(c + m, x + m, m);
-            case 1: return rgb(x + m, c + m, m);
-            case 2: return rgb(m, c + m, x + m);
-            case 3: return rgb(m, x + m, c + m);
-            case 4: return rgb(x + m, m, c + m);
-            case 5: return rgb(c + m, m, x + m);
-        }
-    }
-
     get r() {
         return this.data[0];
     }
@@ -93,7 +71,22 @@ export class RgbColor {
     }
 
     toHsv() {
-        return HsvColor.fromRgb(this.r, this.g, this.b);
+        const cMax = Math.max(...this.data);
+        const cMin = Math.min(...this.data);
+        const delta = cMax - cMin;
+
+        let hue;
+        if (cMax === cMin) hue = 0;
+        else if (cMax === this.r) hue = (this.g - this.b) / delta;
+        else if (cMax === this.g) hue = (this.b - this.r) / delta + 2;
+        else if (cMax === this.b) hue = (this.r - this.g) / delta + 4;
+        hue /= 6;
+
+        return hsv(
+            modWrap(hue),
+            cMax === 0 ? 0 : delta / cMax,
+            cMax,
+        );
     }
 }
 
@@ -128,27 +121,25 @@ export class HsvColor {
         this.data[2] = value;
     }
 
-    static fromRgb(r, g, b) {
-        const cMax = Math.max(r, g, b);
-        const cMin = Math.min(r, g, b);
-        const delta = cMax - cMin;
-
-        let hue;
-        if (cMax === cMin) hue = 0;
-        else if (cMax === r) hue = (g - b) / delta;
-        else if (cMax === g) hue = (b - r) / delta + 2;
-        else if (cMax === b) hue = (r - g) / delta + 4;
-        hue /= 6;
-
-        return hsv(
-            modWrap(hue),
-            cMax === 0 ? 0 : delta / cMax,
-            cMax,
-        );
-    }
-
     toRgb() {
-        return RgbColor.fromHsv(this.h, this.s, this.v);
+        let h = modWrap(this.h) * 6;
+
+        // Chroma
+        const c = this.v * this.s;
+        // A triangle wave with 3 peaks aligned with the rgb component peaks on
+        // the hue spectrum.
+        const x = c * (1 - Math.abs(h % 2 - 1));
+        const m = this.v - c;
+
+        const sector = Math.floor(h);
+        switch (sector) {
+            case 0: return rgb(c + m, x + m, m);
+            case 1: return rgb(x + m, c + m, m);
+            case 2: return rgb(m, c + m, x + m);
+            case 3: return rgb(m, x + m, c + m);
+            case 4: return rgb(x + m, m, c + m);
+            case 5: return rgb(c + m, m, x + m);
+        }
     }
 }
 
