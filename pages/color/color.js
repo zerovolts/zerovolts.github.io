@@ -197,12 +197,6 @@ class RgbColor {
         this.normalize();
     }
 
-    normalize() {
-        this.red = clamp(this.red, 0, 1);
-        this.green = clamp(this.green, 0, 1);
-        this.blue = clamp(this.blue, 0, 1);
-    }
-
     static fromBytes(red, green, blue) {
         return new RgbColor(
             red / 255,
@@ -214,44 +208,6 @@ class RgbColor {
     static fromHexString(hex) {
         const bytes = hex.match(CHUNK_2).map(byte => parseInt(byte, 16));
         return RgbColor.fromBytes(bytes[0], bytes[1], bytes[2]);
-    }
-
-    toBytes() {
-        return [
-            Math.floor(this.red * 255),
-            Math.floor(this.green * 255),
-            Math.floor(this.blue * 255),
-        ];
-    }
-
-    toHexString() {
-        const [red, green, blue] = this.toBytes();
-        return `${byteToHex(red)}${byteToHex(green)}${byteToHex(blue)}`;
-    }
-
-    toByteString() {
-        const [red, green, blue] = this.toBytes();
-        return `${red}, ${green}, ${blue}`;
-    }
-
-    toFractString() {
-        return `${this.red.toFixed(2)}, ${this.green.toFixed(2)}, ${this.blue.toFixed(2)}`;
-    }
-
-    toNonSrgbFractString() {
-        return `${Math.pow(this.red, 2.2).toFixed(2)}, ${Math.pow(this.green, 2.2).toFixed(2)}, ${Math.pow(this.blue, 2.2).toFixed(2)}`;
-    }
-
-    addValue(amount) {
-        return new RgbColor(
-            this.red += amount,
-            this.green += amount,
-            this.blue += amount,
-        );
-    }
-
-    toHsv() {
-        return HsvColor.fromRgb(this.red, this.green, this.blue);
     }
 
     static fromHsv(hue, sat, val) {
@@ -274,6 +230,36 @@ class RgbColor {
             case 4: return new RgbColor(x + m, m, c + m);
             case 5: return new RgbColor(c + m, m, x + m);
         }
+    }
+
+    normalize() {
+        this.red = clamp(this.red, 0, 1);
+        this.green = clamp(this.green, 0, 1);
+        this.blue = clamp(this.blue, 0, 1);
+    }
+
+    toBytes() {
+        return [this.red, this.green, this.blue].map(c => Math.floor(c * 255));
+    }
+
+    toHexString() {
+        return this.toBytes().map(byteToHex).join("");
+    }
+
+    toByteString() {
+        return this.toBytes().join(", ");
+    }
+
+    toFractString() {
+        return [this.red, this.green, this.blue].map(c => c.toFixed(2)).join(", ");
+    }
+
+    toNonSrgbFractString() {
+        return [this.red, this.green, this.blue].map(c => Math.pow(c, 2.2).toFixed(2)).join(", ");
+    }
+
+    toHsv() {
+        return HsvColor.fromRgb(this.red, this.green, this.blue);
     }
 }
 
