@@ -2,7 +2,7 @@ import { RgbColor, HsvColor, rgb, hsv } from "/shared/color.js"
 
 class App {
     constructor() {
-        this.encodeUrl = this.setUrlRgbColor.bind(this);
+        this.encodeUrl = this.updateUrlWithRgbColor.bind(this);
 
         document.addEventListener("DOMContentLoaded", async () => {
             this.mainColorEl = document.getElementById("color-picker-display");
@@ -23,23 +23,25 @@ class App {
 
             for (const el of this.rgbSliderEls) {
                 el.addEventListener("input", () => this.updateDocumentWithRgbColor(this.getRgbColorFromDocument()));
+                el.addEventListener("mouseup", () => this.updateUrlWithRgbColor(this.getRgbColorFromDocument()));
             }
 
             for (const el of this.hsvSliderEls) {
                 el.addEventListener("input", () => this.updateDocumentWithRgbColor(this.getHsvColorFromDocument().toRgb()));
+                el.addEventListener("mouseup", () => this.updateUrlWithRgbColor(this.getHsvColorFromDocument().toRgb()));
             }
 
-            this.updateDocumentWithRgbColor(this.getUrlRgbColor());
+            this.updateDocumentWithRgbColor(this.getRgbColorFromUrl());
         });
     }
 
-    setUrlRgbColor(color) {
+    updateUrlWithRgbColor(color) {
         const url = new URL(window.location);
         url.searchParams.set("c", color.toHex());
         window.history.replaceState(null, document.title, url.toString());
     }
 
-    getUrlRgbColor() {
+    getRgbColorFromUrl() {
         const url = new URL(window.location);
         const hex = url.searchParams.get("c") ?? "7f7f7f";
         return RgbColor.fromHex(hex);
@@ -114,20 +116,18 @@ class App {
         this.hexColorEl.innerText = color.toHex();
         this.fractColorEl.innerText = colorToNormalizedString(color);
         this.nonSrgbFractColorEl.innerText = colorToNormalizedNonSrgbString(color);
-
-        this.setUrlRgbColor(color);
     }
 
     randomizeColor() {
-        this.updateDocumentWithRgbColor(rgb(
-            Math.random(),
-            Math.random(),
-            Math.random(),
-        ));
+        const color = rgb(Math.random(), Math.random(), Math.random());
+        this.updateDocumentWithRgbColor(color);
+        this.updateUrlWithRgbColor(color);
     }
 
     resetColor() {
-        this.updateDocumentWithRgbColor(rgb(0.5, 0.5, 0.5), false);
+        const color = rgb(0.5, 0.5, 0.5)
+        this.updateDocumentWithRgbColor(color, false);
+        this.updateUrlWithRgbColor(color);
     }
 
     copyByteValue() {
