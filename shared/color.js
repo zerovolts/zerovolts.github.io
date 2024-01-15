@@ -2,6 +2,8 @@ import { clamp } from "/shared/math.js";
 
 const CHUNK_2 = /(.{1,2})/g;
 
+export function rgb(r, g, b) { return new RgbColor(r, g, b) };
+
 export class RgbColor {
     constructor(red, green, blue) {
         this.red = red;
@@ -11,7 +13,7 @@ export class RgbColor {
     }
 
     static fromBytes(red, green, blue) {
-        return new RgbColor(
+        return rgb(
             red / 255,
             green / 255,
             blue / 255,
@@ -36,12 +38,12 @@ export class RgbColor {
 
         const sector = Math.floor(hue);
         switch (sector) {
-            case 0: return new RgbColor(c + m, x + m, m);
-            case 1: return new RgbColor(x + m, c + m, m);
-            case 2: return new RgbColor(m, c + m, x + m);
-            case 3: return new RgbColor(m, x + m, c + m);
-            case 4: return new RgbColor(x + m, m, c + m);
-            case 5: return new RgbColor(c + m, m, x + m);
+            case 0: return rgb(c + m, x + m, m);
+            case 1: return rgb(x + m, c + m, m);
+            case 2: return rgb(m, c + m, x + m);
+            case 3: return rgb(m, x + m, c + m);
+            case 4: return rgb(x + m, m, c + m);
+            case 5: return rgb(c + m, m, x + m);
         }
     }
 
@@ -76,6 +78,8 @@ export class RgbColor {
     }
 }
 
+export function hsv(h, s, v) { return new HsvColor(h, s, v); }
+
 export class HsvColor {
     constructor(hue, saturation, value) {
         this.hue = hue;
@@ -95,7 +99,7 @@ export class HsvColor {
         else if (cMax === blue) hue = (red - green) / delta + 4;
         hue /= 6;
 
-        return new HsvColor(
+        return hsv(
             modWrap(hue),
             cMax === 0 ? 0 : delta / cMax,
             cMax,

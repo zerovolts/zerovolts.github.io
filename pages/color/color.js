@@ -1,4 +1,4 @@
-import { RgbColor, HsvColor } from "/shared/color.js"
+import { RgbColor, HsvColor, rgb, hsv } from "/shared/color.js"
 
 class App {
     constructor() {
@@ -55,7 +55,7 @@ class App {
     }
 
     getColor() {
-        return new RgbColor(
+        return rgb(
             Number(this.redSliderEl.value),
             Number(this.greenSliderEl.value),
             Number(this.blueSliderEl.value),
@@ -63,7 +63,7 @@ class App {
     }
 
     getHsvColor() {
-        return new HsvColor(
+        return hsv(
             Number(this.hueSliderEl.value),
             Number(this.satSliderEl.value),
             Number(this.valSliderEl.value),
@@ -81,49 +81,49 @@ class App {
         const oldHsv = this.getHsvColor();
         const { hue, saturation, value } = color.toHsv();
         const newHsv = persistHsv
-            ? new HsvColor(
+            ? hsv(
                 saturation > 0
                     ? oldHsv.hue < 1 ? hue : oldHsv.hue
                     : oldHsv.hue,
                 value > 0 ? saturation : oldHsv.saturation,
                 value,
             )
-            : new HsvColor(hue, saturation, value);
+            : hsv(hue, saturation, value);
         this.hueSliderEl.value = newHsv.hue;
         this.satSliderEl.value = newHsv.saturation;
         this.valSliderEl.value = newHsv.value;
 
         // RGB slider background adjustment
         this.redSliderEl.style = makeGradientString(
-            new RgbColor(0, green, blue),
-            new RgbColor(1, green, blue),
+            rgb(0, green, blue),
+            rgb(1, green, blue),
         );
         this.greenSliderEl.style = makeGradientString(
-            new RgbColor(red, 0, blue),
-            new RgbColor(red, 1, blue),
+            rgb(red, 0, blue),
+            rgb(red, 1, blue),
         );
         this.blueSliderEl.style = makeGradientString(
-            new RgbColor(red, green, 0),
-            new RgbColor(red, green, 1),
+            rgb(red, green, 0),
+            rgb(red, green, 1),
         );
 
         // HSV slider background adjustment
         this.hueSliderEl.style = makeGradientString(
-            new HsvColor(0, saturation, value).toRgb(),
-            new HsvColor(1 / 6, saturation, value).toRgb(),
-            new HsvColor(2 / 6, saturation, value).toRgb(),
-            new HsvColor(3 / 6, saturation, value).toRgb(),
-            new HsvColor(4 / 6, saturation, value).toRgb(),
-            new HsvColor(5 / 6, saturation, value).toRgb(),
-            new HsvColor(1, saturation, value).toRgb(),
+            hsv(0, saturation, value).toRgb(),
+            hsv(1 / 6, saturation, value).toRgb(),
+            hsv(2 / 6, saturation, value).toRgb(),
+            hsv(3 / 6, saturation, value).toRgb(),
+            hsv(4 / 6, saturation, value).toRgb(),
+            hsv(5 / 6, saturation, value).toRgb(),
+            hsv(1, saturation, value).toRgb(),
         );
         this.satSliderEl.style = makeGradientString(
-            new HsvColor(hue, 0, value).toRgb(),
-            new HsvColor(hue, 1, value).toRgb(),
+            hsv(hue, 0, value).toRgb(),
+            hsv(hue, 1, value).toRgb(),
         );
         this.valSliderEl.style = makeGradientString(
-            new HsvColor(hue, saturation, 0).toRgb(),
-            new HsvColor(hue, saturation, 1).toRgb(),
+            hsv(hue, saturation, 0).toRgb(),
+            hsv(hue, saturation, 1).toRgb(),
         );
 
         this.redSliderLabelEl.innerText = red.toFixed(3);
@@ -144,7 +144,7 @@ class App {
     }
 
     randomizeColor() {
-        this.setColor(new RgbColor(
+        this.setColor(rgb(
             Math.random(),
             Math.random(),
             Math.random(),
@@ -152,7 +152,7 @@ class App {
     }
 
     resetColor() {
-        this.setColor(new RgbColor(0.5, 0.5, 0.5), false);
+        this.setColor(rgb(0.5, 0.5, 0.5), false);
     }
 
     refreshColor() {
