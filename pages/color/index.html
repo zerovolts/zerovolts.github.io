@@ -57,10 +57,6 @@
                 </div>
             </div>
             <div class="col-16 fill-width">
-                <div>
-                    <button onclick="app.randomizeColor()">Random</button>
-                    <button onclick="app.resetColor()">Reset</button>
-                </div>
                 <div class="col-4 slider-container">
                     <div class="row-4 align-center">
                         <span class="label">red</span>
@@ -94,6 +90,10 @@
                         <input id="val-slider" class="color-slider fill-width" type="range" min="0" max="1" step="0.001">
                         <span id="val-slider-label" class="label">0.000</span>
                     </div>
+                </div>
+                <div>
+                    <button onclick="app.resetColor()">Reset</button>
+                    <button onclick="app.randomizeColor()">Random</button>
                 </div>
             </div>
         </div>
