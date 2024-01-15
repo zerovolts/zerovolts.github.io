@@ -2,8 +2,6 @@ import { RgbColor, HsvColor, rgb, hsv } from "/shared/color.js"
 
 class App {
     constructor() {
-        this.encodeUrl = this.updateUrlWithRgbColor.bind(this);
-
         document.addEventListener("DOMContentLoaded", async () => {
             this.mainColorEl = document.getElementById("color-picker-display");
 
@@ -31,7 +29,9 @@ class App {
                 el.addEventListener("mouseup", () => this.updateUrlWithRgbColor(this.getHsvColorFromDocument().toRgb()));
             }
 
-            this.updateDocumentWithRgbColor(this.getRgbColorFromUrl());
+            const color = this.getRgbColorFromUrl();
+            this.updateDocumentWithRgbColor(color);
+            this.updateUrlWithRgbColor(color);
         });
     }
 
