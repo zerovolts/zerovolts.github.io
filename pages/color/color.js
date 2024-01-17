@@ -1,38 +1,40 @@
 import { RgbColor, HsvColor, rgb, hsv } from "/shared/color.js"
 
+document.addEventListener("DOMContentLoaded", async () => {
+    window.app = new App();
+});
+
 class App {
     constructor() {
-        document.addEventListener("DOMContentLoaded", async () => {
-            this.mainColorEl = document.getElementById("color-picker-display");
+        this.mainColorEl = document.getElementById("color-picker-display");
 
-            this.byteColorEl = document.getElementById("byte-color");
-            this.hexColorEl = document.getElementById("hex-color");
-            this.fractColorEl = document.getElementById("normalized-color");
-            this.nonSrgbFractColorEl = document.getElementById("normalized-non-srgb-color");
+        this.byteColorEl = document.getElementById("byte-color");
+        this.hexColorEl = document.getElementById("hex-color");
+        this.fractColorEl = document.getElementById("normalized-color");
+        this.nonSrgbFractColorEl = document.getElementById("normalized-non-srgb-color");
 
-            this.rgbSliderEls = ["red-slider", "green-slider", "blue-slider"]
-                .map(id => document.getElementById(id));
-            this.rgbSliderLabelEls = ["red-slider-label", "green-slider-label", "blue-slider-label"]
-                .map(id => document.getElementById(id));
-            this.hsvSliderEls = ["hue-slider", "sat-slider", "val-slider"]
-                .map(id => document.getElementById(id));
-            this.hsvSliderLabelEls = ["hue-slider-label", "sat-slider-label", "val-slider-label"]
-                .map(id => document.getElementById(id));
+        this.rgbSliderEls = ["red-slider", "green-slider", "blue-slider"]
+            .map(id => document.getElementById(id));
+        this.rgbSliderLabelEls = ["red-slider-label", "green-slider-label", "blue-slider-label"]
+            .map(id => document.getElementById(id));
+        this.hsvSliderEls = ["hue-slider", "sat-slider", "val-slider"]
+            .map(id => document.getElementById(id));
+        this.hsvSliderLabelEls = ["hue-slider-label", "sat-slider-label", "val-slider-label"]
+            .map(id => document.getElementById(id));
 
-            for (const el of this.rgbSliderEls) {
-                el.addEventListener("input", () => this.updateDocumentWithRgbColor(this.getRgbColorFromDocument()));
-                el.addEventListener("mouseup", () => this.updateUrlWithRgbColor(this.getRgbColorFromDocument()));
-            }
+        for (const el of this.rgbSliderEls) {
+            el.addEventListener("input", () => this.updateDocumentWithRgbColor(this.getRgbColorFromDocument()));
+            el.addEventListener("mouseup", () => this.updateUrlWithRgbColor(this.getRgbColorFromDocument()));
+        }
 
-            for (const el of this.hsvSliderEls) {
-                el.addEventListener("input", () => this.updateDocumentWithRgbColor(this.getHsvColorFromDocument().toRgb()));
-                el.addEventListener("mouseup", () => this.updateUrlWithRgbColor(this.getHsvColorFromDocument().toRgb()));
-            }
+        for (const el of this.hsvSliderEls) {
+            el.addEventListener("input", () => this.updateDocumentWithRgbColor(this.getHsvColorFromDocument().toRgb()));
+            el.addEventListener("mouseup", () => this.updateUrlWithRgbColor(this.getHsvColorFromDocument().toRgb()));
+        }
 
-            const color = this.getRgbColorFromUrl();
-            this.updateDocumentWithRgbColor(color);
-            this.updateUrlWithRgbColor(color);
-        });
+        const color = this.getRgbColorFromUrl();
+        this.updateDocumentWithRgbColor(color);
+        this.updateUrlWithRgbColor(color);
     }
 
     updateUrlWithRgbColor(color) {
@@ -154,7 +156,6 @@ class App {
         );
     }
 }
-window.app = new App();
 
 function colorToByteString(color) {
     return color.toBytes().join(", ");
