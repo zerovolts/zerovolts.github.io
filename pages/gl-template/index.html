@@ -4,25 +4,31 @@
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>Template | zerovolts</title>
+    <title>GL Template | zerovolts</title>
     <link rel="icon" type="image/x-icon" href="/favicon.ico" />
     <link rel="stylesheet" href="/global.css" />
-    <link rel="stylesheet" href="./style.css" />
     <script src="/components/header/header.js"></script>
     <script src="./app.js" type="module"></script>
     <script
         data-goatcounter="https://zerovolts.goatcounter.com/count"
         async src="//gc.zgo.at/count.js"
     ></script>
+    <style>
+        #main-canvas {
+            width: 512px;
+            height: 512px;
+        }
+    </style>
 </head>
 
 <body>
     <zv-header
-        data-title="Template"
-        data-source="/pages/template">
+        data-title="GL Template"
+        data-source="/pages/gl-template">
     </zv-header>
-    <main class="col-16">
-        <p>Template</p>
+    <main class="col-16 align-center">
+        <canvas id="main-canvas"></canvas>
+        <p>WebGL Template</p>
     </main>
 </body>
 
