@@ -1,5 +1,5 @@
 document.addEventListener("DOMContentLoaded", async () => {
-    window.app = new App(canvas);
+    window.app = new App();
 });
 
 class App {
