@@ -71,13 +71,6 @@ input[type="range"]::-webkit-slider-thumb {
     width: 7px;
 }
 
-.label {
-    font-size: 13px;
-    font-family: var(--font-monospace);
-    text-transform: uppercase;
-    color: #b0b0ad;
-}
-
 .slider-container {
     background: var(--color-background);
     border-radius: var(--radius);

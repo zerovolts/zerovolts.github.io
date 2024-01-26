@@ -1,0 +1,48 @@
+<!doctype html>
+<html>
+
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>UTF-8 Sandbox | zerovolts</title>
+    <link rel="icon" type="image/x-icon" href="/favicon.ico" />
+    <link rel="stylesheet" href="/global.css" />
+    <link rel="stylesheet" href="./style.css" />
+    <script src="/components/header/header.js"></script>
+    <script src="./app.js" type="module"></script>
+    <script
+        data-goatcounter="https://zerovolts.goatcounter.com/count"
+        async src="//gc.zgo.at/count.js"
+    ></script>
+</head>
+
+<body>
+    <zv-header
+        data-title="UTF-8 Sandbox"
+        data-source="/pages/unicode">
+    </zv-header>
+    <main class="col-16">
+        <div class="col-2">
+            <label class="label">Scaled Codepoint Slider</label>
+            <input type="range" id="code-point-slider" min="0" max="4" step="any">
+        </div>
+        <div class="col-16">
+            <div class="row-16">
+                <div id="character" class="character-block"></div>
+                <div class="col-8">
+                    <div class="col-2">
+                        <label class="label">Raw Codepoint Bits</label>
+                        <div id="int-binary-container" class="bits"></div>
+                    </div>
+                    <div class="col-2">
+                        <label class="label">Codepoint with UTF-8 Wrapper</label>
+                        <div id="utf8-binary-container" class="bits"></div>
+                    </div>
+                </div>
+            </div>
+            <div id="bit-container" class="col-4"></div>
+        </div>
+    </main>
+</body>
+
+</html>
