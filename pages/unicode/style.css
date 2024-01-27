@@ -1,13 +1,5 @@
 @import "/global.css";
 
-:root {
-    --color-byte1: #ff697a;
-    --color-byte2: #49d4a9;
-    --color-byte3: #40aee0;
-    --color-byte4: #ffb171;
-    --color-static: var(--color-text);
-}
-
 #bit-container {
     width: fit-content;
     height: 76px;
@@ -55,8 +47,8 @@
     background: var(--color-accent-shadow);
 }
 
-.static-bits { color: var(--color-static); }
-.byte1 { color: var(--color-byte1); }
-.byte2 { color: var(--color-byte2); }
-.byte3 { color: var(--color-byte3); }
-.byte4 { color: var(--color-byte4); }
+.static-bits { color: var(--color-text); }
+.byte1 { color: var(--color-red); }
+.byte2 { color: var(--color-green); }
+.byte3 { color: var(--color-blue); }
+.byte4 { color: var(--color-yellow); }

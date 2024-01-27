@@ -27,6 +27,11 @@
     --color-background: #f0f0ed;
     --color-background-dark: #c9c9c6;
 
+    --color-red: #ff697a;
+    --color-green: #49d4a9;
+    --color-blue: #40aee0;
+    --color-yellow: #ffb171;
+
     --content-width: calc(512px + 4rem);
 
     --radius: 3px;
