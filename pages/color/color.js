@@ -1,11 +1,26 @@
 import { RgbColor, HsvColor, rgb, hsv } from "/shared/color.js"
+import { quadMesh2d } from "/shared/geometry.js";
+import { ShaderProgram, Framebuffer } from "/shared/graphics.js";
+
+// Initiate the fetch first to reduce perceived loading.
+let shaderSources = Promise.all([
+    fetch("./default.vert").then(res => res.text()),
+    fetch("./default.frag").then(res => res.text()),
+]);
 
 document.addEventListener("DOMContentLoaded", async () => {
+    shaderSources = await shaderSources;
     window.app = new App();
 });
 
 class App {
     constructor() {
+        const rgbCanvas = document.getElementById("rgb-mixer");
+        this.rgbMixer = createMixer(rgbCanvas);
+
+        const cmyCanvas = document.getElementById("cmy-mixer");
+        this.cmyMixer = createMixer(cmyCanvas);
+
         this.mainColorEl = document.getElementById("color-picker-display");
 
         this.byteColorEl = document.getElementById("byte-color");
@@ -118,6 +133,22 @@ class App {
         this.hexColorEl.innerText = color.toHex();
         this.fractColorEl.innerText = colorToNormalizedString(color);
         this.nonSrgbFractColorEl.innerText = colorToNormalizedNonSrgbString(color);
+
+        this.rgbMixer.frame.clear(0, 0, 0, 1);
+        this.rgbMixer.frame.draw(
+            this.rgbMixer.mesh,
+            this.rgbMixer.shader,
+            [],
+            { color: color.data, mode: 0 },
+        );
+
+        this.cmyMixer.frame.clear(0, 0, 0, 1);
+        this.cmyMixer.frame.draw(
+            this.cmyMixer.mesh,
+            this.cmyMixer.shader,
+            [],
+            { color: color.data, mode: 1 },
+        );
     }
 
     randomizeColor() {
@@ -154,6 +185,31 @@ class App {
         navigator.clipboard.writeText(
             colorToNormalizedNonSrgbString(this.getRgbColorFromDocument())
         );
+    }
+}
+
+function createMixer(canvas) {
+    canvas.width = Math.floor(canvas.clientWidth * window.devicePixelRatio);
+    canvas.height = Math.floor(canvas.clientHeight * window.devicePixelRatio);
+
+    const gl = canvas.getContext("webgl2", { antialias: true });
+    if (gl === null) throw new Error("WebGL2 not supported");
+    const frame = new Framebuffer(gl, null, canvas.width, canvas.height);
+
+    const shader = new ShaderProgram(
+        gl,
+        shaderSources[0],
+        shaderSources[1],
+        { aPosition: "2f" },
+        { color: "3f", mode: "1f" },
+    );
+    const mesh = quadMesh2d(gl);
+
+    return {
+      gl,
+      frame,
+      shader,
+      mesh,
     }
 }
 

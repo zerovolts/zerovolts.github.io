@@ -20,7 +20,7 @@
 
 .color-slider {
     appearance: none;
-    background: linear-gradient(90deg, #000, #0f0); 
+    background: linear-gradient(90deg, #000, #0f0);
     border-radius: var(--radius);
     height: var(--slider-height);
     margin-top: 4px;
@@ -75,4 +75,12 @@ input[type="range"]::-webkit-slider-thumb {
     background: var(--color-background);
     border-radius: var(--radius);
     padding: 1rem;
+}
+
+#rgb-mixer, #cmy-mixer {
+    width: 128px;
+    height: 128px;
+    border-radius: var(--radius);
+    padding: 8px;
+    background: var(--color-background);
 }
