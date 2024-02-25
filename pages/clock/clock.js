@@ -142,14 +142,14 @@ class App extends GlApp {
                     this.fiveMarkMesh,
                     this.shaderProgram,
                     [],
-                    { uColor: COLOR_BLACK, uTransform: Mat4.rotationZ(angle).data },
+                    { uColor: COLOR_BLACK, uTransform: new Float32Array(Mat4.rotationZ(angle).data) },
                 );
             } else {
                 this.screen.draw(
                     this.markMesh,
                     this.shaderProgram,
                     [],
-                    { uColor: COLOR_BLACK, uTransform: Mat4.rotationZ(angle).data },
+                    { uColor: COLOR_BLACK, uTransform: new Float32Array(Mat4.rotationZ(angle).data) },
                 );
             }
         }
