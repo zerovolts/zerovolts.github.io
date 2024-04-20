@@ -19,6 +19,23 @@ class ZvHeader extends HTMLElement {
             sourceEl.innerText = "Source";
             sourceEl.setAttribute("href", `${githubPath}${relativePath}`);
         }
+
+        const initialTheme = localStorage.getItem("theme");
+        const themeToggleEl = this.shadowRoot.getElementById("theme-toggle");
+        themeToggleEl.checked = initialTheme === "dark";
+        themeToggleEl.addEventListener("click", e => {
+            const value = e.target.checked ? "dark" : "light";
+            document.documentElement.setAttribute("data-theme", value);
+            localStorage.setItem("theme", value)
+            siteLogoEl.src = e.target.checked
+                ? "/assets/images/zakku-dark.png"
+                : "/assets/images/zakku.png";
+        });
+
+        const siteLogoEl = this.shadowRoot.getElementById("site-logo");
+        if (localStorage.getItem("theme") === "dark") {
+            siteLogoEl.src = "/assets/images/zakku-dark.png";
+        }
     }
 }
 

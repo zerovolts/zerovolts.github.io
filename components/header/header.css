@@ -15,9 +15,20 @@ header {
     font-family: var(--font-monospace);
 }
 
+#theme-toggle {
+    appearance: none;
+    width: 16px;
+    height: 16px;
+    background: var(--color-accent);
+    border-radius: var(--radius);
+    margin: 0;
+}
+
+#theme-toggle:checked {
+    background: var(--color-accent);
+}
+
 .header-links {
-    display: flex;
-    flex-direction: row;
     padding: 0 2rem;
 }
 

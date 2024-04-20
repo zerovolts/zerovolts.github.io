@@ -20,8 +20,12 @@
     --color-positive: #00dc90;
     --color-positive-shadow: #00a97c;
 
+    --color-negative: #ff906a;
+    --color-negative-shadow: #ff6a50;
+
     --color-text: #2c3e50;
     --color-text-light: white;
+    --color-text-soft: #b0b0ad;
 
     --color-background-light: white;
     --color-background: #f0f0ed;
@@ -38,6 +42,19 @@
 
     --font: "Ubuntu";
     --font-monospace: "Ubuntu Mono";
+}
+
+[data-theme="dark"] {
+    --color-accent: #00dc90;
+    --color-accent-shadow: #00a97c;
+    --color-accent-soft: #2c3d38;
+
+    --color-text: #dce6e8;
+    --color-text-soft: #667778;
+
+    --color-background-light: #1e292a;
+    --color-background: #182021;
+    --color-background-dark: #121819;
 }
 
 @media (max-width: calc(600px + 8rem)) {
@@ -150,9 +167,14 @@ button:active {
         box-shadow var(--down-speed);
 }
 
-button.enabled {
+button.positive {
     background: var(--color-positive);
     box-shadow: 0 3px 0 0 var(--color-positive-shadow);
+}
+
+button.negative {
+    background: var(--color-negative);
+    box-shadow: 0 3px 0 0 var(--color-negative-shadow);
 }
 
 .row-2,
@@ -214,6 +236,7 @@ button.enabled {
     color: var(--color-accent);
     background: var(--color-accent-soft);
     border-radius: var(--radius);
+    height: fit-content;
 }
 
 .label {
@@ -221,4 +244,5 @@ button.enabled {
     font-family: var(--font-monospace);
     text-transform: uppercase;
     color: #b0b0ad;
+    color: var(--color-text-soft);
 }

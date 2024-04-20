@@ -30,15 +30,18 @@ class App extends GlApp {
         const specularButton = document.getElementById("specular");
         ambientButton.addEventListener("click", () => {
             this.lightFlags ^= AMBIENT_FLAG;
-            ambientButton.classList.toggle("enabled");
+            ambientButton.classList.toggle("positive");
+            ambientButton.classList.toggle("negative");
         });
         diffuseButton.addEventListener("click", () => {
             this.lightFlags ^= DIFFUSE_FLAG;
-            diffuseButton.classList.toggle("enabled");
+            diffuseButton.classList.toggle("positive");
+            diffuseButton.classList.toggle("negative");
         });
         specularButton.addEventListener("click", () => {
             this.lightFlags ^= SPECULAR_FLAG;
-            specularButton.classList.toggle("enabled");
+            specularButton.classList.toggle("positive");
+            specularButton.classList.toggle("negative");
         });
 
         gl.clearColor(0.1, 0.1, 0.1, 1.0);

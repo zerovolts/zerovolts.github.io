@@ -10,6 +10,13 @@ window.addEventListener("load", () => {
         image.style.height = `${boundingRect.height * pixelSize}px`;
         image.style.visibility = "visible";
     }
+
+    let theme = localStorage.getItem("theme");
+    if (theme === null) {
+        localStorage.setItem("theme", "light");
+        theme = "light";
+    }
+    document.documentElement.setAttribute('data-theme', theme);
 });
 
 function getPixelSize(element) {
@@ -26,3 +33,4 @@ function getPixelSize(element) {
         return 4;
     }
 }
+
