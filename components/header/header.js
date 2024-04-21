@@ -26,15 +26,7 @@ class ZvHeader extends HTMLElement {
             const value = e.target.checked ? "dark" : "light";
             document.documentElement.setAttribute("data-theme", value);
             localStorage.setItem("theme", value)
-            siteLogoEl.src = e.target.checked
-                ? "/assets/images/zakku-dark.png"
-                : "/assets/images/zakku.png";
         });
-
-        const siteLogoEl = document.getElementById("site-logo");
-        if (localStorage.getItem("theme") === "dark") {
-            siteLogoEl.src = "/assets/images/zakku-dark.png";
-        }
     }
 }
 
