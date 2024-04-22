@@ -16,6 +16,8 @@ header {
     background-position: 0 0;
     width: 40px;
     height: 24px;
+    image-rendering: pixelated; /* Chrome */
+    image-rendering: crisp-edges; /* Firefox */
     transition: background-position 0.2s;
 }
 
