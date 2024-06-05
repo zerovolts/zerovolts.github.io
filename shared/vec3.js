@@ -65,11 +65,11 @@ export class Vec3 extends VecBase {
     };
 
     cross(other) {
-        return [
+        return v3(
             (this.y * other.z) - (this.z * other.y),
             (this.z * other.x) - (this.x * other.z),
             (this.x * other.y) - (this.y * other.x),
-        ];
+        );
     }
 
     dot(other) {
