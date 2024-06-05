@@ -6,7 +6,7 @@ import { Vec3 } from "./vec3.js";
 export function quadMesh2d(gl) {
     return new Mesh(gl, {
         position: [
-            -1,  -1,
+            -1, -1,
             -1,  1,
              1,  1,
              1, -1,
@@ -27,7 +27,7 @@ export function quadMesh2d(gl) {
 export function quadMesh(gl) {
     return new Mesh(gl, {
         position: [
-            -1,  -1, 0,
+            -1, -1, 0,
             -1,  1, 0,
              1,  1, 0,
              1, -1, 0,
