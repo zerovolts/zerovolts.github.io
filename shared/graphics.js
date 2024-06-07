@@ -55,7 +55,7 @@ export class Framebuffer {
         gl.bindFramebuffer(gl.FRAMEBUFFER, this.framebuffer);
         gl.viewport(0, 0, this.width, this.height);
 
-        gl.drawElements(gl.TRIANGLES, mesh.indexCount, gl.UNSIGNED_SHORT, 0);
+        gl.drawElements(mesh.renderMode, mesh.indexCount, gl.UNSIGNED_SHORT, 0);
     }
 }
 
@@ -132,6 +132,7 @@ export class Mesh {
     constructor(gl, attributes) {
         this.gl = gl;
         this.attributes = {};
+        this.renderMode = gl.TRIANGLES;
 
         this.setAttribute("aPosition", attributes.position);
         if (attributes.uv !== undefined) { this.setAttribute("aUv", attributes.uv); }
