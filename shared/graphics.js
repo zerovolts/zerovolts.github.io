@@ -1,3 +1,5 @@
+import { assert } from "/shared/util.js";
+
 // Goals
 // - Separate mesh and material so they can be interchanged easily
 // - Reduce the need for custom WebGL when creating new objects
@@ -172,16 +174,20 @@ export class ShaderProgram {
 
         this.attributes = {};
         for (const [key, value] of Object.entries(attributeInfo)) {
+            const location = gl.getAttribLocation(this.program, key);
+            // assert(location !== -1, `Shader attribute \"${key}\" not found in shader program.`);
             this.attributes[key] = {
-                location: gl.getAttribLocation(this.program, key),
+                location,
                 type: value,
             };
         }
 
         this.uniforms = {};
         for (const [key, value] of Object.entries(uniformInfo)) {
+            const location = gl.getUniformLocation(this.program, key);
+            // assert(location !== null, `Shader uniform \"${key}\" not found in shader program.`);
             this.uniforms[key] = {
-                location: gl.getUniformLocation(this.program, key),
+                location,
                 type: value,
             };
         }

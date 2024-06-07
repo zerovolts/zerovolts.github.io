@@ -14,3 +14,13 @@ export function loadImage(src) {
         img.src = src;
     });
 }
+
+export function assert(condition, message) {
+    if (condition) return;
+    console.error("Assertion failed:", message);
+    debugger;
+}
+
+export function assertEq(actual, expected) {
+    assert(actual === expected, `Expected ${actual} to equal ${expected}`);
+}
