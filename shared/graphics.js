@@ -130,23 +130,23 @@ export class Texture {
 }
 
 export class Mesh {
-    // Possible attributes: position, index, uv, normal, color
     constructor(gl, attributes) {
         this.gl = gl;
         this.attributes = {};
         this.renderMode = gl.TRIANGLES;
 
-        this.setAttribute("aPosition", attributes.position);
-        if (attributes.uv !== undefined) { this.setAttribute("aUv", attributes.uv); }
-        if (attributes.normal !== undefined) { this.setAttribute("aNormal", attributes.normal); }
-        if (attributes.color !== undefined) { this.setAttribute("aColor", attributes.color); }
+        assert(attributes.aPosition !== undefined, "Mesh must have an \"aPosition\" attribute.");
+        for (const [key, value] of Object.entries(attributes)) {
+            if (key === "indexBuffer") continue;
+            this.setAttribute(key, value);
+        }
 
         this.indexBuffer = gl.createBuffer();
         gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, this.indexBuffer);
-        gl.bufferData(gl.ELEMENT_ARRAY_BUFFER, new Uint16Array(attributes.index), gl.STATIC_DRAW);
+        gl.bufferData(gl.ELEMENT_ARRAY_BUFFER, new Uint16Array(attributes.indexBuffer), gl.STATIC_DRAW);
 
-        this.vertexCount = attributes.position.length;
-        this.indexCount = attributes.index.length;
+        this.vertexCount = attributes.aPosition.length;
+        this.indexCount = attributes.indexBuffer.length;
     }
 
     setAttribute(key, value) {

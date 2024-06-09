@@ -5,17 +5,17 @@ import { Vec3 } from "./vec3.js";
 
 export function quadMesh2d(gl) {
     return new Mesh(gl, {
-        position: [
+        aPosition: [
             -1, -1,
             -1,  1,
              1,  1,
              1, -1,
         ],
-        index: [
+        indexBuffer: [
             0, 3, 2,
             2, 1, 0,
         ],
-        uv: [
+        aUv: [
             0, 0,
             1, 0,
             1, 1,
@@ -26,17 +26,17 @@ export function quadMesh2d(gl) {
 
 export function quadMesh(gl) {
     return new Mesh(gl, {
-        position: [
+        aPosition: [
             -1, -1, 0,
             -1,  1, 0,
              1,  1, 0,
              1, -1, 0,
         ],
-        index: [
+        indexBuffer: [
             0, 3, 2,
             2, 1, 0,
         ],
-        uv: [
+        aUv: [
             0, 0,
             1, 0,
             1, 1,
@@ -61,8 +61,8 @@ export function circleMesh(gl, radius, segmentCount) {
     }
 
     return new Mesh(gl, {
-        position: positions.map(x => x.data).flat(),
-        index: indices,
+        aPosition: positions.map(x => x.data).flat(),
+        indexBuffer: indices,
     });
 }
 
@@ -99,8 +99,8 @@ export function lineMesh(gl, start, end, width, segmentCount, rounded = false) {
     }
 
     return new Mesh(gl, {
-        position: positions.map(x => x.data).flat(),
-        index: indices,
+        aPosition: positions.map(x => x.data).flat(),
+        indexBuffer: indices,
     });
 }
 
@@ -108,7 +108,7 @@ export function cubeMesh(gl) {
     const a = -.5;
     const z = .5;
     return new Mesh(gl, {
-        position: [
+        aPosition: [
             // Front
             a, a, a,
             a, z, a,
@@ -140,7 +140,7 @@ export function cubeMesh(gl) {
             z, z, z,
             z, a, z,
         ],
-        index: [
+        indexBuffer: [
             // Front
             0, 1, 2,
             2, 3, 0,
@@ -160,7 +160,7 @@ export function cubeMesh(gl) {
             20, 21, 22,
             22, 23, 20,
         ],
-        uv: [
+        aUv: [
             1, 0, 0, 0, 0, 1, 1, 1,
             1, 0, 0, 0, 0, 1, 1, 1,
             1, 0, 0, 0, 0, 1, 1, 1,
@@ -168,7 +168,7 @@ export function cubeMesh(gl) {
             1, 0, 0, 0, 0, 1, 1, 1,
             1, 0, 0, 0, 0, 1, 1, 1,
         ],
-        normal: [
+        aNormal: [
             0, 0, -1, 0, 0, -1, 0, 0, -1, 0, 0, -1,
             0, 0, 1, 0, 0, 1, 0, 0, 1, 0, 0, 1,
             0, -1, 0, 0, -1, 0, 0, -1, 0, 0, -1, 0,
@@ -272,10 +272,10 @@ export function cylinderMesh(gl, segmentCount) {
     }
 
     return new Mesh(gl, {
-        position: positions,
-        normal: normals,
-        uv: uvs,
-        index: indices,
+        aPosition: positions,
+        aNormal: normals,
+        aUv: uvs,
+        indexBuffer: indices,
     });
 }
 
@@ -351,10 +351,10 @@ export function icosahedronMesh(gl) {
     }
 
     return new Mesh(gl, {
-        position: positions.map(v => v.data).flat(),
-        normal: normals.map(v => v.data).flat(),
+        aPosition: positions.map(v => v.data).flat(),
+        aNormal: normals.map(v => v.data).flat(),
         // TODO
-        uv: Array(positions.length * 2).fill(0),
-        index: indices,
+        aUv: Array(positions.length * 2).fill(0),
+        indexBuffer: indices,
     })
 }

@@ -58,9 +58,9 @@ class App extends GlApp {
         }
 
         this.mesh = new Mesh(gl, {
-            position: [-1, -1, 1, -1, 1, 1, -1, 1],
-            uv: [0, 0, 1, 0, 1, 1, 0, 1],
-            index: [0, 1, 2, 2, 3, 0],
+            aPosition: [-1, -1, 1, -1, 1, 1, -1, 1],
+            aUv: [0, 0, 1, 0, 1, 1, 0, 1],
+            indexBuffer: [0, 1, 2, 2, 3, 0],
         });
 
         this.texture = new Texture(gl, image, null, null);

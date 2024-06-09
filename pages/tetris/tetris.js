@@ -30,9 +30,9 @@ class App extends GlApp {
             {},
         );
         this.backgroundMesh = new Mesh(gl, {
-            position: [-1, -1, 1, -1, 1, 1, -1, 1],
-            uv: [0, 0, 1, 0, 1, 1, 0, 1],
-            index: [0, 1, 2, 2, 3, 0],
+            aPosition: [-1, -1, 1, -1, 1, 1, -1, 1],
+            aUv: [0, 0, 1, 0, 1, 1, 0, 1],
+            indexBuffer: [0, 1, 2, 2, 3, 0],
         });
 
         this.blockShader = new ShaderProgram(
@@ -43,9 +43,9 @@ class App extends GlApp {
             { uCoord: "2f", uColor: "3f" },
         );
         this.blockMesh = new Mesh(gl, {
-            position: [0, 0, 1, 0, 1, 1, 0, 1],
-            uv: [0, 0, 1, 0, 1, 1, 0, 1],
-            index: [0, 1, 2, 2, 3, 0],
+            aPosition: [0, 0, 1, 0, 1, 1, 0, 1],
+            aUv: [0, 0, 1, 0, 1, 1, 0, 1],
+            indexBuffer: [0, 1, 2, 2, 3, 0],
         });
 
         this.timer = 0;
