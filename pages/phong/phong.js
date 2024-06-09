@@ -58,7 +58,7 @@ class App extends GlApp {
             vertexSource,
             fragmentSource,
             { aPosition: "3f", aUv: "2f", aNormal: "3f" },
-            { uDimensions: "2f", uTransform: "m4f", uLightFlags: "1i" },
+            { uTransform: "m4f", uLightFlags: "1i" },
         );
 
         this.t = 0;
@@ -84,7 +84,7 @@ class App extends GlApp {
             this.icosahedronMesh,
             this.shaderProgram,
             [],
-            { uDimensions: [this.width, this.height], uTransform: model.data, uLightFlags: this.lightFlags },
+            { uTransform: model.data, uLightFlags: this.lightFlags },
         );
     }
 }

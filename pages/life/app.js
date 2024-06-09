@@ -39,7 +39,7 @@ class App extends GlApp {
             shaderSources[0],
             shaderSources[1],
             { aPosition: "2f", aUv: "2f" },
-            { uTexture: "1i" },
+            { board: "1i" },
         );
         this.resetShader = new ShaderProgram(
             gl,
@@ -53,7 +53,7 @@ class App extends GlApp {
             shaderSources[0],
             shaderSources[3],
             { aPosition: "2f", aUv: "2f" },
-            { uResolution: "2f", uBoard: "1i" },
+            { uResolution: "2f", board: "1i" },
         );
 
         this.stepCount = 0;
@@ -87,7 +87,7 @@ class App extends GlApp {
                 this.quadMesh,
                 this.defaultShader,
                 [this.boardTexture],
-                { uTexture: 0 }
+                { board: 0 }
             );
         }
 
@@ -96,19 +96,19 @@ class App extends GlApp {
                 this.quadMesh,
                 this.defaultShader,
                 [this.boardTexture],
-                { uTexture: 0 }
+                { board: 0 }
             );
             this.boardFramebuffer.draw(
                 this.quadMesh,
                 this.lifeSimShader,
                 [this.tempBoardTexture],
-                { uResolution: [this.width, this.height], uBoard: 0 }
+                { uResolution: [this.width, this.height], board: 0 }
             );
             this.screen.draw(
                 this.quadMesh,
                 this.defaultShader,
                 [this.boardTexture],
-                { uTexture: 0 }
+                { board: 0 }
             );
         }
     }
