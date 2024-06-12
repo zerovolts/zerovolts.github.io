@@ -28,14 +28,13 @@ class App extends GlApp {
 
         this.t = 0;
 
-        this.keys = {
-            "up": false,
-            "down": false,
-            "left": false,
-            "right": false,
-            "q": false,
-            "e": false,
-        };
+        this.keymap = new KeyMap();
+        this.keymap.bindKey("w", "forward");
+        this.keymap.bindKey("s", "backward");
+        this.keymap.bindKey("a", "rotateLeft");
+        this.keymap.bindKey("d", "rotateRight");
+        this.keymap.bindKey("q", "strafeLeft");
+        this.keymap.bindKey("e", "strafeRight");
 
         gl.enable(gl.DEPTH_TEST);
 
@@ -113,23 +112,23 @@ class App extends GlApp {
 
     update(delta) {
         this.t += delta;
-        if (this.keys.up) {
+        if (this.keymap.isActionActive("forward")) {
             this.camera.position.addMut(this.camera.forward.scale(-0.1));
         }
-        if (this.keys.down) {
+        if (this.keymap.isActionActive("backward")) {
             this.camera.position.addMut(this.camera.forward.scale(0.1));
         }
-        if (this.keys.left) {
+        if (this.keymap.isActionActive("rotateLeft")) {
             this.camera.forward = Mat4.rotationY(-.01).mulVec(this.camera.forward).normalize();
         }
-        if (this.keys.right) {
+        if (this.keymap.isActionActive("rotateRight")) {
             this.camera.forward = Mat4.rotationY(.01).mulVec(this.camera.forward).normalize();
         }
-        if (this.keys.q) {
+        if (this.keymap.isActionActive("strafeLeft")) {
             const right = this.camera.forward.cross(this.camera.up);
             this.camera.position.addMut(right.scale(-0.1));
         }
-        if (this.keys.e) {
+        if (this.keymap.isActionActive("strafeRight")) {
             const right = this.camera.forward.cross(this.camera.up);
             this.camera.position.addMut(right.scale(0.1));
         }
@@ -147,48 +146,38 @@ class App extends GlApp {
     }
 
     handleKeydown(e) {
-        switch (e.key) {
-            case "w": {
-                this.keys.up = true;
-            } break;
-            case "s": {
-                this.keys.down = true;
-            } break;
-            case "a": {
-                this.keys.left = true;
-            } break;
-            case "d": {
-                this.keys.right = true;
-            } break;
-            case "q": {
-                this.keys.q = true;
-            } break;
-            case "e": {
-                this.keys.e = true;
-            } break;
-        }
+        this.keymap.pressKey(e.key);
     }
 
     handleKeyup(e) {
-        switch (e.key) {
-            case "w": {
-                this.keys.up = false;
-            } break;
-            case "s": {
-                this.keys.down = false;
-            } break;
-            case "a": {
-                this.keys.left = false;
-            } break;
-            case "d": {
-                this.keys.right = false;
-            } break;
-            case "q": {
-                this.keys.q = false;
-            } break;
-            case "e": {
-                this.keys.e = false;
-            } break;
-        }
+        this.keymap.releaseKey(e.key);
+    }
+}
+
+export class KeyMap {
+    constructor() {
+        this.keyActionMap = new Map();
+        this.activeActions = new Map();
+    }
+
+    bindKey(key, action) {
+        this.keyActionMap.set(key, action);
+        this.activeActions.set(action, false);
+    }
+
+    isActionActive(action) {
+        return this.activeActions.get(action);
+    }
+
+    pressKey(key) {
+        const action = this.keyActionMap.get(key);
+        if (action === undefined) return;
+        this.activeActions.set(action, true);
+    }
+
+    releaseKey(key) {
+        const action = this.keyActionMap.get(key);
+        if (action === undefined) return;
+        this.activeActions.set(action, false);
     }
 }
