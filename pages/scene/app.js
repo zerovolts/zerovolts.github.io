@@ -35,6 +35,8 @@ class App extends GlApp {
         this.keymap.bindKey("d", "rotateRight");
         this.keymap.bindKey("q", "strafeLeft");
         this.keymap.bindKey("e", "strafeRight");
+        this.keymap.bindKey("r", "up");
+        this.keymap.bindKey("f", "down");
 
         gl.enable(gl.DEPTH_TEST);
 
@@ -131,6 +133,12 @@ class App extends GlApp {
         if (this.keymap.isActionActive("strafeRight")) {
             const right = this.camera.forward.cross(this.camera.up);
             this.camera.position.addMut(right.scale(0.1));
+        }
+        if (this.keymap.isActionActive("up")) {
+            this.camera.position.addMut(this.camera.up.scale(-0.1));
+        }
+        if (this.keymap.isActionActive("down")) {
+            this.camera.position.addMut(this.camera.up.scale(0.1));
         }
 
         this.cube.transform = Mat4.identity()
