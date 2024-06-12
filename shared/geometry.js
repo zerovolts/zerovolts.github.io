@@ -36,6 +36,12 @@ export function quadMesh(gl) {
             0, 3, 2,
             2, 1, 0,
         ],
+        aNormal: [
+            0, 0, 1,
+            0, 0, 1,
+            0, 0, 1,
+            0, 0, 1,
+        ],
         aUv: [
             0, 0,
             1, 0,

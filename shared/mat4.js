@@ -1,3 +1,5 @@
+import { v3 } from "./vec3.js";
+
 export function m4(
     x0, x1, x2, x3,
     x4, x5, x6, x7,
@@ -28,6 +30,23 @@ export class Mat4 {
             0, 0, 1, 0,
             0, 0, 0, 1,
         );
+    }
+
+    static fromBasisVectors(x, y, z) {
+        return m4(
+            x.x, x.y, x.z, 0,
+            y.x, y.y, y.z, 0,
+            z.x, z.y, z.z, 0,
+            0,   0,   0,   1,
+        );
+    }
+
+    static lookAt(position, target, up) {
+        const forward = target.sub(position).scale(-1).normalize();
+        const right = forward.cross(up).normalize();
+        // guaranteed to be orthogonal to the other vectors
+        const fixedUp = right.cross(forward).normalize();
+        return Mat4.fromBasisVectors(right, fixedUp, forward);
     }
 
     static translation(x, y, z) {
@@ -107,6 +126,15 @@ export class Mat4 {
             }
         }
         return result;
+    }
+
+    // TODO: This should take and emit a Vec4.
+    mulVec(v) {
+        return v3(
+            v3(this.data[0], this.data[1], this.data[2]).dot(v),
+            v3(this.data[4], this.data[5], this.data[6]).dot(v),
+            v3(this.data[8], this.data[9], this.data[10]).dot(v),
+        );
     }
 
     translate(x, y, z) {
