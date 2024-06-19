@@ -87,4 +87,8 @@ export class Vec3 extends VecBase {
             lerp(this.z, to.z, progress),
         );
     };
+
+    toString() {
+        return `[${this.data[0]}, ${this.data[1]}, ${this.data[2]}]`;
+    }
 }
