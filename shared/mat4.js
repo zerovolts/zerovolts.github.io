@@ -169,4 +169,8 @@ export class Mat4 {
             `[${this.data[12]}, ${this.data[13]}, ${this.data[14]}, ${this.data[15]}]`,
         ].join("\n");
     }
+
+    translation() {
+        return v3(this.data[12], this.data[13], this.data[14]);
+    }
 }

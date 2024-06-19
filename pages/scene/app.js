@@ -47,6 +47,7 @@ class App extends GlApp {
             { aPosition: "3f", aColor: "4f" },
             { uMvp: "m4f", uModel: "m4f", uCameraPosition: "3f" },
         );
+        this.colorShaderProgram.supportsTransparency = true;
 
         this.lightingShaderProgram = new ShaderProgram(
             gl,
@@ -68,7 +69,21 @@ class App extends GlApp {
             quadMesh(gl),
             this.lightingShaderProgram,
         );
-        this.floor.mesh.setAttribute("aColor", repeat(4, [0.05, 0.07, 0.19, 1]));
+        this.floor.mesh.setAttribute("aColor", repeat(4, [0.1, 0.1, 0.1, 1]));
+
+        this.window = new Entity(
+            Mat4.identity().translate(0, 2, 2),
+            quadMesh(gl),
+            this.colorShaderProgram,
+        );
+        this.window.mesh.setAttribute("aColor", repeat(4, [1, .2, .2, .8]));
+
+        this.window2 = new Entity(
+            Mat4.identity().translate(0, 2, 4),
+            quadMesh(gl),
+            this.colorShaderProgram,
+        );
+        this.window2.mesh.setAttribute("aColor", repeat(4, [.2, 1, .2, .4]));
 
         this.gridMesh = new Mesh(gl, {
             aPosition: [
@@ -88,12 +103,12 @@ class App extends GlApp {
                 1, 0, 0,
             ],
             aColor: [
-                1, 0, 0, .1,
-                1, 0, 0, .1,
-                0, 1, 0, .1,
-                0, 1, 0, .1,
-                0, 0, 1, .1,
-                0, 0, 1, .1,
+                1, 0, 0, 1,
+                1, 0, 0, 1,
+                0, 1, 0, 1,
+                0, 1, 0, 1,
+                0, 0, 1, 1,
+                0, 0, 1, 1,
             ],
             indexBuffer: [0, 1, 2, 3, 4, 5],
         })
@@ -106,10 +121,13 @@ class App extends GlApp {
 
         this.camera = new Camera(Vec3.back().add(Vec3.down().scale(2)), Vec3.back(), Vec3.up(), .8, 1, .1, 100);
 
-        this.scene = new Scene(this.camera, [this.floor, this.cube, this.grid]);
+        this.scene = new Scene(this.camera, [this.floor, this.cube, this.grid, this.window2, this.window]);
 
         document.addEventListener("keydown", (e) => this.handleKeydown(e));
         document.addEventListener("keyup", (e) => this.handleKeyup(e));
+
+        gl.enable(gl.BLEND);
+        gl.blendFunc(gl.SRC_ALPHA, gl.ONE_MINUS_SRC_ALPHA);
     }
 
     update(delta) {

@@ -159,6 +159,8 @@ export class Mesh {
 
 export class ShaderProgram {
     constructor(gl, vertSource, fragSource, attributeInfo, uniformInfo) {
+        this.supportsTransparency = false;
+
         const vertShader = gl.createShader(gl.VERTEX_SHADER);
         gl.shaderSource(vertShader, vertSource);
         gl.compileShader(vertShader);

@@ -6,7 +6,31 @@ export class Scene {
         this.entities = entities;
     }
 
+    sortEntities() {
+        // TODO: This should be removed once the camera position is fixed.
+        const correctedCameraPosition = this.camera.position.scale(-1);
+
+        this.entities.sort((a, b) => {
+            const tA = a.shader.supportsTransparency;
+            const tB = b.shader.supportsTransparency;
+
+            // Draw transparent objects after opaque ones.
+            if (tA && !tB) return 1;
+            if (!tA && tB) return -1;
+
+            const camToA = a.transform.translation().sub(correctedCameraPosition);
+            const camToB = b.transform.translation().sub(correctedCameraPosition);
+
+            return tA && tB
+                // both transparent - sort back to front
+                ? camToB.lengthSq() - camToA.lengthSq()
+                // both opaque - sort front to back
+                : camToA.lengthSq() - camToB.lengthSq();
+        });
+    }
+
     render(framebuffer) {
+        this.sortEntities();
         for (const entity of this.entities) {
             entity.draw(framebuffer, this.camera);
         }

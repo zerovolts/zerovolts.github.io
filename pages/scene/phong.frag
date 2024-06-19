@@ -39,5 +39,5 @@ void main() {
     color += specular(vWorldNormal, LIGHT_DIR, normalize(uCameraPosition - vWorldPosition), 100.) * vColor.rgb * SPECULAR_INTENSITY * vec3(1);
     
     vec3 srgb = pow(color, vec3(1. / 2.2));
-    fragColor = vec4(srgb, 1.);
+    fragColor = vec4(srgb, vColor.a);
 }
