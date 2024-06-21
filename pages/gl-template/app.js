@@ -29,17 +29,17 @@ class App extends GlApp {
         );
 
         this.triangleMesh = new Mesh(gl, {
-            position: [
+            aPosition: [
                 0, 1,
                 -1, -1,
                 1, -1,
             ],
-            color: [
+            aColor: [
                 1, 0, 0, 1,
                 0, 1, 0, 1,
                 0, 0, 1, 1,
             ],
-            index: [0, 1, 2],
+            indexBuffer: [0, 1, 2],
         });
     }
 
