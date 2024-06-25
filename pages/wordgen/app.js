@@ -2,7 +2,8 @@ document.addEventListener("DOMContentLoaded", async () => {
     window.app = new App();
 });
 
-const text = `in general when a rigid body moves both its position and orientation vary with time in the kinematic sense these changes are referred to as translation and rotation respectively indeed the position of a rigid body can be viewed as a hypothetic translation and rotation of the body starting from a hypothetic reference position not necessarily coinciding with a position actually taken by the body during its motion`.split(" ");
+const textStr = `in general when a rigid body moves both its position and orientation vary with time in the kinematic sense these changes are referred to as translation and rotation respectively indeed the position of a rigid body can be viewed as a hypothetic translation and rotation of the body starting from a hypothetic reference position not necessarily coinciding with a position actually taken by the body during its motion`;
+const text = textStr.split(" ").filter(word => word.length > 2);
 
 class App {
     constructor() {
@@ -40,22 +41,26 @@ const endState = Object.create(null);
 class MarkovChain {
     constructor() {
         this.counts = new Map();
+        this.windowSize = 2;
     }
 
     generate() {
         let output = [];
-        let state = startState;
+        let state = Array(this.windowSize).fill(startState);
         while (true) {
-            state = this.nextState(state);
-            if (state === endState) break;
-            output.push(state);
+            const newState = this.nextState(state);
+            if (newState === endState) break;
+            state[0] = state[1];
+            state[1] = newState;
+            output.push(newState);
         }
         return output;
     }
 
     nextState(prev) {
-        const probabilities = this.probabilities.get(prev);
-        const letters = this.values.get(prev);
+        const key = stateToKey(prev);
+        const probabilities = this.probabilities.get(key);
+        const letters = this.values.get(key);
         const r = Math.random();
 
         // TODO: binary search
@@ -68,22 +73,24 @@ class MarkovChain {
     }
 
     train(arr) {
-        this.addPair(startState, arr[0]);
-        for (let i = 0; i < arr.length - 1; i++) {
-            this.addPair(arr[i], arr[i + 1]);
+        this.addPair([startState, startState], arr[0]);
+        this.addPair([startState, arr[0]], arr[1]);
+        for (let i = 0; i < arr.length - 2; i++) {
+            this.addPair([arr[i], arr[i + 1]], arr[i + 2]);
         }
-        this.addPair(arr.at(-1), endState);
+        this.addPair([arr.at(-2), arr.at(-1)], endState);
         this.recomputeAllProbabilities();
     }
 
     addPair(a, b) {
-        if (this.counts.get(a) === undefined) {
-            this.counts.set(a, new Map());
+        const key = stateToKey(a);
+        if (this.counts.get(key) === undefined) {
+            this.counts.set(key, new Map());
         }
-        if (this.counts.get(a).get(b) === undefined) {
-            this.counts.get(a).set(b, 0);
+        if (this.counts.get(key).get(b) === undefined) {
+            this.counts.get(key).set(b, 0);
         }
-        this.counts.get(a).set(b, this.counts.get(a).get(b) + 1);
+        this.counts.get(key).set(b, this.counts.get(key).get(b) + 1);
     }
 
     recomputeAllProbabilities() {
@@ -109,4 +116,12 @@ class MarkovChain {
             this.values.get(a)[i] = key;
         }
     }
+}
+
+function stateToKey(state) {
+    return state.map(value => {
+        if (value === startState) return "<start>";
+        if (value === endState) return "<end>";
+        return value;
+    }).join(":");
 }
