@@ -1,1 +1,9 @@
 @import "/global.css";
+
+#output {
+    display: flex;
+    flex-direction: column;
+    flex-wrap: wrap;
+    gap: 12px;
+    height: calc(19px * 8 + 12px * 7);
+}

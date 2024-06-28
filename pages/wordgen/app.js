@@ -1,9 +1,11 @@
+import { mountEl, span, text } from "/shared/dom.js";
+
 document.addEventListener("DOMContentLoaded", async () => {
     window.app = new App();
 });
 
-const textStr = `in general when a rigid body moves both its position and orientation vary with time in the kinematic sense these changes are referred to as translation and rotation respectively indeed the position of a rigid body can be viewed as a hypothetic translation and rotation of the body starting from a hypothetic reference position not necessarily coinciding with a position actually taken by the body during its motion`;
-const text = textStr.split(" ").filter(word => word.length > 2);
+const trainingStr = `in general when a rigid body moves both its position and orientation vary with time in the kinematic sense these changes are referred to as translation and rotation respectively indeed the position of a rigid body can be viewed as a hypothetic translation and rotation of the body starting from a hypothetic reference position not necessarily coinciding with a position actually taken by the body during its motion`;
+const trainingTokens= trainingStr.split(" ").filter(word => word.length > 2);
 
 class App {
     constructor() {
@@ -13,7 +15,7 @@ class App {
         this.generateEl.addEventListener("click", () => this.generate());
 
         this.mc = new MarkovChain();
-        for (const word of text) {
+        for (const word of trainingTokens) {
             this.mc.train(word);
         }
 
@@ -24,13 +26,13 @@ class App {
         const words = Array(16);
         let i = 0;
         while (true) {
-            if (i >= 16) break;
+            if (i >= 32) break;
             const word = this.mc.generate().join("");
             if (word.length < 5 || word.length > 10) continue;
-            i += 1;
             words[i] = word;
+            i += 1;
         }
-        this.outputEl.innerText = words.join("\n");
+        mountEl(this.outputEl, words.map(word => span({}, [text(word)])));
     }
 }
 
