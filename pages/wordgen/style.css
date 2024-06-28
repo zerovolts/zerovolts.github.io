@@ -7,3 +7,7 @@
     gap: 12px;
     height: calc(19px * 8 + 12px * 7);
 }
+
+.subtitle {
+    font-size: 14px;
+}
