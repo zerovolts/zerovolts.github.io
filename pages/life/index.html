@@ -36,6 +36,15 @@
             </div>
             <div id="step-count">0</div>
         </div>
+        <p>An implementation of <a
+        href="https://en.wikipedia.org/wiki/Conway's_Game_of_Life">Conway's Game
+        of Life</a> using the GPU. Since the next state is a function of the
+        current state and we don't want to write to the same texture we're
+        reading from, there are two textures (A and B) representing the game
+        state, with each pixel corresponding to a cell. Each frame, the contents
+        of B are copied to A, then a fragment shader is used to calculate the
+        new cell states from A and draw them onto B. B is then rendered to the
+        screen.</p>
     </main>
 </body>
 
