@@ -1,5 +1,14 @@
 const DEFAULT_PIXEL_SIZE = 3;
 
+document.addEventListener("DOMContentLoaded", () => {
+    let theme = localStorage.getItem("theme");
+    if (theme === null) {
+        localStorage.setItem("theme", "light");
+        theme = "light";
+    }
+    document.documentElement.setAttribute('data-theme', theme);
+});
+
 // Images are available after window load.
 window.addEventListener("load", () => {
     const images = document.getElementsByClassName("pixel-art");
@@ -10,13 +19,6 @@ window.addEventListener("load", () => {
         image.style.height = `${boundingRect.height * pixelSize}px`;
         image.style.visibility = "visible";
     }
-
-    let theme = localStorage.getItem("theme");
-    if (theme === null) {
-        localStorage.setItem("theme", "light");
-        theme = "light";
-    }
-    document.documentElement.setAttribute('data-theme', theme);
 });
 
 function getPixelSize(element) {
